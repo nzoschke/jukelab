@@ -15,12 +15,6 @@
     src: string;
   } = $props();
 
-  // HACK: binding of `paused` is supposed to control playback
-  $effect(() => {
-    const el = document.getElementsByTagName("audio")[0];
-    audio.paused ? el.pause() : el.play();
-  });
-
   $effect(() => {
     audio.muted = audio.seeking;
   });

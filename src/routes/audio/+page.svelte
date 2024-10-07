@@ -1,12 +1,18 @@
 <script>
-  import Audio from "./Audio.svelte";
+  import AudioC from "./Audio.svelte";
+  import Controls from "./Controls.svelte";
+  import { Audio } from "$lib/types/audio";
+
+  let audio = $state(Audio);
 </script>
 
 <svelte:head>
-  <title>Audio Source</title>
-  <meta name="description" content="Audio source" />
+  <title>Audio Controls</title>
+  <meta name="description" content="Audio Controls" />
 </svelte:head>
 
-<section class="flex flex-col justify-center items-center flex-[0.6]">
-  <Audio class="w-full" controls loop src="/steps.mp3" />
-</section>
+<AudioC bind:audio src="/steps.mp3" />
+
+<div class="flex flex-col items-center space-y-2 p-2">
+  <Controls bind:audio />
+</div>
