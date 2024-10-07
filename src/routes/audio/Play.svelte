@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Icon, Pause, Play } from "svelte-hero-icons";
-  import { Audio } from "$lib/types/audio";
+  import { Audio, ReadyState } from "$lib/types/audio";
 
   let {
     audio = $bindable(Audio),
@@ -13,8 +13,12 @@
 
 <button
   class="btn btn-circle btn-primary {cls}"
-  class:btn-disabled={audio.readyState != 4}
+  class:btn-disabled={audio.readyState != ReadyState.EnoughData}
   onclick={() => {
+    if (audio.ended) {
+      audio.currentTime = 0;
+    }
+
     audio.paused = !audio.paused;
   }}
   aria-label="playPause"
