@@ -43,9 +43,12 @@
     "vite": "^5.0.3",
     "vitest": "^2.0.0"
   },
-  "type": "module",
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "**/*": "prettier --write --ignore-unknown"
+  },
+  "type": "module",
+  "dependencies": {
+    "@types/spotify-web-playback-sdk": "^0.1.19"
   }
 }
