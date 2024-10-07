@@ -1,10 +1,12 @@
 import type { Config } from "tailwindcss";
-import daisyui from "daisyui";
 
 export default {
   content: ["./src/**/*.{html,js,svelte,ts}"],
+  daisyui: {
+    logs: false,
+  },
   theme: {
     extend: {},
   },
-  plugins: [daisyui],
+  plugins: [require("@tailwindcss/typography"), require("daisyui")],
 } satisfies Config;

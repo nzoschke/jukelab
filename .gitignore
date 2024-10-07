@@ -1,6 +1,7 @@
 node_modules
 
 # Output
+.eslintcache
 .output
 .vercel
 /.svelte-kit
