@@ -49,7 +49,7 @@
 <AudioC bind:audio src={track.src} />
 
 <div class="flex h-[calc(100vh-10rem)] flex-col items-center space-y-2 p-2">
-  <Title {track} />
+  <Title {album} {track} />
 
   <div class="w-full flex-grow overflow-scroll">
     {#each album.tracks as t}

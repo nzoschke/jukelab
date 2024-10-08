@@ -6,6 +6,7 @@ const s = API();
 test("album", async () => {
   const a = await s.album("spotify:album:1iVsD8ZLyrdmTJBinwqq5j");
   assert.deepEqual(a, {
+    art: "https://i.scdn.co/image/ab67616d0000b273d277db349be4465265387adf",
     artist: "The Greatest Bits",
     barcode: "1827849487699",
     compilation: false,
@@ -20,6 +21,7 @@ test("album", async () => {
 test("albumTracks", async () => {
   const a = await s.albumTracks("spotify:album:1iVsD8ZLyrdmTJBinwqq5j");
   assert.deepEqual(a, {
+    art: "https://i.scdn.co/image/ab67616d0000b273d277db349be4465265387adf",
     artist: "The Greatest Bits",
     barcode: "1827849487699",
     compilation: false,
