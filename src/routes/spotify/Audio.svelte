@@ -20,6 +20,7 @@
 
     audio.duration = s.track_window.current_track.duration_ms / 1000;
     audio.currentTime = s.position / 1000;
+    audio.readyState = ReadyState.EnoughData;
   };
 
   const playPause = async (paused: boolean, src: string) => {
