@@ -19,7 +19,7 @@
     audio.muted = audio.seeking;
   });
 
-  // fix so binding of `paused` reliable controls playback
+  // fix so binding of `paused` reliably controls playback
   $effect(() => {
     const el = document.getElementsByTagName("audio")[0];
     audio.paused ? el.pause() : el.play();
