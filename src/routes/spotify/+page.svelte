@@ -48,7 +48,7 @@
 
 <AudioC bind:audio src={track.src} />
 
-<div class="flex h-full flex-col items-center space-y-2 p-2">
+<div class="flex h-[calc(100vh-10rem)] flex-col items-center space-y-2 p-2">
   <Title {track} />
 
   <div class="w-full flex-grow overflow-scroll">
