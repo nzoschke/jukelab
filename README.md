@@ -1,24 +1,22 @@
-# create-svelte
+# JukeLab
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+JukeLab is a DIY jukebox.
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Spotify
+
+To get a dev Spotify access token that works for 1 hour, go to the [Getting Started with Web Playback SDK](https://developer.spotify.com/documentation/web-playback-sdk/tutorials/getting-started) doc, click "Reveal your access token", then set it in `.env`:
 
 ```bash
+PUBLIC_SPOTIFY_TOKEN=<TOKEN>
+```
+
+```bash
+# install dependencies
+npm install
+
+# start dev server
 npm run dev
 
 # or start the server and open the app in a new browser tab
