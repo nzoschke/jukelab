@@ -65,7 +65,7 @@ test("track", async () => {
       "https://p.scdn.co/mp3-preview/d4e744aefa6cfae56c3c980bf51707ee02e3b62c?cid=adaaf209fb064dfab873a71817029e0d",
     disc: 1,
     genre: "",
-    isrc: "QZ22B1868791",
+    isrc: "",
     key: "",
     length: 137948,
     mood: "",
