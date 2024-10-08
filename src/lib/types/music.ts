@@ -3,6 +3,7 @@
 // - https://docs.mp3tag.de/mapping-table/
 
 export interface Album {
+  art: string;
   artist: string;
   barcode: string;
   compilation: boolean;
@@ -43,6 +44,7 @@ export interface Track {
 // Constants
 
 export const Album: Album = {
+  art: "",
   artist: "",
   barcode: "",
   compilation: false,
@@ -54,6 +56,7 @@ export const Album: Album = {
 };
 
 export const AlbumTracks: AlbumTracks = {
+  art: "",
   artist: "",
   barcode: "",
   compilation: false,

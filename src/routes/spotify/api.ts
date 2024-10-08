@@ -18,6 +18,7 @@ export const API = () => {
 
   const _album = (a: SAlbum): Album => {
     return {
+      art: a.images.at(0)?.url || "",
       artist: a.artists[0].name,
       barcode: a.external_ids.upc,
       compilation: a.album_type == "compilation",
@@ -37,8 +38,8 @@ export const API = () => {
       bpm: 0,
       comment: t.preview_url || "",
       disc: t.disc_number,
-      genre: a.genres && a.genres.length > 0 ? a.genres[0] : "",
-      isrc: "", // FIXME
+      genre: a.genres?.length > 0 ? a.genres[0] : "",
+      isrc: (t as s.Track).external_ids?.isrc || "",
       key: "",
       length: t.duration_ms,
       mood: "",
