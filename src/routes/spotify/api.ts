@@ -2,8 +2,8 @@ import { env } from "$env/dynamic/public";
 import type { Album, AlbumTracks, Track } from "$lib/types/music";
 import {
   SpotifyApi,
-  type Album as APIAlbum,
-  type Track as APITrack,
+  type Album as FullAlbum,
+  type Track as FullTrack,
   type SimplifiedTrack,
 } from "@spotify/web-api-ts-sdk";
 
@@ -18,7 +18,7 @@ export const API = () => {
       refresh_token: "",
     });
 
-  const _album = (a: APIAlbum): Album => {
+  const _album = (a: FullAlbum): Album => {
     return {
       artist: a.artists[0].name,
       barcode: a.external_ids.upc,
@@ -31,7 +31,7 @@ export const API = () => {
     };
   };
 
-  const _track = (t: APITrack): Track => {
+  const _track = (t: FullTrack): Track => {
     return {
       album: t.album.name,
       albumArtist: t.album.artists[0].name,
@@ -52,7 +52,7 @@ export const API = () => {
     };
   };
 
-  const _strack = (a: APIAlbum, t: SimplifiedTrack): Track => {
+  const _strack = (a: FullAlbum, t: SimplifiedTrack): Track => {
     return {
       album: a.name,
       albumArtist: a.artists[0].name,
