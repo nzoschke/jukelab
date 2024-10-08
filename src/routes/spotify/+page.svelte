@@ -1,18 +1,66 @@
-<script>
-  import AudioC from "./Audio.svelte";
-  import Controls from "../audio/Controls.svelte";
+<script lang="ts">
   import { Audio } from "$lib/types/audio";
+  import { AlbumTracks, Track } from "$lib/types/music";
+  import { onMount } from "svelte";
+  import PlayNext from "../audio/PlayNext.svelte";
+  import Pos from "../audio/Pos.svelte";
+  import Vol from "../audio/Vol.svelte";
+  import { API, token as _token } from "./api";
+  import AudioC from "./Audio.svelte";
+  import Title from "./Title.svelte";
 
   let audio = $state(Audio);
+  let src = "spotify:album:1iVsD8ZLyrdmTJBinwqq5j";
+  let token = $state<string>();
+  let album = $state(AlbumTracks);
+  let track = $state(Track);
+
+  const next = (delta: number) => {
+    const { tracks } = album;
+
+    let n = tracks.findIndex((t) => t.src == track.src) + delta;
+    if (n == tracks.length) n = 0;
+    if (n < 0) n = tracks.length - 1;
+
+    track = tracks[n];
+    audio.readyState = 0;
+
+    if (!audio.paused) {
+      audio.paused = true;
+      audio.paused = false;
+    }
+  };
+
+  onMount(async () => {
+    token = await _token();
+    if (token == "") return;
+
+    const api = API();
+    album = await api.albumTracks(src);
+    track = album.tracks[0];
+  });
 </script>
 
 <svelte:head>
-  <title>Spotify Controls</title>
-  <meta name="description" content="Spotify Controls" />
+  <title>Spotify Album</title>
+  <meta name="description" content="Spotify Album" />
 </svelte:head>
 
-<AudioC bind:audio src="spotify:track:0UK7txy2sUR6kqvEZtx72w" />
+<AudioC bind:audio src={track.src} />
 
-<div class="flex flex-col items-center space-y-2 p-2">
-  <Controls bind:audio />
+<div class="flex h-[calc(100vh-10rem)] flex-col items-center space-y-2 p-2">
+  <Title {track} />
+
+  <div class="w-full flex-grow overflow-scroll">
+    {#each album.tracks as t}
+      <div class:font-bold={t.src == track.src}>{t.title}</div>
+    {/each}
+  </div>
+
+  <PlayNext bind:audio {next} />
+
+  <div class="flex w-full items-center space-x-12">
+    <Pos bind:audio />
+    <Vol bind:audio />
+  </div>
 </div>

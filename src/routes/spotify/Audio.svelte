@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { Audio, ReadyState } from "$lib/types/audio";
-  import { env } from "$env/dynamic/public";
-
-  const token = async () => env.PUBLIC_SPOTIFY_TOKEN;
+  import { onMount } from "svelte";
+  import { token } from "./api";
 
   let {
     audio = $bindable(Audio),
@@ -22,6 +20,7 @@
 
     audio.duration = s.track_window.current_track.duration_ms / 1000;
     audio.currentTime = s.position / 1000;
+    audio.readyState = ReadyState.EnoughData;
   };
 
   const playPause = async (paused: boolean, src: string) => {
