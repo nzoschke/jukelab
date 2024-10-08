@@ -1,6 +1,11 @@
 import { env } from "$env/dynamic/public";
-import type { Album, Track } from "$lib/types/music";
-import { SpotifyApi } from "@spotify/web-api-ts-sdk";
+import type { Album, AlbumTracks, Track } from "$lib/types/music";
+import {
+  SpotifyApi,
+  type Album as APIAlbum,
+  type Track as APITrack,
+  type SimplifiedTrack,
+} from "@spotify/web-api-ts-sdk";
 
 export const token = async () => env.PUBLIC_SPOTIFY_TOKEN;
 
@@ -13,11 +18,7 @@ export const API = () => {
       refresh_token: "",
     });
 
-  const album = async (uri: string): Promise<Album> => {
-    const c = await client();
-    const parts = uri.split(":");
-    const a = await c.albums.get(parts[2]);
-
+  const _album = (a: APIAlbum): Album => {
     return {
       artist: a.artists[0].name,
       barcode: a.external_ids.upc,
@@ -30,11 +31,7 @@ export const API = () => {
     };
   };
 
-  const track = async (uri: string): Promise<Track> => {
-    const c = await client();
-    const parts = uri.split(":");
-    const t = await c.tracks.get(parts[2]);
-
+  const _track = (t: APITrack): Track => {
     return {
       album: t.album.name,
       albumArtist: t.album.artists[0].name,
@@ -55,8 +52,59 @@ export const API = () => {
     };
   };
 
+  const _strack = (a: APIAlbum, t: SimplifiedTrack): Track => {
+    return {
+      album: a.name,
+      albumArtist: a.artists[0].name,
+      artist: t.artists[0].name,
+      bpm: 0,
+      comment: t.preview_url || "",
+      disc: t.disc_number,
+      genre: a.genres.length > 0 ? a.genres[0] : "",
+      isrc: "", // FIXME
+      key: "",
+      length: t.duration_ms,
+      mood: "",
+      src: t.uri,
+      track: t.track_number,
+      title: t.name,
+      type: "spotify",
+      year: new Date(a.release_date),
+    };
+  };
+
+  const album = async (uri: string): Promise<Album> => {
+    const c = await client();
+    const parts = uri.split(":");
+    const a = await c.albums.get(parts[2]);
+
+    return _album(a);
+  };
+
+  const albumTracks = async (uri: string): Promise<AlbumTracks> => {
+    const c = await client();
+    const parts = uri.split(":");
+    const a = await c.albums.get(parts[2]);
+
+    const album = _album(a) as AlbumTracks;
+    album.tracks = a.tracks.items.map((t) => {
+      return _strack(a, t);
+    });
+
+    return album;
+  };
+
+  const track = async (uri: string): Promise<Track> => {
+    const c = await client();
+    const parts = uri.split(":");
+    const t = await c.tracks.get(parts[2]);
+
+    return _track(t);
+  };
+
   return {
     album,
+    albumTracks,
     track,
   };
 };
