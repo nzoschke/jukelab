@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { Audio, ReadyState } from "$lib/types/audio";
+  import { env } from "$env/dynamic/public";
 
-  // https://developer.spotify.com/documentation/web-playback-sdk/tutorials/getting-started
-  const token = async () => "";
+  const token = async () => env.PUBLIC_SPOTIFY_TOKEN;
 
   let {
     audio = $bindable(Audio),

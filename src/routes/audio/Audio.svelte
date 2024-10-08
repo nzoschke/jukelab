@@ -18,6 +18,12 @@
   $effect(() => {
     audio.muted = audio.seeking;
   });
+
+  // fix binding of `paused` doesn't reliably control playback
+  $effect(() => {
+    const el = document.getElementsByTagName("audio")[0];
+    audio.paused ? el.pause() : el.play();
+  });
 </script>
 
 <audio
