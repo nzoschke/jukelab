@@ -17,7 +17,7 @@
 
   onMount(async () => {
     token = await auth.token();
-    if (!token) return;
+    if (token == "") return;
 
     const api = API();
     track = await api.track(src);
