@@ -12,6 +12,13 @@ To get a dev Spotify access token that works for 1 hour, go to the [Getting Star
 PUBLIC_SPOTIFY_TOKEN=<TOKEN>
 ```
 
+To make a Spotify app that works indefinitely, go to [Getting started with Web API
+](https://developer.spotify.com/documentation/web-api/tutorials/getting-started) doc, follow the "Create an app" section, get your client ID, then set it in `.env`:
+
+```bash
+PUBLIC_SPOTIFY_CLIENT_ID=<CLIENT_ID>
+```
+
 ```bash
 # install dependencies
 npm install
