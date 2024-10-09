@@ -14,15 +14,46 @@
   const auth = Auth();
 
   let deviceId = "";
+  let endedTs = 0;
   let player: Spotify.Player | undefined;
+  let trackId = "";
 
   const onState = (s: Spotify.PlaybackState | null | undefined) => {
     if (!s) return;
-    if (!s.track_window.current_track) return;
 
-    audio.duration = s.track_window.current_track.duration_ms / 1000;
-    audio.currentTime = s.position / 1000;
-    audio.readyState = ReadyState.EnoughData;
+    const {
+      paused,
+      position,
+      timestamp,
+      track_window: { current_track, previous_tracks },
+    } = s;
+
+    if (!current_track) return;
+    const { id, duration_ms } = current_track;
+
+    // determine start of track
+    if (id && id != trackId) {
+      trackId = id;
+      audio.ended = false;
+      return;
+    }
+
+    // determine end of track, "debounced" to only send one update
+    // https://github.com/spotify/web-playback-sdk/issues/35#issuecomment-509159445
+    // https://github.com/metabrainz/listenbrainz-server/blob/d6c612d6e51d28c392bafba42dd27f0e73286e34/frontend/js/src/common/brainzplayer/SpotifyPlayer.tsx#L536
+    if (
+      paused &&
+      position == 0 &&
+      previous_tracks?.findIndex((t) => t.id === id) !== -1 &&
+      timestamp > endedTs + 500
+    ) {
+      endedTs = timestamp;
+      audio.ended = true;
+      return;
+    }
+
+    audio.currentTime = position / 1000;
+    audio.duration = duration_ms / 1000;
   };
 
   const playPause = async (paused: boolean, src: string) => {
@@ -31,6 +62,9 @@
     if (paused) {
       return player.pause();
     }
+
+    // immediately update ended to avoid "update depth exceeded"
+    audio.ended = false;
 
     const s = await player.getCurrentState();
     if (src == s?.track_window.current_track.uri) {

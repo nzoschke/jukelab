@@ -2,7 +2,7 @@
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks, Track } from "$lib/types/music";
   import { onMount } from "svelte";
-  import PlayNext from "../audio/PlayNext.svelte";
+  import PlaySkip from "../audio/PlaySkip.svelte";
   import Pos from "../audio/Pos.svelte";
   import Vol from "../audio/Vol.svelte";
   import { API } from "./api";
@@ -19,21 +19,20 @@
   let token = $state<string>();
   let track = $state(Track);
 
-  const next = (delta: number) => {
+  const skip = (delta: number) => {
     const { tracks } = album;
 
     let n = tracks.findIndex((t) => t.src == track.src) + delta;
-    if (n == tracks.length) n = 0;
+    if (n >= tracks.length) n = 0;
     if (n < 0) n = tracks.length - 1;
 
     track = tracks[n];
-    audio.readyState = 0;
-
-    if (!audio.paused) {
-      audio.paused = true;
-      audio.paused = false;
-    }
   };
+
+  // when ended, play next by updating track.src
+  $effect(() => {
+    if (audio.ended) skip(1);
+  });
 
   onMount(async () => {
     token = await auth.token();
@@ -61,7 +60,7 @@
     {/each}
   </div>
 
-  <PlayNext bind:audio {next} />
+  <PlaySkip bind:audio {skip} />
 
   <div class="flex w-full items-center space-x-12">
     <Pos bind:audio />
