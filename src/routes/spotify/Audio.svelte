@@ -16,12 +16,34 @@
   let deviceId = "";
   let player: Spotify.Player | undefined;
 
+  let endedAt = 0;
   const onState = (s: Spotify.PlaybackState | null | undefined) => {
     if (!s) return;
-    if (!s.track_window.current_track) return;
 
-    audio.duration = s.track_window.current_track.duration_ms / 1000;
-    audio.currentTime = s.position / 1000;
+    const {
+      paused,
+      position,
+      timestamp,
+      track_window: { current_track, previous_tracks },
+    } = s;
+
+    if (!current_track) return;
+
+    // SDK sends many starting/stopping events so debounce
+    // https://github.com/metabrainz/listenbrainz-server/blob/master/frontend/js/src/brainzplayer/SpotifyPlayer.tsx#L502-L514
+    if (
+      paused &&
+      position == 0 &&
+      previous_tracks?.findIndex((t) => t.id === current_track.id) !== -1 &&
+      timestamp > endedAt + 500
+    ) {
+      endedAt = timestamp;
+      audio.ended = true;
+      return;
+    }
+
+    audio.currentTime = position / 1000;
+    audio.duration = current_track.duration_ms / 1000;
     audio.readyState = ReadyState.EnoughData;
   };
 

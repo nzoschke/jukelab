@@ -27,6 +27,7 @@
     if (n < 0) n = tracks.length - 1;
 
     track = tracks[n];
+    audio.ended = false;
     audio.readyState = 0;
 
     if (!audio.paused) {
@@ -34,6 +35,10 @@
       audio.paused = false;
     }
   };
+
+  $effect(() => {
+    if (audio.ended) next(1);
+  });
 
   onMount(async () => {
     token = await auth.token();
