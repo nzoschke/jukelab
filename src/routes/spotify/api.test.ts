@@ -1,7 +1,8 @@
 import { assert, test } from "vitest";
 import { API } from "./api";
+import { env } from "$env/dynamic/public";
 
-const s = API();
+const s = API(env.PUBLIC_SPOTIFY_TOKEN);
 
 test("album", async () => {
   const a = await s.album("spotify:album:1iVsD8ZLyrdmTJBinwqq5j");

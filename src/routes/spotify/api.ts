@@ -1,16 +1,16 @@
-import { env } from "$env/dynamic/public";
 import type { Album, AlbumTracks, Track } from "$lib/types/music";
 import * as s from "@spotify/web-api-ts-sdk";
-
-export const token = async () => env.PUBLIC_SPOTIFY_TOKEN;
+import { Auth } from "./auth";
 
 type SAlbum = s.Album | s.SimplifiedAlbum;
 type STrack = s.Track | s.SimplifiedTrack;
 
-export const API = () => {
-  const client = async () =>
+export const API = (token?: string) => {
+  const auth = Auth();
+
+  const api = async () =>
     s.SpotifyApi.withAccessToken("", {
-      access_token: await token(),
+      access_token: token || (await auth.token()) || "",
       token_type: "",
       expires_in: 3600,
       refresh_token: "",
@@ -52,7 +52,7 @@ export const API = () => {
   };
 
   const album = async (uri: string): Promise<Album> => {
-    const c = await client();
+    const c = await api();
     const parts = uri.split(":");
     const a = await c.albums.get(parts[2]);
 
@@ -60,7 +60,7 @@ export const API = () => {
   };
 
   const albumTracks = async (uri: string): Promise<AlbumTracks> => {
-    const c = await client();
+    const c = await api();
     const parts = uri.split(":");
     const a = await c.albums.get(parts[2]);
 
@@ -73,7 +73,7 @@ export const API = () => {
   };
 
   const track = async (uri: string): Promise<Track> => {
-    const c = await client();
+    const c = await api();
     const parts = uri.split(":");
     const t = await c.tracks.get(parts[2]);
 

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Audio, ReadyState } from "$lib/types/audio";
   import { onMount } from "svelte";
-  import { token } from "./api";
+  import { Auth } from "./auth";
 
   let {
     audio = $bindable(Audio),
@@ -10,6 +10,8 @@
     audio: Audio;
     src: string;
   } = $props();
+
+  const auth = Auth();
 
   let deviceId = "";
   let player: Spotify.Player | undefined;
@@ -41,7 +43,7 @@
         uris: [src],
       }),
       headers: {
-        Authorization: `Bearer ${await token()}`,
+        Authorization: `Bearer ${await auth.token()}`,
       },
       method: "PUT",
     });
@@ -71,7 +73,7 @@
     window.onSpotifyWebPlaybackSDKReady = async () => {
       player = new Spotify.Player({
         getOAuthToken: async (cb) => {
-          const t = await token();
+          const t = await auth.token();
           if (t) cb(t);
         },
         name: "MediaLab",

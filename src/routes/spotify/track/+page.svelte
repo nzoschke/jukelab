@@ -3,9 +3,12 @@
   import { Track } from "$lib/types/music";
   import { onMount } from "svelte";
   import Controls from "../../audio/Controls.svelte";
-  import { API, token as _token } from "../api";
+  import { API } from "../api";
   import AudioC from "../Audio.svelte";
+  import { Auth } from "../auth";
   import Title from "../Title.svelte";
+
+  const auth = Auth();
 
   let audio = $state(Audio);
   let src = "spotify:track:0UK7txy2sUR6kqvEZtx72w";
@@ -13,7 +16,7 @@
   let track = $state(Track);
 
   onMount(async () => {
-    token = await _token();
+    token = await auth.token();
     if (token == "") return;
 
     const api = API();
