@@ -29,6 +29,7 @@
     track = tracks[n];
   };
 
+  // when ended, play next by updating track.src
   $effect(() => {
     if (audio.ended) skip(1);
   });
