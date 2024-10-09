@@ -14,7 +14,7 @@
   const auth = Auth();
 
   let deviceId = "";
-  let endedAt = 0;
+  let endedTs = 0;
   let player: Spotify.Player | undefined;
 
   const onState = (s: Spotify.PlaybackState | null | undefined) => {
@@ -30,25 +30,23 @@
     if (!current_track) return;
     const { id, duration_ms } = current_track;
 
-    // determine end of track
+    // determine end of track, "debounced" to only send one state change
     // https://github.com/spotify/web-playback-sdk/issues/35#issuecomment-509159445
     // https://github.com/metabrainz/listenbrainz-server/blob/d6c612d6e51d28c392bafba42dd27f0e73286e34/frontend/js/src/common/brainzplayer/SpotifyPlayer.tsx#L536
     if (
       paused &&
       position == 0 &&
       previous_tracks?.findIndex((t) => t.id === id) !== -1 &&
-      timestamp > endedAt + 500
+      timestamp > endedTs + 500
     ) {
-      endedAt = timestamp;
+      endedTs = timestamp;
       audio.ended = true;
-      audio.readyState = ReadyState.Nothing;
 
       return;
     }
 
     audio.currentTime = position / 1000;
     audio.duration = duration_ms / 1000;
-    audio.readyState = ReadyState.EnoughData;
   };
 
   const playPause = async (paused: boolean, src: string) => {

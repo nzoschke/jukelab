@@ -5,10 +5,10 @@
 
   let {
     audio = $bindable(Audio),
-    next,
+    skip,
   }: {
     audio: Audio;
-    next: (delta: number) => void;
+    skip: (delta: number) => void;
   } = $props();
 </script>
 
@@ -16,7 +16,7 @@
   <button
     class="btn btn-circle btn-md"
     onclick={() => {
-      next(-1);
+      skip(-1);
     }}
   >
     <Icon
@@ -34,7 +34,7 @@
   <button
     class="btn btn-circle"
     onclick={() => {
-      next(+1);
+      skip(+1);
     }}
   >
     <Icon src={Forward} solid class="size-6" aria-hidden="false" aria-label="next" role="img" />
