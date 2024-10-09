@@ -14,9 +14,9 @@
   const auth = Auth();
 
   let deviceId = "";
+  let endedAt = 0;
   let player: Spotify.Player | undefined;
 
-  let endedAt = 0;
   const onState = (s: Spotify.PlaybackState | null | undefined) => {
     if (!s) return;
 
@@ -28,22 +28,26 @@
     } = s;
 
     if (!current_track) return;
+    const { id, duration_ms } = current_track;
 
-    // SDK sends many starting/stopping events so debounce
-    // https://github.com/metabrainz/listenbrainz-server/blob/master/frontend/js/src/brainzplayer/SpotifyPlayer.tsx#L502-L514
+    // determine end of track
+    // https://github.com/spotify/web-playback-sdk/issues/35#issuecomment-509159445
+    // https://github.com/metabrainz/listenbrainz-server/blob/d6c612d6e51d28c392bafba42dd27f0e73286e34/frontend/js/src/common/brainzplayer/SpotifyPlayer.tsx#L536
     if (
       paused &&
       position == 0 &&
-      previous_tracks?.findIndex((t) => t.id === current_track.id) !== -1 &&
+      previous_tracks?.findIndex((t) => t.id === id) !== -1 &&
       timestamp > endedAt + 500
     ) {
       endedAt = timestamp;
       audio.ended = true;
+      audio.readyState = ReadyState.Nothing;
+
       return;
     }
 
     audio.currentTime = position / 1000;
-    audio.duration = current_track.duration_ms / 1000;
+    audio.duration = duration_ms / 1000;
     audio.readyState = ReadyState.EnoughData;
   };
 
@@ -53,6 +57,8 @@
     if (paused) {
       return player.pause();
     }
+
+    audio.ended = false;
 
     const s = await player.getCurrentState();
     if (src == s?.track_window.current_track.uri) {
