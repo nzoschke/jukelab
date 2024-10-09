@@ -5,14 +5,18 @@
   import PlayNext from "../audio/PlayNext.svelte";
   import Pos from "../audio/Pos.svelte";
   import Vol from "../audio/Vol.svelte";
-  import { API, token as _token } from "./api";
+  import { API } from "./api";
   import AudioC from "./Audio.svelte";
+  import { Auth } from "./auth";
+  import Login from "./Login.svelte";
   import Title from "./Title.svelte";
 
+  const auth = Auth();
+
+  let album = $state(AlbumTracks);
   let audio = $state(Audio);
   let src = "spotify:album:1iVsD8ZLyrdmTJBinwqq5j";
   let token = $state<string>();
-  let album = $state(AlbumTracks);
   let track = $state(Track);
 
   const next = (delta: number) => {
@@ -32,8 +36,8 @@
   };
 
   onMount(async () => {
-    token = await _token();
-    if (token == "") return;
+    token = await auth.token();
+    if (!token) return;
 
     const api = API();
     album = await api.albumTracks(src);
@@ -63,4 +67,6 @@
     <Pos bind:audio />
     <Vol bind:audio />
   </div>
+
+  <Login href="/spotify" />
 </div>

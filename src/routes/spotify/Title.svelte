@@ -5,7 +5,7 @@
     album,
     track,
   }: {
-    album: Album;
+    album?: Album;
     track: Track;
   } = $props();
 </script>
