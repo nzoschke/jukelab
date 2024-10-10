@@ -19,6 +19,19 @@ export interface AlbumTracks extends Album {
   tracks: Track[];
 }
 
+export interface Playlist {
+  art: string;
+  id: string;
+  comment: string;
+  owner: string;
+  src: string;
+  title: string;
+}
+
+export interface PlaylistTracks extends Playlist {
+  tracks: Track[];
+}
+
 export interface Track {
   album: string;
   albumArtist: string;
@@ -66,6 +79,25 @@ export const AlbumTracks: AlbumTracks = {
   title: "",
   tracks: [],
   year: new Date(0),
+};
+
+export const Playlist: Playlist = {
+  art: "",
+  comment: "",
+  id: "",
+  owner: "",
+  src: "",
+  title: "",
+};
+
+export const PlaylistTracks: PlaylistTracks = {
+  art: "",
+  comment: "",
+  id: "",
+  owner: "",
+  src: "",
+  title: "",
+  tracks: [],
 };
 
 export const Track: Track = {
