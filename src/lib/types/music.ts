@@ -19,6 +19,19 @@ export interface AlbumTracks extends Album {
   tracks: Track[];
 }
 
+export interface Playlist {
+  art: string;
+  id: string;
+  comment: string;
+  owner: string;
+  src: string;
+  title: string;
+}
+
+export interface PlaylistTracks extends Playlist {
+  tracks: Track[];
+}
+
 export interface Track {
   album: string;
   albumArtist: string;
