@@ -23,11 +23,12 @@
   let track = $state(Track);
 
   const skip = (delta: number) => {
-    // const { tracks } = album;
-    // let n = tracks.findIndex((t) => t.src == track.src) + delta;
-    // if (n >= tracks.length) n = 0;
-    // if (n < 0) n = tracks.length - 1;
-    // track = tracks[n];
+    const tracks = albums.map((a) => a.tracks).flat();
+    let n = tracks.findIndex((t) => t.src == track.src) + delta;
+    if (n >= tracks.length) n = 0;
+    if (n < 0) n = tracks.length - 1;
+    track = tracks[n];
+    album = albums.find((a) => a.tracks.includes(track))!;
   };
 
   // when ended, play next by updating track.src
