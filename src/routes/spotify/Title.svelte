@@ -24,9 +24,12 @@
 >
   {@render art(album)}
   <div class="flex flex-col items-center text-center">
-    <div>{track.title}</div>
-    <div>{track.album} {track.year.getMilliseconds() == 0 ? "" : `(${track.year})`}</div>
-    <div>{track.artist}</div>
+    <div class="truncate">{track.title}</div>
+    <div class="truncate">
+      {track.album}
+      {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
+    </div>
+    <div class="truncate">{track.artist}</div>
   </div>
   {@render art()}
 </div>

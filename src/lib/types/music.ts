@@ -81,6 +81,25 @@ export const AlbumTracks: AlbumTracks = {
   year: new Date(0),
 };
 
+export const Playlist: Playlist = {
+  art: "",
+  comment: "",
+  id: "",
+  owner: "",
+  src: "",
+  title: "",
+};
+
+export const PlaylistTracks: PlaylistTracks = {
+  art: "",
+  comment: "",
+  id: "",
+  owner: "",
+  src: "",
+  title: "",
+  tracks: [],
+};
+
 export const Track: Track = {
   album: "",
   albumArtist: "",
