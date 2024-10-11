@@ -6,11 +6,20 @@
   import { onMount } from "svelte";
   import AudioC from "../Audio.svelte";
   import { Icon, Bars3, Bell, MagnifyingGlass } from "svelte-hero-icons";
+  import Login from "../Login.svelte";
 
   const auth = Auth();
 
   let album = $state(AlbumTracks);
   let albums = $state<AlbumTracks[]>([]);
+  let albumPages = $derived(
+    albums.reduce<AlbumTracks[][]>((all, one, i) => {
+      const ch = Math.floor(i / 4);
+      if (!all[ch]) all[ch] = [];
+      all[ch].push(one);
+      return all;
+    }, []),
+  );
   let audio = $state(Audio);
   let src = "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E";
   let playlist = $state(PlaylistTracks);
@@ -42,7 +51,7 @@
     if (i) {
       var re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
       albums = JSON.parse(i, (k, v) => {
-        if (typeof v == "string" && re.exec(v)) {
+        if (typeof v == "string" && re.test(v)) {
           return new Date(v);
         }
         return v;
@@ -85,10 +94,18 @@
 
 <AudioC bind:audio src={track.src} />
 
+{#snippet alb(album?: AlbumTracks)}
+  {#if album}
+    <div class="border text-xl truncate">{album.title}</div>
+  {:else}
+    <div class="border">JUKELAB</div>
+  {/if}
+{/snippet}
+
 <div class="w-svw h-svh bg-red-200">
-  <div class="drawer">
+  <div class="drawer h-full">
     <input id="my-drawer" type="checkbox" class="drawer-toggle" />
-    <div class="drawer-content">
+    <div class="drawer-content flex flex-col">
       <!-- Page content here -->
       <div class="navbar bg-base-100">
         <div class="navbar-start">
@@ -109,15 +126,26 @@
               <span class="badge badge-xs badge-primary indicator-item"></span>
             </div>
           </button>
+          <Login href="/spotify/jukebox" />
         </div>
+      </div>
+      <div class="carousel flex-grow">
+        {#each albumPages as page}
+          <div class="carousel-item size-full grid grid-cols-2">
+            {@render alb(page[0])}
+            {@render alb(page[1])}
+            {@render alb(page[2])}
+            {@render alb(page[3])}
+          </div>
+        {/each}
       </div>
     </div>
     <div class="drawer-side">
       <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
       <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
         <!-- Sidebar content here -->
-        <li><a>Sidebar Item 1</a></li>
-        <li><a>Sidebar Item 2</a></li>
+        <li>Sidebar Item 1</li>
+        <li>Sidebar Item 2</li>
       </ul>
     </div>
   </div>

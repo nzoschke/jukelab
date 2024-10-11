@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Auth } from "../auth";
+  import { Auth } from "$lib/spotify/auth";
 
   onMount(async () => {
     const auth = Auth();
