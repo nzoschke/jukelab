@@ -1,15 +1,16 @@
 <script lang="ts">
+  import { API } from "$lib/spotify/api";
+  import { Auth } from "$lib/spotify/auth";
   import { Audio } from "$lib/types/audio";
-  import { Album, AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
+  import { AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
   import { onMount } from "svelte";
-  import PlaySkip from "../../audio/PlaySkip.svelte";
-  import Pos from "../../audio/Pos.svelte";
-  import Vol from "../../audio/Vol.svelte";
-  import { API } from "../api";
-  import AudioC from "../Audio.svelte";
-  import { Auth } from "../auth";
-  import Login from "../Login.svelte";
-  import Title from "../Title.svelte";
+  import PlaySkip from "../audio/PlaySkip.svelte";
+  import Pos from "../audio/Pos.svelte";
+  import Vol from "../audio/Vol.svelte";
+  import AudioC from "../spotify/Audio.svelte";
+  import Login from "../spotify/Login.svelte";
+  import Title from "../spotify/Title.svelte";
+  import AlbumC from "./Album.svelte";
 
   const auth = Auth();
 
@@ -93,10 +94,8 @@
   <Title {album} {track} />
 
   <div class="w-full flex-grow overflow-scroll">
-    {#each albums as a}
-      {#each a.tracks as t}
-        <div class:font-bold={t.src == track.src}>{t.title}</div>
-      {/each}
+    {#each albums as album}
+      <AlbumC {album} />
     {/each}
   </div>
 

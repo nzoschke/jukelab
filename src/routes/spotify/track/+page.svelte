@@ -3,9 +3,9 @@
   import { Track } from "$lib/types/music";
   import { onMount } from "svelte";
   import Controls from "../../audio/Controls.svelte";
-  import { API } from "../api";
+  import { API } from "$lib/spotify/api";
   import AudioC from "../Audio.svelte";
-  import { Auth } from "../auth";
+  import { Auth } from "$lib/spotify/auth";
   import Title from "../Title.svelte";
 
   const auth = Auth();

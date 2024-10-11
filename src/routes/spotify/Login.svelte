@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { UserProfile } from "@spotify/web-api-ts-sdk";
   import { onMount } from "svelte";
-  import { Auth } from "./auth";
+  import { Auth } from "$lib/spotify/auth";
 
   let {
     href = "",

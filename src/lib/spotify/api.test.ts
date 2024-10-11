@@ -1,5 +1,5 @@
 import { assert, test } from "vitest";
-import { API } from "./api";
+import { API } from "$lib/spotify/api";
 import { env } from "$env/dynamic/public";
 
 const s = API(env.PUBLIC_SPOTIFY_TOKEN);
