@@ -4,13 +4,8 @@
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
   import { onMount } from "svelte";
-  import PlaySkip from "../audio/PlaySkip.svelte";
-  import Pos from "../audio/Pos.svelte";
-  import Vol from "../audio/Vol.svelte";
-  import AudioC from "../spotify/Audio.svelte";
-  import Login from "../spotify/Login.svelte";
-  import Title from "../spotify/Title.svelte";
-  import AlbumC from "./Album.svelte";
+  import AudioC from "../Audio.svelte";
+  import { Icon, Bars3, Bell, MagnifyingGlass } from "svelte-hero-icons";
 
   const auth = Auth();
 
@@ -90,21 +85,40 @@
 
 <AudioC bind:audio src={track.src} />
 
-<div class="flex h-[calc(100vh-10rem)] flex-col items-center space-y-2 p-2">
-  <Title {album} {track} />
-
-  <div class="w-full flex-grow overflow-scroll">
-    {#each albums as album}
-      <AlbumC {album} />
-    {/each}
+<div class="w-svw h-svh bg-red-200">
+  <div class="drawer">
+    <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+    <div class="drawer-content">
+      <!-- Page content here -->
+      <div class="navbar bg-base-100">
+        <div class="navbar-start">
+          <label for="my-drawer" class="btn btn-ghost btn-circle">
+            <Icon src={Bars3} class="size-5" />
+          </label>
+        </div>
+        <div class="navbar-center">
+          <a class="btn btn-ghost text-xl" href="#top">JukeLab</a>
+        </div>
+        <div class="navbar-end">
+          <button class="btn btn-ghost btn-circle" aria-label="search">
+            <Icon src={MagnifyingGlass} class="size-5" />
+          </button>
+          <button class="btn btn-ghost btn-circle" aria-label="notifications">
+            <div class="indicator">
+              <Icon src={Bell} class="size-5" />
+              <span class="badge badge-xs badge-primary indicator-item"></span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-side">
+      <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+      <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+        <!-- Sidebar content here -->
+        <li><a>Sidebar Item 1</a></li>
+        <li><a>Sidebar Item 2</a></li>
+      </ul>
+    </div>
   </div>
-
-  <PlaySkip bind:audio {skip} />
-
-  <div class="flex w-full items-center space-x-12">
-    <Pos bind:audio />
-    <Vol bind:audio />
-  </div>
-
-  <Login href="/spotify" />
 </div>
