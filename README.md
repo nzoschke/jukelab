@@ -1,8 +1,29 @@
 # JukeLab
 
-JukeLab is a DIY jukebox.
+JukeLab brings an old-school jukebox to your next party. Curate a jukebox playlist full of 100 albums, set up a dedicated device, then let your friends control the music all night.
+
+Visit [jukelab.com](https://jukelab.com/jukebox) to try out the app in your web browser, or [visit the Apple App Store](https://apps.apple.com/app/id1480787158) to try it on your iPad or iPhone.
+
+Under the hood it is a web app built on top of [Spotify for developers](https://developer.spotify.com/).
+
+Read on to learn how to develop the app to further customize your experience.
+
+## Why JukeLab?
+
+We look back to a simpler time when artists crafted albums, fans bought records, friends made mix CDs, and nerds customized their music apps.
 
 ## Developing
+
+On Mac we recommend [Homebrew](https://brew.sh/) to install development tools
+
+```bash
+brew install git node
+git clone https://github.com/nzoschke/jukelab.git
+cd jukelab
+npm install
+npm run dev
+open http://localhost:5173/spotify/jukebox
+```
 
 ### Spotify
 
