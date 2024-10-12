@@ -124,7 +124,7 @@
     </div>
   </div>
   <div class="drawer-side">
-    <label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+    <label for="drawer" aria-label="close menu" class="drawer-overlay"></label>
     {@render menu()}
   </div>
 </div>
