@@ -116,7 +116,7 @@
       {@render footer()}
 
       <footer
-        class="flex min-h-32 flex-col-reverse overflow-scroll text-xs"
+        class="flex min-h-24 flex-col-reverse overflow-scroll text-xs"
         class:hidden={!ui.details}
       >
         {@render details()}
@@ -137,7 +137,7 @@
 {/snippet}
 
 {#snippet nav()}
-  <div class="navbar bg-base-300">
+  <div class="navbar h-16 bg-base-300">
     <div class="navbar-start">
       <label for="drawer" class="btn btn-circle btn-ghost">
         <Icon src={Bars3} class="size-5" />
@@ -202,7 +202,7 @@
 {/snippet}
 
 {#snippet footer()}
-  <div class="navbar bg-base-300">
+  <div class="navbar h-16 bg-base-300">
     <div class="navbar-start"></div>
     <div class="navbar-center">
       <PlaySkip {audio} {skip} />
