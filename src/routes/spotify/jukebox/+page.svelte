@@ -27,6 +27,7 @@
   let token = $state<string>();
   let track = $state(Track);
   let ui = $state({
+    aside: false,
     details: false,
   });
 
@@ -123,32 +124,31 @@
   </div>
 </div>
 
-{#snippet _album(n: number, album?: AlbumTracks)}
+{#snippet _album(n: number, album: AlbumTracks)}
   <div class="flex size-1/2">
-    <div class="flex-1 truncate">{album?.title}</div>
-    <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
-  </div>
-{/snippet}
-
-{#snippet alb(n: number, album?: AlbumTracks)}
-  {#if album}
-    <div class="h-1/2 flex">
-      <div class="base-100 h-full w-0 flex-1">
-        <div class="flex h-[2rem] md:h-[3rem]">TITLE</div>
-        <div class="tracks h-full w-full text-base-content bg-amber-500">
-          <div
-            class="pointer-events-auto h-[calc(100%_-_2rem)] overflow-scroll text-xs md:h-[calc(100%_-_3rem)] md:text-base md:leading-[16px]"
-          >
-            {#each album.tracks as track, n}{/each}
-          </div>
+    <div class="flex-1 overflow-hidden flex flex-col">
+      <div class="flex">
+        <div
+          class="size-12 aspect-square flex items-center justify-center text-2xl bg-black font-bold text-white"
+        >
+          {n.toString().padStart(2, "0")}
+        </div>
+        <div class="flex flex-col overflow-hidden">
+          <p class="truncate">{album.title}</p>
+          <p class="truncate">{album.artist}</p>
         </div>
       </div>
-      <div class="border aspect-square h-full max-w-[50%] object-cover sm:max-w-full">IMG</div>
-      <!-- <img class="aspect-square h-full max-w-[50%] object-cover sm:max-w-full" src={album.art} alt="" /> -->
+      <div class="h-full w-full overflow-scroll">
+        {#each album.tracks as track, n}
+          <p class="truncate">
+            <span class="font-bold font-mono">{(n + 1).toString().padStart(2, "0")}</span>
+            {track.title}
+          </p>
+        {/each}
+      </div>
     </div>
-  {:else}
-    <!-- <div class="border">JUKELAB</div> -->
-  {/if}
+    <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
+  </div>
 {/snippet}
 
 {#snippet menu()}
@@ -193,7 +193,7 @@
 {/snippet}
 
 {#snippet aside()}
-  <div class="flex w-64 flex-col rounded-box bg-base-200">
+  <div class="flex w-64 flex-col rounded-box bg-base-200" class:hidden={!ui.aside}>
     <div role="tablist" class="tabs tabs-boxed">
       <button role="tab" class="tab">Tab 1</button>
       <button role="tab" class="tab" class:tab-active={true}>Tab 2</button>
