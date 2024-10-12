@@ -46,10 +46,31 @@ export const Playlist = (src: string) => {
     album = albums[0];
     track = album.tracks[0];
 
+    _shuffle();
+
     // FIXME
     queue = albums[0].tracks;
-    shuffle = albums[1].tracks;
     history = albums[2].tracks;
+  };
+
+  const _shuffle = () => {
+    if (shuffle.length > 0) return;
+
+    const tracks: Track[] = [];
+    albums.forEach((p) => {
+      p.tracks.forEach((t) => {
+        tracks.push(t);
+      });
+    });
+
+    let i = tracks.length;
+    while (i != 0) {
+      const ri = Math.floor(Math.random() * i);
+      i--;
+      [tracks[i], tracks[ri]] = [tracks[ri]!, tracks[i]!];
+    }
+
+    shuffle = tracks;
   };
 
   return {

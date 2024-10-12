@@ -170,9 +170,11 @@
       {@render tab("shuffle")}
       {@render tab("history")}
     </div>
-    {@render list("queue", queue)}
-    {@render list("shuffle", shuffle)}
-    {@render list("history", history)}
+    <div class="overflow-scroll">
+      {@render list("queue", queue)}
+      {@render list("shuffle", shuffle.slice(0, 10))}
+      {@render list("history", history)}
+    </div>
   </div>
 
   {#snippet tab(tab: Tabs)}
