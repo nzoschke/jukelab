@@ -146,7 +146,6 @@ export const Playlist = (src: string) => {
     chunk,
     find,
     push,
-    shift,
     skip,
 
     get album() {

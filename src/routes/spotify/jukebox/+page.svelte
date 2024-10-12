@@ -34,10 +34,6 @@
 
   const push = async (at: AlbumTrack) => {
     await playlist.push(at);
-    if (audio.currentTime == 0 && audio.paused) {
-      await playlist.shift();
-      audio.paused = false;
-    }
 
     const el = document.getElementById("push") as HTMLDialogElement;
     el.showModal();
@@ -46,7 +42,22 @@
     }, 1500);
   };
 
-  // when ended, play next by updating track.src
+  // if queued when nothing is playing, play
+  $effect(() => {
+    if (audio.currentTime == 0 && audio.paused && playlist.queue.length == 1) {
+      playlist.skip(1);
+      audio.paused = false;
+    }
+  });
+
+  // if playing with nothing queued, dequeue
+  $effect(() => {
+    if (!audio.paused && playlist.queue.length == 0 && playlist.history.length == 0) {
+      playlist.skip(1);
+    }
+  });
+
+  // if ended, play next
   $effect(() => {
     if (audio.ended) playlist.skip(1);
   });
