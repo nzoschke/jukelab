@@ -3,7 +3,7 @@
   <meta name="description" content="About this app" />
 </svelte:head>
 
-<div class="prose flex flex-col max-w-[48rem] justify-center items-center mx-auto">
+<div class="prose mx-auto flex max-w-[48rem] flex-col items-center justify-center">
   <h1>About this app</h1>
 
   <p>

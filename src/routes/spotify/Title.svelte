@@ -12,14 +12,14 @@
 
 {#snippet art(album?: Album)}
   {#if album && album.art != ""}
-    <img alt="" class="h-full aspect-square" src={album.art} />
+    <img alt="" class="aspect-square h-full" src={album.art} />
   {:else}
-    <div class="h-full aspect-square"></div>
+    <div class="aspect-square h-full"></div>
   {/if}
 {/snippet}
 
 <div
-  class="flex h-24 min-h-24 w-1/2 items-center justify-center rounded bg-base-200 p-2 space-x-2"
+  class="flex h-24 min-h-24 w-1/2 items-center justify-center space-x-2 rounded bg-base-200 p-2"
   class:skeleton={!track.src}
 >
   {@render art(album)}

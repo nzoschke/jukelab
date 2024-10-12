@@ -9,12 +9,12 @@
   <meta name="description" content="Svelte demo app" />
 </svelte:head>
 
-<section class="flex flex-col justify-center items-center flex-[0.6]">
+<section class="flex flex-[0.6] flex-col items-center justify-center">
   <h1 class="w-full">
-    <span class="w-full relative block pb-64">
+    <span class="relative block w-full pb-64">
       <picture>
         <source srcset={welcome} type="image/webp" />
-        <img class="absolute size-full top-0 block" src={welcome_fallback} alt="Welcome" />
+        <img class="absolute top-0 block size-full" src={welcome_fallback} alt="Welcome" />
       </picture>
     </span>
 

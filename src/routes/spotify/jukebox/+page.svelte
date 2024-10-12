@@ -113,7 +113,7 @@
 
       {@render footer()}
 
-      <footer class="h-48 overflow-scroll flex flex-col-reverse text-xs" class:hidden={!ui.details}>
+      <footer class="flex h-48 flex-col-reverse overflow-scroll text-xs" class:hidden={!ui.details}>
         {@render details()}
       </footer>
     </div>
@@ -125,34 +125,32 @@
 </div>
 
 {#snippet _album(n: number, album: AlbumTracks)}
-  <div class="flex size-1/2">
-    <div class="flex-1 overflow-hidden flex flex-col">
-      <div class="flex">
-        <div
-          class="size-12 aspect-square flex items-center justify-center text-2xl bg-black font-bold text-white"
-        >
-          {n.toString().padStart(2, "0")}
-        </div>
-        <div class="flex flex-col overflow-hidden">
-          <p class="truncate">{album.title}</p>
-          <p class="truncate">{album.artist}</p>
-        </div>
+  <div class="flex flex-1 flex-col overflow-hidden">
+    <div class="flex">
+      <div
+        class="flex aspect-square size-12 items-center justify-center bg-black text-2xl font-bold text-white"
+      >
+        {n.toString().padStart(2, "0")}
       </div>
-      <div class="h-full w-full overflow-scroll">
-        {#each album.tracks as track, n}
-          <p class="truncate">
-            <span class="font-bold font-mono">{(n + 1).toString().padStart(2, "0")}</span>
-            {track.title}
-          </p>
-        {/each}
+      <div class="flex flex-col overflow-hidden">
+        <p class="truncate">{album.title}</p>
+        <p class="truncate">{album.artist}</p>
       </div>
     </div>
-    <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
+    <div class="h-full w-full overflow-scroll">
+      {#each album.tracks as track, n}
+        <p class="truncate">
+          <span class="font-mono font-bold">{(n + 1).toString().padStart(2, "0")}</span>
+          {track.title}
+        </p>
+      {/each}
+    </div>
   </div>
+  <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
 {/snippet}
 
 {#snippet menu()}
-  <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+  <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
     <li>Sidebar Item 1</li>
     <li>Sidebar Item 2</li>
   </ul>
@@ -161,7 +159,7 @@
 {#snippet nav()}
   <div class="navbar bg-base-300">
     <div class="navbar-start">
-      <label for="drawer" class="btn btn-ghost btn-circle">
+      <label for="drawer" class="btn btn-circle btn-ghost">
         <Icon src={Bars3} class="size-5" />
       </label>
     </div>
@@ -169,13 +167,13 @@
       <a class="btn btn-ghost text-xl" href="#top">JukeLab</a>
     </div>
     <div class="navbar-end">
-      <button class="btn btn-ghost btn-circle" aria-label="search">
+      <button class="btn btn-circle btn-ghost" aria-label="search">
         <Icon src={MagnifyingGlass} class="size-5" />
       </button>
-      <button class="btn btn-ghost btn-circle" aria-label="notifications">
+      <button class="btn btn-circle btn-ghost" aria-label="notifications">
         <div class="indicator">
           <Icon src={Bell} class="size-5" />
-          <span class="badge badge-xs badge-primary indicator-item"></span>
+          <span class="badge indicator-item badge-primary badge-xs"></span>
         </div>
       </button>
       <Login href="/spotify/jukebox" />
@@ -185,16 +183,24 @@
 
 {#snippet main()}
   <div class="flex size-full flex-wrap">
-    {@render _album(0, album)}
-    {@render _album(0, album)}
-    {@render _album(0, album)}
-    {@render _album(0, album)}
+    <div class="flex size-1/2 border-2">
+      {@render _album(0, album)}
+    </div>
+    <div class="flex size-1/2 border-2">
+      {@render _album(0, album)}
+    </div>
+    <div class="flex size-1/2 border-2">
+      {@render _album(0, album)}
+    </div>
+    <div class="flex size-1/2 border-2">
+      {@render _album(0, album)}
+    </div>
   </div>
 {/snippet}
 
 {#snippet aside()}
   <div class="flex w-64 flex-col rounded-box bg-base-200" class:hidden={!ui.aside}>
-    <div role="tablist" class="tabs tabs-boxed">
+    <div role="tablist" class="tabs-boxed tabs">
       <button role="tab" class="tab">Tab 1</button>
       <button role="tab" class="tab" class:tab-active={true}>Tab 2</button>
       <button role="tab" class="tab">Tab 3</button>
@@ -208,7 +214,7 @@
     <div class="navbar-center"></div>
     <div class="navbar-end">
       <button
-        class="btn btn-ghost btn-circle"
+        class="btn btn-circle btn-ghost"
         onclick={() => {
           ui.details = !ui.details;
         }}
@@ -220,7 +226,7 @@
 {/snippet}
 
 {#snippet details()}
-  <div class="bg-base-content text-neutral-content text-xs p-2">
+  <div class="bg-base-content p-2 text-xs text-neutral-content">
     <pre data-prefix="$"><code>npm i daisyui</code></pre>
     <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
     <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
