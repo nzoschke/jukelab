@@ -148,7 +148,7 @@
 {#snippet aside()}
   {@const { queue, shuffle, history } = playlist}
 
-  <div class="flex w-80 flex-col overflow-hidden bg-base-300 pr-1" class:hidden={!ui.aside}>
+  <div class="flex w-80 flex-col overflow-hidden bg-base-300 p-1" class:hidden={!ui.aside}>
     <div role="tablist" class="tabs-boxed tabs">
       {@render tab("queue")}
       {@render tab("shuffle")}
@@ -175,10 +175,10 @@
   {#snippet list(tab: Tabs, srcs: Src[])}
     {#each srcs as src}
       {@const { album, track } = playlist.find(src)}
-      <div class="flex space-x-1 space-y-1" class:hidden={ui.queueTab != tab}>
+      <div class="flex items-center space-x-1 border pt-1" class:hidden={ui.queueTab != tab}>
         <img class="h-12 w-12" src={album.art} alt="art" />
         <div class="flex flex-col overflow-hidden">
-          <div class="truncate">{track.title}</div>
+          <div class="truncate font-bold">{track.title}</div>
           <div class="truncate">{track.artist}</div>
         </div>
       </div>
@@ -240,26 +240,24 @@
       >
         {pad(n)}
       </div>
-      <div class="flex flex-col overflow-hidden">
-        <p class="truncate">{album.title}</p>
+      <div class="ml-1 flex flex-col overflow-hidden">
+        <p class="truncate font-bold">{album.title}</p>
         <p class="truncate">{album.artist}</p>
       </div>
     </div>
-    <div class="h-full w-full overflow-scroll">
+    <div class="overflow-scroll">
       {#each album.tracks as track, n}
-        <div>
-          <button
-            class="truncate"
-            onclick={() => {
-              select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
-              const el = document.getElementById("modal") as HTMLDialogElement;
-              el.showModal();
-            }}
-          >
-            <span class="font-mono font-bold">{pad(n + 1)}</span>
-            {track.title}
-          </button>
-        </div>
+        <button
+          class="block w-full truncate text-left"
+          onclick={() => {
+            select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
+            const el = document.getElementById("modal") as HTMLDialogElement;
+            el.showModal();
+          }}
+        >
+          <span class="font-mono font-bold">{pad(n + 1)}</span>
+          {track.title}
+        </button>
       {/each}
     </div>
   </div>
@@ -269,8 +267,8 @@
 <dialog id="modal" class="modal">
   <div class="modal-box text-center">
     <h3 class="pb-4 text-lg font-bold">Queue {pad(select.albumNum)}{pad(select.trackNum + 1)}</h3>
-    <p>{select.track.title}</p>
-    <p>by {select.track.artist}</p>
+    <p class="text-lg">{select.track.title}</p>
+    <p>{select.track.artist}</p>
     <div class="modal-action">
       <form method="dialog">
         <button class="btn btn-secondary">No</button>
