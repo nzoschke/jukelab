@@ -7,6 +7,8 @@
   import AudioC from "../Audio.svelte";
   import { Icon, Bars3, Bell, CommandLine, MagnifyingGlass } from "svelte-hero-icons";
   import Login from "../Login.svelte";
+  import PlaySkip from "../../audio/PlaySkip.svelte";
+  import Title from "../Title.svelte";
 
   const auth = Auth();
 
@@ -96,7 +98,7 @@
   <meta name="description" content="Spotify Jukebox" />
 </svelte:head>
 
-<AudioC bind:audio src={track.src} />
+<AudioC {audio} src={track.src} />
 
 <div class="drawer">
   <input id="drawer" type="checkbox" class="drawer-toggle" />
@@ -127,31 +129,6 @@
   </div>
 </div>
 
-{#snippet _album(n: number, album: AlbumTracks)}
-  <div class="flex flex-1 flex-col overflow-hidden">
-    <div class="flex">
-      <div
-        class="flex aspect-square size-12 items-center justify-center bg-black text-2xl font-bold text-white"
-      >
-        {n.toString().padStart(2, "0")}
-      </div>
-      <div class="flex flex-col overflow-hidden">
-        <p class="truncate">{album.title}</p>
-        <p class="truncate">{album.artist}</p>
-      </div>
-    </div>
-    <div class="h-full w-full overflow-scroll">
-      {#each album.tracks as track, n}
-        <p class="truncate">
-          <span class="font-mono font-bold">{(n + 1).toString().padStart(2, "0")}</span>
-          {track.title}
-        </p>
-      {/each}
-    </div>
-  </div>
-  <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
-{/snippet}
-
 {#snippet menu()}
   <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
     <li>Sidebar Item 1</li>
@@ -166,8 +143,15 @@
         <Icon src={Bars3} class="size-5" />
       </label>
     </div>
-    <div class="navbar-center">
-      <a class="btn btn-ghost text-xl" href="#top">JukeLab</a>
+    <div class="navbar-center flex w-1/2 rounded border border-gray-50">
+      <div class="pl-1"><img class="h-12 w-12" src={album.art} alt="" /></div>
+      <div class="flex-1 text-center">
+        <p class="truncate">{track.title}</p>
+        <p class="truncate">
+          {track.album}
+          {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
+        </p>
+      </div>
     </div>
     <div class="navbar-end">
       <button class="btn btn-circle btn-ghost" aria-label="search">
@@ -192,13 +176,13 @@
           <div class="flex size-1/2 border-2">
             {@render _album(n * 4 + 0, albums[0])}
           </div>
-          <div class="flex size-1/2 border-2">
+          <div class="flex size-1/2 flex-row-reverse border-2">
             {@render _album(n * 4 + 2, albums[2])}
           </div>
           <div class="flex size-1/2 border-2">
             {@render _album(n * 4 + 1, albums[1])}
           </div>
-          <div class="flex size-1/2 border-2">
+          <div class="flex size-1/2 flex-row-reverse border-2">
             {@render _album(n * 4 + 3, albums[3])}
           </div>
         </div>
@@ -220,7 +204,9 @@
 {#snippet footer()}
   <div class="navbar bg-base-300">
     <div class="navbar-start"></div>
-    <div class="navbar-center"></div>
+    <div class="navbar-center">
+      <PlaySkip {audio} {skip} />
+    </div>
     <div class="navbar-end">
       <button
         class="btn btn-circle btn-ghost"
@@ -252,4 +238,29 @@
     <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
     <pre data-prefix=">" class="text-success"><code>END!</code></pre>
   </div>
+{/snippet}
+
+{#snippet _album(n: number, album: AlbumTracks)}
+  <div class="flex flex-1 flex-col overflow-hidden">
+    <div class="flex">
+      <div
+        class="flex aspect-square size-12 items-center justify-center bg-black text-2xl font-bold text-white"
+      >
+        {n.toString().padStart(2, "0")}
+      </div>
+      <div class="flex flex-col overflow-hidden">
+        <p class="truncate">{album.title}</p>
+        <p class="truncate">{album.artist}</p>
+      </div>
+    </div>
+    <div class="h-full w-full overflow-scroll">
+      {#each album.tracks as track, n}
+        <p class="truncate">
+          <span class="font-mono font-bold">{(n + 1).toString().padStart(2, "0")}</span>
+          {track.title}
+        </p>
+      {/each}
+    </div>
+  </div>
+  <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
 {/snippet}
