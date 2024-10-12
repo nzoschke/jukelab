@@ -29,7 +29,7 @@
   let ui = $state({
     aside: false,
     details: false,
-    queueTab: "queue" as Tabs,
+    tab: "queue" as Tabs,
   });
 
   const enqueue = async (at: AlbumTrack) => {
@@ -190,9 +190,9 @@
     <button
       role="tab"
       class="tab w-20"
-      class:tab-active={ui.queueTab == tab}
+      class:tab-active={ui.tab == tab}
       onclick={() => {
-        ui.queueTab = tab;
+        ui.tab = tab;
       }}>{tab.toUpperCase()}</button
     >
   {/snippet}
@@ -200,7 +200,7 @@
   {#snippet list(tab: Tabs, srcs: Src[])}
     {#each srcs as src}
       {@const { album, track } = playlist.find(src)}
-      <div class="flex items-center space-x-1 border pt-1" class:hidden={ui.queueTab != tab}>
+      <div class="flex items-center space-x-1 border pt-1" class:hidden={ui.tab != tab}>
         <img class="h-12 w-12" src={album.art} alt="art" />
         <div class="flex flex-col overflow-hidden">
           <div class="truncate font-bold">{track.title}</div>

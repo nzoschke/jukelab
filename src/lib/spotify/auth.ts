@@ -1,5 +1,6 @@
 import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 import { env } from "$env/dynamic/public";
+import { dev } from "$app/environment";
 
 export const Auth = () => {
   const api = SpotifyApi.withUserAuthorization(
@@ -57,4 +58,32 @@ export const Auth = () => {
     redirect,
     token,
   };
+};
+
+export const validate = async (): Promise<string | undefined> => {
+  if (!dev) return;
+
+  const { PUBLIC_SPOTIFY_CLIENT_ID: id, PUBLIC_SPOTIFY_TOKEN: token } = env;
+
+  if (id) {
+    return id.length == 32 ? undefined : "Bad PUBLIC_SPOTIFY_CLIENT_ID. See README.md";
+  }
+
+  if (token) {
+    const api = SpotifyApi.withAccessToken("", {
+      access_token: token,
+      token_type: "",
+      expires_in: 3600,
+      refresh_token: "",
+    });
+
+    try {
+      await api.currentUser.profile();
+      return;
+    } catch (e) {
+      return "Bad or expired token PUBLIC_SPOTIFY_TOKEN. See README.md";
+    }
+  }
+
+  return "Missing PUBLIC_SPOTIFY_TOKEN and PUBLIC_SPOTIFY_CLIENT_ID. See README.md";
 };

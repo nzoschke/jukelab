@@ -18,37 +18,30 @@ On Mac we recommend [Homebrew](https://brew.sh/) to install development tools
 
 ```bash
 brew install git node
+
 git clone https://github.com/nzoschke/jukelab.git
 cd jukelab
+
+# fill in PUBLIC_SPOTIFY_TOKEN
+cp .env.example .env
+
 npm install
-npm run dev
-open http://localhost:5173/spotify/jukebox
+npm run dev -- --open
 ```
 
 ### Spotify
 
-To get a dev Spotify access token that works for 1 hour, go to the [Getting Started with Web Playback SDK](https://developer.spotify.com/documentation/web-playback-sdk/tutorials/getting-started) doc, click "Reveal your access token", then set it in `.env`:
+To get a dev Spotify access token that works for 1 hour, go to the [Getting Started with Web Playback SDK](https://developer.spotify.com/documentation/web-playback-sdk/tutorials/getting-started) doc, log into Spotify, click "Reveal your access token", then set it in `.env`:
 
 ```bash
 PUBLIC_SPOTIFY_TOKEN=<TOKEN>
 ```
 
-To make a Spotify app that works indefinitely, go to [Getting started with Web API
+To make a "prod" Spotify app that works indefinitely, go to [Getting started with Web API
 ](https://developer.spotify.com/documentation/web-api/tutorials/getting-started) doc, follow the "Create an app" section, get your client ID, then set it in `.env`:
 
 ```bash
 PUBLIC_SPOTIFY_CLIENT_ID=<CLIENT_ID>
-```
-
-```bash
-# install dependencies
-npm install
-
-# start dev server
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
 ## Building
