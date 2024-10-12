@@ -113,7 +113,10 @@
 
       {@render footer()}
 
-      <footer class="flex h-48 flex-col-reverse overflow-scroll text-xs" class:hidden={!ui.details}>
+      <footer
+        class="flex min-h-32 flex-col-reverse overflow-scroll text-xs"
+        class:hidden={!ui.details}
+      >
         {@render details()}
       </footer>
     </div>
@@ -182,19 +185,25 @@
 {/snippet}
 
 {#snippet main()}
-  <div class="flex size-full flex-wrap">
-    <div class="flex size-1/2 border-2">
-      {@render _album(0, album)}
-    </div>
-    <div class="flex size-1/2 border-2">
-      {@render _album(0, album)}
-    </div>
-    <div class="flex size-1/2 border-2">
-      {@render _album(0, album)}
-    </div>
-    <div class="flex size-1/2 border-2">
-      {@render _album(0, album)}
-    </div>
+  <div class="carousel size-full">
+    {#each albumPages as albums, n}
+      <div class="carousel-item size-full">
+        <div class="flex size-full flex-wrap">
+          <div class="flex size-1/2 border-2">
+            {@render _album(n * 4 + 0, albums[0])}
+          </div>
+          <div class="flex size-1/2 border-2">
+            {@render _album(n * 4 + 2, albums[2])}
+          </div>
+          <div class="flex size-1/2 border-2">
+            {@render _album(n * 4 + 1, albums[1])}
+          </div>
+          <div class="flex size-1/2 border-2">
+            {@render _album(n * 4 + 3, albums[3])}
+          </div>
+        </div>
+      </div>
+    {/each}
   </div>
 {/snippet}
 
@@ -227,7 +236,7 @@
 
 {#snippet details()}
   <div class="bg-base-content p-2 text-xs text-neutral-content">
-    <pre data-prefix="$"><code>npm i daisyui</code></pre>
+    <pre data-prefix="$"><code>START</code></pre>
     <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
     <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
     <pre data-prefix="$"><code>npm i daisyui</code></pre>
