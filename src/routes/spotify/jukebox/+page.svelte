@@ -32,6 +32,16 @@
     queueTab: "queue" as Tabs,
   });
 
+  const push = (at: AlbumTrack) => {
+    playlist.push(at);
+
+    const el = document.getElementById("push") as HTMLDialogElement;
+    el.showModal();
+    setTimeout(() => {
+      el.close();
+    }, 1500);
+  };
+
   // when ended, play next by updating track.src
   $effect(() => {
     if (audio.ended) playlist.skip(1);
@@ -251,7 +261,7 @@
           class="block w-full truncate text-left"
           onclick={() => {
             select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
-            const el = document.getElementById("modal") as HTMLDialogElement;
+            const el = document.getElementById("select") as HTMLDialogElement;
             el.showModal();
           }}
         >
@@ -264,22 +274,35 @@
   <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
 {/snippet}
 
-<dialog id="modal" class="modal">
+<dialog id="select" class="modal">
   <div class="modal-box text-center">
     <h3 class="pb-4 text-lg font-bold">Queue {pad(select.albumNum)}{pad(select.trackNum + 1)}</h3>
-    <p class="text-lg">{select.track.title}</p>
+    <p class="text-lg font-bold">{select.track.title}</p>
     <p>{select.track.artist}</p>
     <div class="modal-action">
       <form method="dialog">
-        <button class="btn btn-secondary">No</button>
+        <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+
+        <button class="btn btn-secondary" onclick={() => {}}>No</button>
         <button
           class="btn btn-primary"
           onclick={() => {
-            playlist.push(select);
+            push(select);
           }}>OK</button
         >
       </form>
     </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<dialog id="push" class="modal">
+  <div class="modal-box text-center">
+    <h3 class="pb-4 text-lg font-bold">Queued {pad(select.albumNum)}{pad(select.trackNum + 1)}</h3>
+    <p class="text-lg font-bold">{select.track.title}</p>
+    <p>{select.track.artist}</p>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>
