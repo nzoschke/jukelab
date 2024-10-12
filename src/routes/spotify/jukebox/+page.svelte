@@ -124,9 +124,9 @@
 </div>
 
 {#snippet _album(n: number, album?: AlbumTracks)}
-  <div class="flex size-full">
-    <div class="flex-1 min-w-[40%]">{album?.title}</div>
-    <img class="aspect-square object-cover object-center" src={album?.art} alt="art" />
+  <div class="flex size-1/2">
+    <div class="flex-1 truncate">{album?.title}</div>
+    <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
   </div>
 {/snippet}
 
@@ -184,23 +184,11 @@
 {/snippet}
 
 {#snippet main()}
-  <div class="flex size-full">
-    <div class="w-1/2 bg-red-50 flex flex-col">
-      <div class="h-1/2">
-        {@render _album(0, album)}
-      </div>
-      <div class="h-1/2">
-        {@render _album(0, album)}
-      </div>
-    </div>
-    <div class="w-1/2 bg-red-50 flex flex-col">
-      <div class="h-1/2">
-        {@render _album(0, album)}
-      </div>
-      <div class="h-1/2">
-        {@render _album(0, album)}
-      </div>
-    </div>
+  <div class="flex size-full flex-wrap">
+    {@render _album(0, album)}
+    {@render _album(0, album)}
+    {@render _album(0, album)}
+    {@render _album(0, album)}
   </div>
 {/snippet}
 
