@@ -78,32 +78,28 @@ export const Playlist = (src: string) => {
     track = at.track;
   };
 
-  const push = async (at: AlbumTrack) => {
-    queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
-  };
+  const play = async (src: Src | undefined) => {
+    if (!src) return;
 
-  const shift = async (): Promise<Src | undefined> => {
-    const src = queue.length > 0 ? queue.shift() : shuffle.shift();
-    if (src) {
-      history.unshift(src);
-      const at = find(src);
-      album = at.album;
-      track = at.track;
-    }
-
-    return src;
-  };
-
-  const unshift = async (): Promise<Src | undefined> => {
-    if (history.length < 1) return;
-
-    const src = history[1];
     history.unshift(src);
     const at = find(src);
     album = at.album;
     track = at.track;
 
     return src;
+  };
+
+  const push = async (at: AlbumTrack) => {
+    queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
+  };
+
+  const shift = async (): Promise<Src | undefined> => {
+    const src = queue.length > 0 ? queue.shift() : shuffle.shift();
+    return play(src);
+  };
+
+  const unshift = async (): Promise<Src | undefined> => {
+    return play(history[1]);
   };
 
   const skip = async (delta: number) => {
