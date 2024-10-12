@@ -4,11 +4,17 @@
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
   import { onMount } from "svelte";
-  import AudioC from "../Audio.svelte";
-  import { Icon, Bars3, Bell, CommandLine, MagnifyingGlass } from "svelte-hero-icons";
-  import Login from "../Login.svelte";
+  import {
+    Bars3,
+    Bell,
+    CommandLine,
+    Icon,
+    MagnifyingGlass,
+    ArrowLeftOnRectangle,
+  } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
-  import Title from "../Title.svelte";
+  import AudioC from "../Audio.svelte";
+  import Login from "../Login.svelte";
 
   const auth = Auth();
 
@@ -103,7 +109,7 @@
 <div class="drawer">
   <input id="drawer" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content">
-    <div class="flex h-screen w-screen flex-col overflow-hidden">
+    <div class="flex h-screen w-screen flex-col">
       {@render nav()}
 
       <div class="flex flex-grow justify-end overflow-scroll">
@@ -114,13 +120,7 @@
       </div>
 
       {@render footer()}
-
-      <footer
-        class="flex min-h-24 flex-col-reverse overflow-scroll text-xs"
-        class:hidden={!ui.details}
-      >
-        {@render details()}
-      </footer>
+      {@render details()}
     </div>
   </div>
   <div class="drawer-side">
@@ -192,11 +192,43 @@
 {/snippet}
 
 {#snippet aside()}
-  <div class="flex w-64 flex-col rounded-box bg-base-200" class:hidden={!ui.aside}>
+  <div class="flex w-64 flex-col bg-base-300" class:hidden={!ui.aside}>
     <div role="tablist" class="tabs-boxed tabs">
       <button role="tab" class="tab">Tab 1</button>
       <button role="tab" class="tab" class:tab-active={true}>Tab 2</button>
       <button role="tab" class="tab">Tab 3</button>
+    </div>
+    <div class="overflow-scroll">
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
+      <p>HELLO</p>
     </div>
   </div>
 {/snippet}
@@ -211,6 +243,15 @@
       <button
         class="btn btn-circle btn-ghost"
         onclick={() => {
+          ui.aside = !ui.aside;
+        }}
+      >
+        <Icon src={ArrowLeftOnRectangle} class="size-5" solid={ui.aside} />
+      </button>
+
+      <button
+        class="btn btn-circle btn-ghost"
+        onclick={() => {
           ui.details = !ui.details;
         }}
       >
@@ -221,22 +262,20 @@
 {/snippet}
 
 {#snippet details()}
-  <div class="bg-base-content p-2 text-xs text-neutral-content">
-    <pre data-prefix="$"><code>START</code></pre>
-    <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
-    <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
-    <pre data-prefix="$"><code>npm i daisyui</code></pre>
-    <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
-    <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
-    <pre data-prefix="$"><code>npm i daisyui</code></pre>
-    <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
-    <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
-    <pre data-prefix="$"><code>npm i daisyui</code></pre>
-    <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
-    <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
-    <pre data-prefix="$"><code>npm i daisyui</code></pre>
-    <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
-    <pre data-prefix=">" class="text-success"><code>END!</code></pre>
+  <div
+    class="flex h-24 min-h-24 flex-col-reverse overflow-scroll bg-base-content p-2 text-xs text-neutral-content"
+    class:hidden={!ui.details}
+  >
+    <div class="">
+      <pre data-prefix="$"><code>START</code></pre>
+      <pre data-prefix="$"><code>npm i daisyui</code></pre>
+      <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
+      <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
+      <pre data-prefix="$"><code>npm i daisyui</code></pre>
+      <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
+      <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
+      <pre data-prefix=">" class="text-success"><code>END!</code></pre>
+    </div>
   </div>
 {/snippet}
 
