@@ -68,11 +68,15 @@ export const Auth = () => {
   };
 };
 
+// get prod client ID. undefined means unset, "" means invalid, otherwise the client ID is returned
 const clientId = () => {
   const { PUBLIC_SPOTIFY_CLIENT_ID: id } = env;
-  if (id && id.length == 32) return id;
+  if (!id) return;
+  if (id.length != 32) return "";
+  return id;
 };
 
+// get dev token. undefined means unset, "" means invalid, otherwise the valid token is returned
 const devToken = async () => {
   const { PUBLIC_SPOTIFY_TOKEN: token } = env;
   if (!token) return;
@@ -92,7 +96,7 @@ const devToken = async () => {
   }
 };
 
-// validate tokens. undefined means no error
+// validate tokens. undefined means no error, otherwise an error message is returned
 export const validate = async (): Promise<string | undefined> => {
   if (!dev) return;
   if (clientId()) return;
