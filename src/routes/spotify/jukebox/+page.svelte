@@ -104,7 +104,7 @@
   <meta name="description" content="Spotify Jukebox" />
 </svelte:head>
 
-<AudioC {audio} src={track.src} />
+<AudioC bind:audio src={track.src} />
 
 <div class="drawer">
   <input id="drawer" type="checkbox" class="drawer-toggle" />
@@ -143,8 +143,12 @@
         <Icon src={Bars3} class="size-5" />
       </label>
     </div>
-    <div class="navbar-center flex w-1/2 rounded border border-gray-50">
-      <div class="pl-1"><img class="h-12 w-12" src={album.art} alt="" /></div>
+    <div class="navbar-center flex h-12 w-1/2 rounded border border-gray-50 bg-base-200">
+      <div class="size-10 pl-1">
+        {#if album.art != ""}
+          <img class="size-full" src={album.art} alt="" />
+        {/if}
+      </div>
       <div class="flex-1 text-center">
         <p class="truncate">{track.title}</p>
         <p class="truncate">
@@ -237,7 +241,7 @@
   <div class="navbar h-16 bg-base-300">
     <div class="navbar-start"></div>
     <div class="navbar-center">
-      <PlaySkip {audio} {skip} />
+      <PlaySkip bind:audio {skip} />
     </div>
     <div class="navbar-end">
       <button
