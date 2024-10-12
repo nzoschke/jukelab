@@ -1,6 +1,11 @@
 import { API } from "$lib/spotify/api";
 import { Album, AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
 
+export interface Src {
+  albumSrc: string;
+  trackSrc: string;
+}
+
 export interface AlbumTrack {
   albumNum: number;
   album: Album;
@@ -18,10 +23,10 @@ export const AlbumTrack: AlbumTrack = {
 export const Playlist = (src: string) => {
   let album = $state(AlbumTracks);
   let albums = $state<AlbumTracks[]>([]);
-  let history = $state<Track[]>([]);
+  let history = $state<Src[]>([]);
   let playlist = $state(PlaylistTracks);
-  let queue = $state<Track[]>([]);
-  let shuffle = $state<Track[]>([]);
+  let queue = $state<Src[]>([]);
+  let shuffle = $state<Src[]>([]);
   let track = $state(Track);
 
   const chunk = (size: number) =>
@@ -69,14 +74,14 @@ export const Playlist = (src: string) => {
     track = album.tracks[0];
 
     _shuffle();
-
-    // FIXME
-    history = albums[2].tracks;
   };
 
   const push = (at: AlbumTrack) => {
-    queue.push(at.track);
+    queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
   };
+
+  // FIXME: history
+  const shift = () => {};
 
   const skip = (delta: number) => {
     const tracks = albums.map((a) => a.tracks).flat();
@@ -88,10 +93,10 @@ export const Playlist = (src: string) => {
     album = albums.find((a) => a.tracks.includes(track))!;
   };
 
-  const find = (albumSrc: string, trackSrc: string): AlbumTrack => {
-    const albumNum = albums.findIndex((a) => a.src == albumSrc);
+  const find = (src: Src): AlbumTrack => {
+    const albumNum = albums.findIndex((a) => a.src == src.albumSrc);
     const album = albums[albumNum];
-    const trackNum = album.tracks.findIndex((t) => t.src == trackSrc);
+    const trackNum = album.tracks.findIndex((t) => t.src == src.trackSrc);
     const track = album.tracks[trackNum];
 
     return {
@@ -102,18 +107,20 @@ export const Playlist = (src: string) => {
     };
   };
 
+  const _src = (a: Album, t: Track): Src => ({ albumSrc: a.src, trackSrc: t.src });
+
   const _shuffle = () => {
     if (shuffle.length > 0) return;
 
-    const tracks = albums.map((a) => a.tracks).flat();
-    let i = tracks.length;
+    const srcs = albums.map((a) => a.tracks.map((t) => _src(a, t))).flat();
+    let i = srcs.length;
     while (i != 0) {
       const ri = Math.floor(Math.random() * i);
       i--;
-      [tracks[i], tracks[ri]] = [tracks[ri]!, tracks[i]!];
+      [srcs[i], srcs[ri]] = [srcs[ri]!, srcs[i]!];
     }
 
-    shuffle = tracks;
+    shuffle = srcs;
   };
 
   return {

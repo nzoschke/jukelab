@@ -14,7 +14,7 @@
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Login from "../Login.svelte";
-  import { Playlist, AlbumTrack } from "./playlist.svelte";
+  import { Playlist, AlbumTrack, type Src } from "./playlist.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -148,7 +148,7 @@
 {#snippet aside()}
   {@const { queue, shuffle, history } = playlist}
 
-  <div class="flex w-64 flex-col bg-base-300" class:hidden={!ui.aside}>
+  <div class="flex w-80 flex-col overflow-hidden bg-base-300 pr-1" class:hidden={!ui.aside}>
     <div role="tablist" class="tabs-boxed tabs">
       {@render tab("queue")}
       {@render tab("shuffle")}
@@ -156,7 +156,7 @@
     </div>
     <div class="overflow-scroll">
       {@render list("queue", queue)}
-      {@render list("shuffle", shuffle.slice(0, 10))}
+      {@render list("shuffle", shuffle.slice(0, 20))}
       {@render list("history", history)}
     </div>
   </div>
@@ -164,7 +164,7 @@
   {#snippet tab(tab: Tabs)}
     <button
       role="tab"
-      class="tab"
+      class="tab w-20"
       class:tab-active={ui.queueTab == tab}
       onclick={() => {
         ui.queueTab = tab;
@@ -172,13 +172,14 @@
     >
   {/snippet}
 
-  {#snippet list(tab: Tabs, tracks: Track[])}
-    {#each tracks as t}
-      <div class="flex p-1" class:hidden={ui.queueTab != tab}>
-        <!-- FIXME: ART <img class="h-12 w-12" src={t.art} alt="art" /> -->
-        <div class="flex flex-col truncate pl-2">
-          <div>{t.title}</div>
-          <div>{t.artist}</div>
+  {#snippet list(tab: Tabs, srcs: Src[])}
+    {#each srcs as src}
+      {@const { album, track } = playlist.find(src)}
+      <div class="flex space-x-1 space-y-1" class:hidden={ui.queueTab != tab}>
+        <img class="h-12 w-12" src={album.art} alt="art" />
+        <div class="flex flex-col overflow-hidden">
+          <div class="truncate">{track.title}</div>
+          <div class="truncate">{track.artist}</div>
         </div>
       </div>
     {/each}
@@ -250,7 +251,7 @@
           <button
             class="truncate"
             onclick={() => {
-              select = playlist.find(album.src, track.src);
+              select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
               const el = document.getElementById("modal") as HTMLDialogElement;
               el.showModal();
             }}
