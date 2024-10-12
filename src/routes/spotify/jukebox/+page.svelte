@@ -123,6 +123,13 @@
   </div>
 </div>
 
+{#snippet _album(n: number, album?: AlbumTracks)}
+  <div class="flex size-full">
+    <div class="flex-1 min-w-[40%]">{album?.title}</div>
+    <img class="aspect-square object-cover object-center" src={album?.art} alt="art" />
+  </div>
+{/snippet}
+
 {#snippet alb(n: number, album?: AlbumTracks)}
   {#if album}
     <div class="h-1/2 flex">
@@ -177,38 +184,23 @@
 {/snippet}
 
 {#snippet main()}
-  <div class="bg-base-100 p-2">
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
-    <div>HI</div>
+  <div class="flex size-full">
+    <div class="w-1/2 bg-red-50 flex flex-col">
+      <div class="h-1/2">
+        {@render _album(0, album)}
+      </div>
+      <div class="h-1/2">
+        {@render _album(0, album)}
+      </div>
+    </div>
+    <div class="w-1/2 bg-red-50 flex flex-col">
+      <div class="h-1/2">
+        {@render _album(0, album)}
+      </div>
+      <div class="h-1/2">
+        {@render _album(0, album)}
+      </div>
+    </div>
   </div>
 {/snippet}
 
