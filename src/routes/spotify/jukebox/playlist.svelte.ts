@@ -8,14 +8,14 @@ export interface Src {
 
 export interface AlbumTrack {
   albumNum: number;
-  album: Album;
+  album: AlbumTracks;
   trackNum: number;
   track: Track;
 }
 
 export const AlbumTrack: AlbumTrack = {
   albumNum: 0,
-  album: Album,
+  album: AlbumTracks,
   trackNum: 0,
   track: Track,
 };
@@ -70,27 +70,45 @@ export const Playlist = (src: string) => {
       }
       return v;
     });
-    album = albums[0];
-    track = album.tracks[0];
 
     _shuffle();
+
+    const at = find(shuffle[0]);
+    album = at.album;
+    track = at.track;
   };
 
-  const push = (at: AlbumTrack) => {
+  const push = async (at: AlbumTrack) => {
     queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
   };
 
-  // FIXME: history
-  const shift = () => {};
+  const shift = async (): Promise<Src | undefined> => {
+    const src = queue.length > 0 ? queue.shift() : shuffle.shift();
+    if (src) {
+      history.unshift(src);
+      const at = find(src);
+      album = at.album;
+      track = at.track;
+    }
 
-  const skip = (delta: number) => {
-    const tracks = albums.map((a) => a.tracks).flat();
-    let n = tracks.findIndex((t) => t.src == track.src) + delta;
-    if (n >= tracks.length) n = 0;
-    if (n < 0) n = tracks.length - 1;
+    return src;
+  };
 
-    track = tracks[n];
-    album = albums.find((a) => a.tracks.includes(track))!;
+  const unshift = async (): Promise<Src | undefined> => {
+    if (history.length < 1) return;
+
+    const src = history[1];
+    history.unshift(src);
+    const at = find(src);
+    album = at.album;
+    track = at.track;
+
+    return src;
+  };
+
+  const skip = async (delta: number) => {
+    if (delta == +1) return await shift();
+    if (delta == -1) return await unshift();
   };
 
   const find = (src: Src): AlbumTrack => {
@@ -128,6 +146,7 @@ export const Playlist = (src: string) => {
     chunk,
     find,
     push,
+    shift,
     skip,
 
     get album() {

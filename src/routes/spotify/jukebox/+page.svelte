@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Auth } from "$lib/spotify/auth";
   import { Audio } from "$lib/types/audio";
-  import { AlbumTracks, Track } from "$lib/types/music";
+  import { AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
   import {
     ArrowLeftOnRectangle,
@@ -14,7 +14,7 @@
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Login from "../Login.svelte";
-  import { Playlist, AlbumTrack, type Src } from "./playlist.svelte";
+  import { AlbumTrack, Playlist, type Src } from "./playlist.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -32,8 +32,12 @@
     queueTab: "queue" as Tabs,
   });
 
-  const push = (at: AlbumTrack) => {
-    playlist.push(at);
+  const push = async (at: AlbumTrack) => {
+    await playlist.push(at);
+    if (audio.currentTime == 0 && audio.paused) {
+      await playlist.shift();
+      audio.paused = false;
+    }
 
     const el = document.getElementById("push") as HTMLDialogElement;
     el.showModal();
@@ -286,8 +290,8 @@
         <button class="btn btn-secondary" onclick={() => {}}>No</button>
         <button
           class="btn btn-primary"
-          onclick={() => {
-            push(select);
+          onclick={async () => {
+            await push(select);
           }}>OK</button
         >
       </form>
