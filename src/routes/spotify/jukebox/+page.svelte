@@ -15,15 +15,16 @@
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Login from "../Login.svelte";
+  import { Playlist } from "./playlist.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
   const auth = Auth();
 
-  let album = $state(AlbumTracks);
-  let albums = $state<AlbumTracks[]>([]);
+  let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
+
   let albumPages = $derived(
-    albums.reduce<AlbumTracks[][]>((all, one, i) => {
+    playlist.albums.reduce<AlbumTracks[][]>((all, one, i) => {
       const ch = Math.floor(i / 4);
       if (!all[ch]) all[ch] = [];
       all[ch].push(one);
@@ -31,16 +32,7 @@
     }, []),
   );
   let audio = $state(Audio);
-  let src = "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E";
-  let playlist = $state(PlaylistTracks);
-  let q = $state({
-    queue: [] as Track[],
-    shuffle: [] as Track[],
-    history: [] as Track[],
-  });
-
   let token = $state<string>();
-  let track = $state(Track);
   let ui = $state({
     aside: false,
     details: false,
@@ -48,12 +40,15 @@
   });
 
   const skip = (delta: number) => {
+    const { albums, track } = playlist;
+
     const tracks = albums.map((a) => a.tracks).flat();
     let n = tracks.findIndex((t) => t.src == track.src) + delta;
     if (n >= tracks.length) n = 0;
     if (n < 0) n = tracks.length - 1;
-    track = tracks[n];
-    album = albums.find((a) => a.tracks.includes(track))!;
+
+    playlist.track = tracks[n];
+    playlist.album = albums.find((a) => a.tracks.includes(track))!;
   };
 
   // when ended, play next by updating track.src
@@ -61,53 +56,10 @@
     if (audio.ended) skip(1);
   });
 
-  const _playlist = async () => {
-    const api = API();
-    playlist = await api.playlist(src);
-
-    // get from cache if snapshot id matches
-    const key = `${src}:${playlist.id}`;
-    const i = localStorage.getItem(key);
-    if (i) {
-      var re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
-      albums = JSON.parse(i, (k, v) => {
-        if (typeof v == "string" && re.test(v)) {
-          return new Date(v);
-        }
-        return v;
-      });
-      album = albums[0];
-      track = album.tracks[0];
-
-      return;
-    }
-
-    // clear cache for old snapshot id
-    Object.keys(localStorage)
-      .filter((k) => k.startsWith(`${src}:`))
-      .forEach((k) => localStorage.removeItem(k));
-
-    // fetch albums
-    for (const [i, t] of playlist.tracks.entries()) {
-      albums.push(await api.trackAlbum(t.src));
-      if (i == 0) {
-        album = albums[0];
-        track = album.tracks[0];
-      }
-    }
-
-    // set cache for snapshot id
-    localStorage.setItem(key, JSON.stringify(albums));
-  };
-
   onMount(async () => {
     token = await auth.token();
     if (!token) return;
-    await _playlist();
-
-    q.queue = albums[0].tracks;
-    q.shuffle = albums[1].tracks;
-    q.history = albums[2].tracks;
+    await playlist.get();
   });
 </script>
 
@@ -116,7 +68,7 @@
   <meta name="description" content="Spotify Jukebox" />
 </svelte:head>
 
-<AudioC bind:audio src={track.src} />
+<AudioC bind:audio src={playlist.track.src} />
 
 <div class="drawer">
   <input id="drawer" type="checkbox" class="drawer-toggle" />
@@ -149,6 +101,8 @@
 {/snippet}
 
 {#snippet nav()}
+  {@const { album, track } = playlist}
+
   <div class="navbar h-16 bg-base-300">
     <div class="navbar-start">
       <label for="drawer" class="btn btn-circle btn-ghost">
@@ -208,15 +162,17 @@
 {/snippet}
 
 {#snippet aside()}
+  {@const { queue, shuffle, history } = playlist}
+
   <div class="flex w-64 flex-col bg-base-300" class:hidden={!ui.aside}>
     <div role="tablist" class="tabs-boxed tabs">
       {@render tab("queue")}
       {@render tab("shuffle")}
       {@render tab("history")}
     </div>
-    {@render list("queue", q.queue)}
-    {@render list("shuffle", q.shuffle)}
-    {@render list("history", q.history)}
+    {@render list("queue", queue)}
+    {@render list("shuffle", shuffle)}
+    {@render list("history", history)}
   </div>
 
   {#snippet tab(tab: Tabs)}
