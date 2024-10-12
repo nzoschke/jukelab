@@ -264,3 +264,9 @@
   </div>
   <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
 {/snippet}
+
+<style>
+  :global(html) {
+    overflow: hidden;
+  }
+</style>
