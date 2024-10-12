@@ -94,59 +94,136 @@
 
 <AudioC bind:audio src={track.src} />
 
-{#snippet alb(album?: AlbumTracks)}
+{#snippet alb(n: number, album?: AlbumTracks)}
   {#if album}
-    <div class="border text-xl truncate">{album.title}</div>
+    <div class="h-1/2 flex">
+      <div class="base-100 h-full w-0 flex-1">
+        <div class="flex h-[2rem] md:h-[3rem]">TITLE</div>
+        <div class="tracks h-full w-full text-base-content bg-amber-500">
+          <div
+            class="pointer-events-auto h-[calc(100%_-_2rem)] overflow-scroll text-xs md:h-[calc(100%_-_3rem)] md:text-base md:leading-[16px]"
+          >
+            {#each album.tracks as track, n}{/each}
+          </div>
+        </div>
+      </div>
+      <div class="border aspect-square h-full max-w-[50%] object-cover sm:max-w-full">IMG</div>
+      <!-- <img class="aspect-square h-full max-w-[50%] object-cover sm:max-w-full" src={album.art} alt="" /> -->
+    </div>
   {:else}
-    <div class="border">JUKELAB</div>
+    <!-- <div class="border">JUKELAB</div> -->
   {/if}
 {/snippet}
 
-<div class="w-svw h-svh bg-red-200">
-  <div class="drawer h-full">
-    <input id="my-drawer" type="checkbox" class="drawer-toggle" />
-    <div class="drawer-content flex flex-col">
-      <!-- Page content here -->
-      <div class="navbar bg-base-100">
-        <div class="navbar-start">
-          <label for="my-drawer" class="btn btn-ghost btn-circle">
-            <Icon src={Bars3} class="size-5" />
-          </label>
-        </div>
-        <div class="navbar-center">
-          <a class="btn btn-ghost text-xl" href="#top">JukeLab</a>
-        </div>
-        <div class="navbar-end">
-          <button class="btn btn-ghost btn-circle" aria-label="search">
-            <Icon src={MagnifyingGlass} class="size-5" />
-          </button>
-          <button class="btn btn-ghost btn-circle" aria-label="notifications">
-            <div class="indicator">
-              <Icon src={Bell} class="size-5" />
-              <span class="badge badge-xs badge-primary indicator-item"></span>
-            </div>
-          </button>
-          <Login href="/spotify/jukebox" />
-        </div>
-      </div>
-      <div class="carousel flex-grow">
-        {#each albumPages as page}
-          <div class="carousel-item size-full grid grid-cols-2">
-            {@render alb(page[0])}
-            {@render alb(page[1])}
-            {@render alb(page[2])}
-            {@render alb(page[3])}
-          </div>
-        {/each}
-      </div>
+{#snippet nav()}
+  <div class="navbar bg-base-100">
+    <div class="navbar-start">
+      <label for="drawer" class="btn btn-ghost btn-circle">
+        <Icon src={Bars3} class="size-5" />
+      </label>
     </div>
-    <div class="drawer-side">
-      <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-      <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
-        <!-- Sidebar content here -->
-        <li>Sidebar Item 1</li>
-        <li>Sidebar Item 2</li>
-      </ul>
+    <div class="navbar-center">
+      <a class="btn btn-ghost text-xl" href="#top">JukeLab</a>
     </div>
+    <div class="navbar-end">
+      <button class="btn btn-ghost btn-circle" aria-label="search">
+        <Icon src={MagnifyingGlass} class="size-5" />
+      </button>
+      <button class="btn btn-ghost btn-circle" aria-label="notifications">
+        <div class="indicator">
+          <Icon src={Bell} class="size-5" />
+          <span class="badge badge-xs badge-primary indicator-item"></span>
+        </div>
+      </button>
+      <Login href="/spotify/jukebox" />
+    </div>
+  </div>
+{/snippet}
+
+{#snippet main()}
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+  <div>HI</div>
+{/snippet}
+
+{#snippet aside()}
+  <div class="flex w-64 flex-col rounded-box border bg-red-200">
+    <div role="tablist" class="tabs tabs-lifted">
+      <button role="tab" class="tab">Tab 1</button>
+      <button role="tab" class="tab" class:tab-active={true}>Tab 2</button>
+      <button role="tab" class="tab">Tab 3</button>
+    </div>
+  </div>
+{/snippet}
+
+{#snippet footer()}
+  <div class="navbar bg-base-100">
+    <div class="navbar-start"></div>
+    <div class="navbar-center"></div>
+    <div class="navbar-end"></div>
+  </div>
+{/snippet}
+
+{#snippet details()}
+  <footer class="footer h-48 items-center bg-neutral p-4 text-neutral-content">
+    <pre>console</pre>
+  </footer>
+{/snippet}
+
+{#snippet menu()}
+  <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+    <li>Sidebar Item 1</li>
+    <li>Sidebar Item 2</li>
+  </ul>
+{/snippet}
+
+<div class="drawer">
+  <input id="drawer" type="checkbox" class="drawer-toggle" />
+  <div class="drawer-content">
+    <div class="flex h-screen w-screen flex-col overflow-hidden">
+      {@render nav()}
+
+      <div class="flex flex-grow justify-end overflow-y-scroll">
+        <div class="flex w-full flex-col overflow-scroll">
+          {@render main()}
+        </div>
+        {@render aside()}
+      </div>
+
+      {@render footer()}
+      {@render details()}
+    </div>
+  </div>
+  <div class="drawer-side">
+    <label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+    {@render menu()}
   </div>
 </div>
