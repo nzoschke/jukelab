@@ -203,36 +203,9 @@
       <button role="tab" class="tab">Tab 3</button>
     </div>
     <div class="overflow-scroll">
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
-      <p>HELLO</p>
+      <p>one</p>
+      <p>two</p>
+      <p>three</p>
     </div>
   </div>
 {/snippet}
