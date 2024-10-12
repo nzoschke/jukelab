@@ -16,6 +16,8 @@
   import AudioC from "../Audio.svelte";
   import Login from "../Login.svelte";
 
+  type Tabs = "queue" | "shuffle" | "history";
+
   const auth = Auth();
 
   let album = $state(AlbumTracks);
@@ -31,12 +33,18 @@
   let audio = $state(Audio);
   let src = "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E";
   let playlist = $state(PlaylistTracks);
+  let q = $state({
+    queue: [] as Track[],
+    shuffle: [] as Track[],
+    history: [] as Track[],
+  });
 
   let token = $state<string>();
   let track = $state(Track);
   let ui = $state({
     aside: false,
     details: false,
+    queueTab: "queue" as Tabs,
   });
 
   const skip = (delta: number) => {
@@ -96,6 +104,10 @@
     token = await auth.token();
     if (!token) return;
     await _playlist();
+
+    q.queue = albums[0].tracks;
+    q.shuffle = albums[1].tracks;
+    q.history = albums[2].tracks;
   });
 </script>
 
@@ -198,16 +210,37 @@
 {#snippet aside()}
   <div class="flex w-64 flex-col bg-base-300" class:hidden={!ui.aside}>
     <div role="tablist" class="tabs-boxed tabs">
-      <button role="tab" class="tab">Tab 1</button>
-      <button role="tab" class="tab" class:tab-active={true}>Tab 2</button>
-      <button role="tab" class="tab">Tab 3</button>
+      {@render tab("queue")}
+      {@render tab("shuffle")}
+      {@render tab("history")}
     </div>
-    <div class="overflow-scroll">
-      <p>one</p>
-      <p>two</p>
-      <p>three</p>
-    </div>
+    {@render list("queue", q.queue)}
+    {@render list("shuffle", q.shuffle)}
+    {@render list("history", q.history)}
   </div>
+
+  {#snippet tab(tab: Tabs)}
+    <button
+      role="tab"
+      class="tab"
+      class:tab-active={ui.queueTab == tab}
+      onclick={() => {
+        ui.queueTab = tab;
+      }}>{tab.toUpperCase()}</button
+    >
+  {/snippet}
+
+  {#snippet list(tab: Tabs, tracks: Track[])}
+    {#each tracks as t}
+      <div class="flex p-1" class:hidden={ui.queueTab != tab}>
+        <!-- <img class="h-12 w-12" src={t.art} alt="art" /> -->
+        <div class="flex flex-col truncate pl-2">
+          <div>{t.title}</div>
+          <div>{t.artist}</div>
+        </div>
+      </div>
+    {/each}
+  {/snippet}
 {/snippet}
 
 {#snippet footer()}
