@@ -5,7 +5,7 @@
   import { AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
   import { onMount } from "svelte";
   import AudioC from "../Audio.svelte";
-  import { Icon, Bars3, Bell, MagnifyingGlass } from "svelte-hero-icons";
+  import { Icon, Bars3, Bell, CommandLine, MagnifyingGlass } from "svelte-hero-icons";
   import Login from "../Login.svelte";
 
   const auth = Auth();
@@ -26,6 +26,9 @@
 
   let token = $state<string>();
   let track = $state(Track);
+  let ui = $state({
+    details: false,
+  });
 
   const skip = (delta: number) => {
     const tracks = albums.map((a) => a.tracks).flat();
@@ -94,6 +97,32 @@
 
 <AudioC bind:audio src={track.src} />
 
+<div class="drawer">
+  <input id="drawer" type="checkbox" class="drawer-toggle" />
+  <div class="drawer-content">
+    <div class="flex h-screen w-screen flex-col overflow-hidden">
+      {@render nav()}
+
+      <div class="flex flex-grow justify-end overflow-scroll">
+        <div class="flex w-full flex-col overflow-scroll">
+          {@render main()}
+        </div>
+        {@render aside()}
+      </div>
+
+      {@render footer()}
+
+      <footer class="h-48 overflow-scroll flex flex-col-reverse text-xs" class:hidden={!ui.details}>
+        {@render details()}
+      </footer>
+    </div>
+  </div>
+  <div class="drawer-side">
+    <label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+    {@render menu()}
+  </div>
+</div>
+
 {#snippet alb(n: number, album?: AlbumTracks)}
   {#if album}
     <div class="h-1/2 flex">
@@ -115,8 +144,15 @@
   {/if}
 {/snippet}
 
+{#snippet menu()}
+  <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+    <li>Sidebar Item 1</li>
+    <li>Sidebar Item 2</li>
+  </ul>
+{/snippet}
+
 {#snippet nav()}
-  <div class="navbar bg-base-100">
+  <div class="navbar bg-base-300">
     <div class="navbar-start">
       <label for="drawer" class="btn btn-ghost btn-circle">
         <Icon src={Bars3} class="size-5" />
@@ -141,42 +177,44 @@
 {/snippet}
 
 {#snippet main()}
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
-  <div>HI</div>
+  <div class="bg-base-100 p-2">
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+    <div>HI</div>
+  </div>
 {/snippet}
 
 {#snippet aside()}
-  <div class="flex w-64 flex-col rounded-box border bg-red-200">
-    <div role="tablist" class="tabs tabs-lifted">
+  <div class="flex w-64 flex-col rounded-box bg-base-200">
+    <div role="tablist" class="tabs tabs-boxed">
       <button role="tab" class="tab">Tab 1</button>
       <button role="tab" class="tab" class:tab-active={true}>Tab 2</button>
       <button role="tab" class="tab">Tab 3</button>
@@ -185,45 +223,38 @@
 {/snippet}
 
 {#snippet footer()}
-  <div class="navbar bg-base-100">
+  <div class="navbar bg-base-300">
     <div class="navbar-start"></div>
     <div class="navbar-center"></div>
-    <div class="navbar-end"></div>
+    <div class="navbar-end">
+      <button
+        class="btn btn-ghost btn-circle"
+        onclick={() => {
+          ui.details = !ui.details;
+        }}
+      >
+        <Icon src={CommandLine} class="size-5" solid={ui.details} />
+      </button>
+    </div>
   </div>
 {/snippet}
 
 {#snippet details()}
-  <footer class="footer h-48 items-center bg-neutral p-4 text-neutral-content">
-    <pre>console</pre>
-  </footer>
-{/snippet}
-
-{#snippet menu()}
-  <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
-    <li>Sidebar Item 1</li>
-    <li>Sidebar Item 2</li>
-  </ul>
-{/snippet}
-
-<div class="drawer">
-  <input id="drawer" type="checkbox" class="drawer-toggle" />
-  <div class="drawer-content">
-    <div class="flex h-screen w-screen flex-col overflow-hidden">
-      {@render nav()}
-
-      <div class="flex flex-grow justify-end overflow-y-scroll">
-        <div class="flex w-full flex-col overflow-scroll">
-          {@render main()}
-        </div>
-        {@render aside()}
-      </div>
-
-      {@render footer()}
-      {@render details()}
-    </div>
+  <div class="bg-base-content text-neutral-content text-xs p-2">
+    <pre data-prefix="$"><code>npm i daisyui</code></pre>
+    <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
+    <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
+    <pre data-prefix="$"><code>npm i daisyui</code></pre>
+    <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
+    <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
+    <pre data-prefix="$"><code>npm i daisyui</code></pre>
+    <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
+    <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
+    <pre data-prefix="$"><code>npm i daisyui</code></pre>
+    <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
+    <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
+    <pre data-prefix="$"><code>npm i daisyui</code></pre>
+    <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
+    <pre data-prefix=">" class="text-success"><code>END!</code></pre>
   </div>
-  <div class="drawer-side">
-    <label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-    {@render menu()}
-  </div>
-</div>
+{/snippet}
