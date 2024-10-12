@@ -10,6 +10,14 @@ export const Playlist = (src: string) => {
   let shuffle = $state<Track[]>([]);
   let track = $state(Track);
 
+  const chunk = (size: number) =>
+    albums.reduce<AlbumTracks[][]>((all, one, i) => {
+      const ch = Math.floor(i / size);
+      if (!all[ch]) all[ch] = [];
+      all[ch].push(one);
+      return all;
+    }, []);
+
   const get = async () => {
     const api = API();
     playlist = await api.playlist(src);
@@ -53,16 +61,20 @@ export const Playlist = (src: string) => {
     history = albums[2].tracks;
   };
 
+  const skip = (delta: number) => {
+    const tracks = albums.map((a) => a.tracks).flat();
+    let n = tracks.findIndex((t) => t.src == track.src) + delta;
+    if (n >= tracks.length) n = 0;
+    if (n < 0) n = tracks.length - 1;
+
+    track = tracks[n];
+    album = albums.find((a) => a.tracks.includes(track))!;
+  };
+
   const _shuffle = () => {
     if (shuffle.length > 0) return;
 
-    const tracks: Track[] = [];
-    albums.forEach((p) => {
-      p.tracks.forEach((t) => {
-        tracks.push(t);
-      });
-    });
-
+    const tracks = albums.map((a) => a.tracks).flat();
     let i = tracks.length;
     while (i != 0) {
       const ri = Math.floor(Math.random() * i);
@@ -74,6 +86,10 @@ export const Playlist = (src: string) => {
   };
 
   return {
+    get,
+    chunk,
+    skip,
+
     get album() {
       return album;
     },
@@ -102,7 +118,5 @@ export const Playlist = (src: string) => {
     set track(v: Track) {
       track = v;
     },
-
-    get,
   };
 };

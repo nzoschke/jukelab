@@ -1,16 +1,15 @@
 <script lang="ts">
-  import { API } from "$lib/spotify/api";
   import { Auth } from "$lib/spotify/auth";
   import { Audio } from "$lib/types/audio";
-  import { AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
+  import { AlbumTracks, Track } from "$lib/types/music";
   import { onMount } from "svelte";
   import {
+    ArrowLeftOnRectangle,
     Bars3,
     Bell,
     CommandLine,
     Icon,
     MagnifyingGlass,
-    ArrowLeftOnRectangle,
   } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
@@ -21,17 +20,8 @@
 
   const auth = Auth();
 
-  let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
-
-  let albumPages = $derived(
-    playlist.albums.reduce<AlbumTracks[][]>((all, one, i) => {
-      const ch = Math.floor(i / 4);
-      if (!all[ch]) all[ch] = [];
-      all[ch].push(one);
-      return all;
-    }, []),
-  );
   let audio = $state(Audio);
+  let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
   let token = $state<string>();
   let ui = $state({
     aside: false,
@@ -39,21 +29,9 @@
     queueTab: "queue" as Tabs,
   });
 
-  const skip = (delta: number) => {
-    const { albums, track } = playlist;
-
-    const tracks = albums.map((a) => a.tracks).flat();
-    let n = tracks.findIndex((t) => t.src == track.src) + delta;
-    if (n >= tracks.length) n = 0;
-    if (n < 0) n = tracks.length - 1;
-
-    playlist.track = tracks[n];
-    playlist.album = albums.find((a) => a.tracks.includes(track))!;
-  };
-
   // when ended, play next by updating track.src
   $effect(() => {
-    if (audio.ended) skip(1);
+    if (audio.ended) playlist.skip(1);
   });
 
   onMount(async () => {
@@ -68,8 +46,7 @@
   <meta name="description" content="Spotify Jukebox" />
 </svelte:head>
 
-<AudioC bind:audio src={playlist.track.src} />
-
+<!-- page layout -->
 <div class="drawer">
   <input id="drawer" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content">
@@ -93,6 +70,10 @@
   </div>
 </div>
 
+<!-- audio element -->
+<AudioC bind:audio src={playlist.track.src} />
+
+<!-- page sections -->
 {#snippet menu()}
   <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
     <li>Sidebar Item 1</li>
@@ -140,7 +121,7 @@
 
 {#snippet main()}
   <div class="carousel size-full">
-    {#each albumPages as albums, n}
+    {#each playlist.chunk(4) as albums, n}
       <div class="carousel-item size-full">
         <div class="flex size-full flex-wrap">
           <div class="flex size-1/2 border-2">
@@ -205,7 +186,7 @@
   <div class="navbar h-16 bg-base-300">
     <div class="navbar-start"></div>
     <div class="navbar-center">
-      <PlaySkip bind:audio {skip} />
+      <PlaySkip bind:audio skip={playlist.skip} />
     </div>
     <div class="navbar-end">
       <button
@@ -272,6 +253,7 @@
   <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
 {/snippet}
 
+<!-- page style -->
 <style>
   :global(html) {
     overflow: hidden;
