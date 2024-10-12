@@ -8,9 +8,11 @@ Under the hood it is a web app built on top of [Spotify for developers](https://
 
 Read on to learn how to develop the app to further customize your experience.
 
+![JukeLab Screenshot](static/jukebox.png?raw=true)
+
 ## Why JukeLab?
 
-We look back to a simpler time when artists crafted albums, fans bought records, friends made mix CDs, and nerds customized their music apps.
+We recall the times when artists composed albums, fans wore out records, friends crafted mix CDs, and nerds skinned music apps.
 
 ## Developing
 
@@ -36,6 +38,8 @@ To get a dev Spotify access token that works for 1 hour, go to the [Getting Star
 ```bash
 PUBLIC_SPOTIFY_TOKEN=<TOKEN>
 ```
+
+![Dev Token](static/token.png?raw=true)
 
 To make a "prod" Spotify app that works indefinitely, go to [Getting started with Web API
 ](https://developer.spotify.com/documentation/web-api/tutorials/getting-started) doc, follow the "Create an app" section, get your client ID, then set it in `.env`:
