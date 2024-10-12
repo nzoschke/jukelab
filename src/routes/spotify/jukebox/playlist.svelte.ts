@@ -89,7 +89,7 @@ export const Playlist = (src: string) => {
     return src;
   };
 
-  const push = async (at: AlbumTrack) => {
+  const enqueue = async (at: AlbumTrack) => {
     queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
   };
 
@@ -140,8 +140,8 @@ export const Playlist = (src: string) => {
   return {
     get,
     chunk,
+    enqueue,
     find,
-    push,
     skip,
 
     get album() {

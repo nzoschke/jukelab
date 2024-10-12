@@ -32,10 +32,10 @@
     queueTab: "queue" as Tabs,
   });
 
-  const push = async (at: AlbumTrack) => {
-    await playlist.push(at);
+  const enqueue = async (at: AlbumTrack) => {
+    await playlist.enqueue(at);
 
-    const el = document.getElementById("push") as HTMLDialogElement;
+    const el = document.getElementById("enqueue") as HTMLDialogElement;
     el.showModal();
     setTimeout(() => {
       el.close();
@@ -302,7 +302,7 @@
         <button
           class="btn btn-primary"
           onclick={async () => {
-            await push(select);
+            await enqueue(select);
           }}>OK</button
         >
       </form>
@@ -313,7 +313,7 @@
   </form>
 </dialog>
 
-<dialog id="push" class="modal">
+<dialog id="enqueue" class="modal">
   <div class="modal-box text-center">
     <h3 class="pb-4 text-lg font-bold">Queued {pad(select.albumNum)}{pad(select.trackNum + 1)}</h3>
     <p class="text-lg font-bold">{select.track.title}</p>
