@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { Auth } from "$lib/spotify/auth";
   import { Audio, ReadyState } from "$lib/types/audio";
   import { onMount } from "svelte";
-  import { Auth } from "./auth";
 
   let {
     audio = $bindable(Audio),

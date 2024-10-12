@@ -1,13 +1,13 @@
 <script lang="ts">
+  import { API } from "$lib/spotify/api";
+  import { Auth } from "$lib/spotify/auth";
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks, Track } from "$lib/types/music";
   import { onMount } from "svelte";
   import PlaySkip from "../audio/PlaySkip.svelte";
   import Pos from "../audio/Pos.svelte";
   import Vol from "../audio/Vol.svelte";
-  import { API } from "./api";
   import AudioC from "./Audio.svelte";
-  import { Auth } from "./auth";
   import Login from "./Login.svelte";
   import Title from "./Title.svelte";
 
