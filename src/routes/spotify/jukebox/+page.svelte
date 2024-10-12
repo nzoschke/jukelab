@@ -1,101 +1,71 @@
 <script lang="ts">
-  import { API } from "$lib/spotify/api";
   import { Auth } from "$lib/spotify/auth";
   import { Audio } from "$lib/types/audio";
-  import { AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
+  import { AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
   import {
+    ArrowLeftOnRectangle,
     Bars3,
     Bell,
     CommandLine,
     Icon,
     MagnifyingGlass,
-    ArrowLeftOnRectangle,
   } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Login from "../Login.svelte";
+  import { AlbumTrack, Playlist, type Src } from "./playlist.svelte";
+
+  type Tabs = "queue" | "shuffle" | "history";
 
   const auth = Auth();
+  const pad = (n: number) => n.toString().padStart(2, "0");
 
-  let album = $state(AlbumTracks);
-  let albums = $state<AlbumTracks[]>([]);
-  let albumPages = $derived(
-    albums.reduce<AlbumTracks[][]>((all, one, i) => {
-      const ch = Math.floor(i / 4);
-      if (!all[ch]) all[ch] = [];
-      all[ch].push(one);
-      return all;
-    }, []),
-  );
   let audio = $state(Audio);
-  let src = "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E";
-  let playlist = $state(PlaylistTracks);
-
+  let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
   let token = $state<string>();
-  let track = $state(Track);
+  let select = $state(AlbumTrack);
+
   let ui = $state({
     aside: false,
     details: false,
+    queueTab: "queue" as Tabs,
   });
 
-  const skip = (delta: number) => {
-    const tracks = albums.map((a) => a.tracks).flat();
-    let n = tracks.findIndex((t) => t.src == track.src) + delta;
-    if (n >= tracks.length) n = 0;
-    if (n < 0) n = tracks.length - 1;
-    track = tracks[n];
-    album = albums.find((a) => a.tracks.includes(track))!;
+  const enqueue = async (at: AlbumTrack) => {
+    await playlist.enqueue(at);
+
+    const el = document.getElementById("enqueue") as HTMLDialogElement;
+    el.showModal();
+    setTimeout(() => {
+      el.close();
+    }, 1500);
   };
 
-  // when ended, play next by updating track.src
+  // if queued when nothing is playing, play
   $effect(() => {
-    if (audio.ended) skip(1);
+    if (audio.currentTime == 0 && audio.paused && playlist.queue.length == 1) {
+      playlist.skip(1);
+      audio.paused = false;
+    }
   });
 
-  const _playlist = async () => {
-    const api = API();
-    playlist = await api.playlist(src);
-
-    // get from cache if snapshot id matches
-    const key = `${src}:${playlist.id}`;
-    const i = localStorage.getItem(key);
-    if (i) {
-      var re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
-      albums = JSON.parse(i, (k, v) => {
-        if (typeof v == "string" && re.test(v)) {
-          return new Date(v);
-        }
-        return v;
-      });
-      album = albums[0];
-      track = album.tracks[0];
-
-      return;
+  // if playing with nothing queued, dequeue
+  $effect(() => {
+    if (!audio.paused && playlist.queue.length == 0 && playlist.history.length == 0) {
+      playlist.skip(1);
     }
+  });
 
-    // clear cache for old snapshot id
-    Object.keys(localStorage)
-      .filter((k) => k.startsWith(`${src}:`))
-      .forEach((k) => localStorage.removeItem(k));
-
-    // fetch albums
-    for (const [i, t] of playlist.tracks.entries()) {
-      albums.push(await api.trackAlbum(t.src));
-      if (i == 0) {
-        album = albums[0];
-        track = album.tracks[0];
-      }
-    }
-
-    // set cache for snapshot id
-    localStorage.setItem(key, JSON.stringify(albums));
-  };
+  // if ended, play next
+  $effect(() => {
+    if (audio.ended) playlist.skip(1);
+  });
 
   onMount(async () => {
     token = await auth.token();
     if (!token) return;
-    await _playlist();
+    await playlist.get();
   });
 </script>
 
@@ -104,8 +74,7 @@
   <meta name="description" content="Spotify Jukebox" />
 </svelte:head>
 
-<AudioC bind:audio src={track.src} />
-
+<!-- page layout -->
 <div class="drawer">
   <input id="drawer" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content">
@@ -129,6 +98,10 @@
   </div>
 </div>
 
+<!-- audio element -->
+<AudioC bind:audio src={playlist.track.src} />
+
+<!-- page sections -->
 {#snippet menu()}
   <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
     <li>Sidebar Item 1</li>
@@ -137,6 +110,8 @@
 {/snippet}
 
 {#snippet nav()}
+  {@const { album, track } = playlist}
+
   <div class="navbar h-16 bg-base-300">
     <div class="navbar-start">
       <label for="drawer" class="btn btn-circle btn-ghost">
@@ -174,7 +149,7 @@
 
 {#snippet main()}
   <div class="carousel size-full">
-    {#each albumPages as albums, n}
+    {#each playlist.chunk(4) as albums, n}
       <div class="carousel-item size-full">
         <div class="flex size-full flex-wrap">
           <div class="flex size-1/2 border-2">
@@ -196,25 +171,51 @@
 {/snippet}
 
 {#snippet aside()}
-  <div class="flex w-64 flex-col bg-base-300" class:hidden={!ui.aside}>
+  {@const { queue, shuffle, history } = playlist}
+
+  <div class="flex w-80 flex-col overflow-hidden bg-base-300 p-1" class:hidden={!ui.aside}>
     <div role="tablist" class="tabs-boxed tabs">
-      <button role="tab" class="tab">Tab 1</button>
-      <button role="tab" class="tab" class:tab-active={true}>Tab 2</button>
-      <button role="tab" class="tab">Tab 3</button>
+      {@render tab("queue")}
+      {@render tab("shuffle")}
+      {@render tab("history")}
     </div>
     <div class="overflow-scroll">
-      <p>one</p>
-      <p>two</p>
-      <p>three</p>
+      {@render list("queue", queue)}
+      {@render list("shuffle", shuffle.slice(0, 20))}
+      {@render list("history", history)}
     </div>
   </div>
+
+  {#snippet tab(tab: Tabs)}
+    <button
+      role="tab"
+      class="tab w-20"
+      class:tab-active={ui.queueTab == tab}
+      onclick={() => {
+        ui.queueTab = tab;
+      }}>{tab.toUpperCase()}</button
+    >
+  {/snippet}
+
+  {#snippet list(tab: Tabs, srcs: Src[])}
+    {#each srcs as src}
+      {@const { album, track } = playlist.find(src)}
+      <div class="flex items-center space-x-1 border pt-1" class:hidden={ui.queueTab != tab}>
+        <img class="h-12 w-12" src={album.art} alt="art" />
+        <div class="flex flex-col overflow-hidden">
+          <div class="truncate font-bold">{track.title}</div>
+          <div class="truncate">{track.artist}</div>
+        </div>
+      </div>
+    {/each}
+  {/snippet}
 {/snippet}
 
 {#snippet footer()}
   <div class="navbar h-16 bg-base-300">
     <div class="navbar-start"></div>
     <div class="navbar-center">
-      <PlaySkip bind:audio {skip} />
+      <PlaySkip bind:audio skip={playlist.skip} />
     </div>
     <div class="navbar-end">
       <button
@@ -262,25 +263,68 @@
       <div
         class="flex aspect-square size-12 items-center justify-center bg-black text-2xl font-bold text-white"
       >
-        {n.toString().padStart(2, "0")}
+        {pad(n)}
       </div>
-      <div class="flex flex-col overflow-hidden">
-        <p class="truncate">{album.title}</p>
+      <div class="ml-1 flex flex-col overflow-hidden">
+        <p class="truncate font-bold">{album.title}</p>
         <p class="truncate">{album.artist}</p>
       </div>
     </div>
-    <div class="h-full w-full overflow-scroll">
+    <div class="overflow-scroll">
       {#each album.tracks as track, n}
-        <p class="truncate">
-          <span class="font-mono font-bold">{(n + 1).toString().padStart(2, "0")}</span>
+        <button
+          class="block w-full truncate text-left"
+          onclick={() => {
+            select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
+            const el = document.getElementById("select") as HTMLDialogElement;
+            el.showModal();
+          }}
+        >
+          <span class="font-mono font-bold">{pad(n + 1)}</span>
           {track.title}
-        </p>
+        </button>
       {/each}
     </div>
   </div>
   <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
 {/snippet}
 
+<dialog id="select" class="modal">
+  <div class="modal-box text-center">
+    <h3 class="pb-4 text-lg font-bold">Queue {pad(select.albumNum)}{pad(select.trackNum + 1)}</h3>
+    <p class="text-lg font-bold">{select.track.title}</p>
+    <p>{select.track.artist}</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+
+        <button class="btn btn-secondary" onclick={() => {}}>No</button>
+        <button
+          class="btn btn-primary"
+          onclick={async () => {
+            await enqueue(select);
+          }}>OK</button
+        >
+      </form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<dialog id="enqueue" class="modal">
+  <div class="modal-box text-center">
+    <h3 class="pb-4 text-lg font-bold">Queued {pad(select.albumNum)}{pad(select.trackNum + 1)}</h3>
+    <p class="text-lg font-bold">{select.track.title}</p>
+    <p>{select.track.artist}</p>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- page style -->
 <style>
   :global(html) {
     overflow: hidden;
