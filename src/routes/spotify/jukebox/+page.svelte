@@ -14,15 +14,18 @@
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Login from "../Login.svelte";
-  import { Playlist } from "./playlist.svelte";
+  import { Playlist, AlbumTrack } from "./playlist.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
   const auth = Auth();
+  const pad = (n: number) => n.toString().padStart(2, "0");
 
   let audio = $state(Audio);
   let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
   let token = $state<string>();
+  let select = $state(AlbumTrack);
+
   let ui = $state({
     aside: false,
     details: false,
@@ -172,7 +175,7 @@
   {#snippet list(tab: Tabs, tracks: Track[])}
     {#each tracks as t}
       <div class="flex p-1" class:hidden={ui.queueTab != tab}>
-        <!-- <img class="h-12 w-12" src={t.art} alt="art" /> -->
+        <!-- FIXME: ART <img class="h-12 w-12" src={t.art} alt="art" /> -->
         <div class="flex flex-col truncate pl-2">
           <div>{t.title}</div>
           <div>{t.artist}</div>
@@ -234,7 +237,7 @@
       <div
         class="flex aspect-square size-12 items-center justify-center bg-black text-2xl font-bold text-white"
       >
-        {n.toString().padStart(2, "0")}
+        {pad(n)}
       </div>
       <div class="flex flex-col overflow-hidden">
         <p class="truncate">{album.title}</p>
@@ -243,15 +246,46 @@
     </div>
     <div class="h-full w-full overflow-scroll">
       {#each album.tracks as track, n}
-        <p class="truncate">
-          <span class="font-mono font-bold">{(n + 1).toString().padStart(2, "0")}</span>
-          {track.title}
-        </p>
+        <div>
+          <button
+            class="truncate"
+            onclick={() => {
+              select = playlist.find(album.src, track.src);
+              const el = document.getElementById("modal") as HTMLDialogElement;
+              el.showModal();
+            }}
+          >
+            <span class="font-mono font-bold">{pad(n + 1)}</span>
+            {track.title}
+          </button>
+        </div>
       {/each}
     </div>
   </div>
   <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
 {/snippet}
+
+<dialog id="modal" class="modal">
+  <div class="modal-box text-center">
+    <h3 class="pb-4 text-lg font-bold">Queue {pad(select.albumNum)}{pad(select.trackNum + 1)}</h3>
+    <p>{select.track.title}</p>
+    <p>by {select.track.artist}</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-secondary">No</button>
+        <button
+          class="btn btn-primary"
+          onclick={() => {
+            playlist.push(select);
+          }}>OK</button
+        >
+      </form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
 
 <!-- page style -->
 <style>

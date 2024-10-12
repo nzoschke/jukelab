@@ -1,6 +1,20 @@
 import { API } from "$lib/spotify/api";
 import { Album, AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
 
+export interface AlbumTrack {
+  albumNum: number;
+  album: Album;
+  trackNum: number;
+  track: Track;
+}
+
+export const AlbumTrack: AlbumTrack = {
+  albumNum: 0,
+  album: Album,
+  trackNum: 0,
+  track: Track,
+};
+
 export const Playlist = (src: string) => {
   let album = $state(AlbumTracks);
   let albums = $state<AlbumTracks[]>([]);
@@ -57,8 +71,11 @@ export const Playlist = (src: string) => {
     _shuffle();
 
     // FIXME
-    queue = albums[0].tracks;
     history = albums[2].tracks;
+  };
+
+  const push = (at: AlbumTrack) => {
+    queue.push(at.track);
   };
 
   const skip = (delta: number) => {
@@ -69,6 +86,20 @@ export const Playlist = (src: string) => {
 
     track = tracks[n];
     album = albums.find((a) => a.tracks.includes(track))!;
+  };
+
+  const find = (albumSrc: string, trackSrc: string): AlbumTrack => {
+    const albumNum = albums.findIndex((a) => a.src == albumSrc);
+    const album = albums[albumNum];
+    const trackNum = album.tracks.findIndex((t) => t.src == trackSrc);
+    const track = album.tracks[trackNum];
+
+    return {
+      albumNum,
+      album,
+      track,
+      trackNum,
+    };
   };
 
   const _shuffle = () => {
@@ -88,6 +119,8 @@ export const Playlist = (src: string) => {
   return {
     get,
     chunk,
+    find,
+    push,
     skip,
 
     get album() {
