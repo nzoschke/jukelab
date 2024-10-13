@@ -25,6 +25,7 @@ export const Playlist = (src: string) => {
   let albums = $state<AlbumTracks[]>([]);
   let history = $state<Src[]>([]);
   let playlist = $state(PlaylistTracks);
+  let progress = $state({ max: 0, value: 0 });
   let queue = $state<Src[]>([]);
   let shuffle = $state<Src[]>([]);
   let track = $state(Track);
@@ -40,6 +41,7 @@ export const Playlist = (src: string) => {
   const get = async (token: () => Promise<string>) => {
     const api = API(token);
     playlist = await api.playlist(src);
+    progress.max = playlist.tracks.length;
 
     // get from cache if snapshot id matches
     const key = `${src}:${playlist.id}`;
@@ -51,8 +53,9 @@ export const Playlist = (src: string) => {
         .filter((k) => k.startsWith(`${src}:`))
         .forEach((k) => localStorage.removeItem(k));
 
-      api.tracksAlbums(playlist.tracks, (album) => {
+      await api.tracksAlbums(playlist.tracks, (album) => {
         const n = albums.push(album);
+        progress.value = n;
         if (n == 1) {
           album = albums[0];
           track = album.tracks[0];
@@ -70,6 +73,7 @@ export const Playlist = (src: string) => {
       }
       return v;
     });
+    progress.value = albums.length;
 
     _shuffle();
 
@@ -161,6 +165,9 @@ export const Playlist = (src: string) => {
     },
     get playlist() {
       return playlist;
+    },
+    get progress() {
+      return progress;
     },
     get queue() {
       return queue;

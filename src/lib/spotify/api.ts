@@ -97,7 +97,7 @@ export const API = (token: () => Promise<string>) => {
     cb?: (album: AlbumTracks) => void,
   ): Promise<AlbumTracks[]> => {
     const albums: AlbumTracks[] = [];
-    for (const [i, t] of tracks.entries()) {
+    for (const t of tracks) {
       const a = await trackAlbum(t.src);
       albums.push(a);
       if (cb) cb(a);

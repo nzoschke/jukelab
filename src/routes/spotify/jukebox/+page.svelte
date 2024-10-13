@@ -110,7 +110,7 @@
 {/snippet}
 
 {#snippet nav()}
-  {@const { album, track } = playlist}
+  {@const { album, progress, track } = playlist}
 
   <div class="navbar h-16 bg-base-300">
     <div class="navbar-start">
@@ -145,6 +145,12 @@
       <Login href="/spotify/jukebox" />
     </div>
   </div>
+  <progress
+    class="progress progress-primary"
+    max={progress.max}
+    value={progress.value}
+    class:hidden={progress.value == progress.max}
+  ></progress>
 {/snippet}
 
 {#snippet main()}
