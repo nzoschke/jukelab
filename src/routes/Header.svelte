@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { page } from "$app/stores";
   import logo from "$lib/images/jukelab.svg";
   import github from "$lib/images/github.svg";
@@ -36,6 +36,3 @@
     </a>
   </div>
 </div>
-
-<style>
-</style>

@@ -26,6 +26,8 @@
     </p>
   </div>
 
+  <audio class="w-1/2" src="/steps.mp3" controls></audio>
+
   <div class="w-1/2 py-16">
     <AudioC bind:audio src="/steps.mp3" />
     <Controls bind:audio />
