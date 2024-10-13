@@ -1,29 +1,22 @@
 <script>
-  import Counter from "./Counter.svelte";
-  import welcome from "$lib/images/svelte-welcome.webp";
-  import welcome_fallback from "$lib/images/svelte-welcome.png";
+  import Controls from "../audio/Controls.svelte";
+  import AudioC from "../audio/Audio.svelte";
+  import { Audio } from "$lib/types/audio";
+
+  let audio = $state(Audio);
 </script>
 
 <svelte:head>
   <title>Home</title>
-  <meta name="description" content="Svelte demo app" />
+  <meta name="description" content="JukeLab" />
 </svelte:head>
 
-<section class="flex flex-[0.6] flex-col items-center justify-center">
-  <h1 class="w-full">
-    <span class="relative block w-full pb-64">
-      <picture>
-        <source srcset={welcome} type="image/webp" />
-        <img class="absolute top-0 block size-full" src={welcome_fallback} alt="Welcome" />
-      </picture>
-    </span>
+<AudioC bind:audio src="/steps.mp3" />
 
-    to your new<br />SvelteKit app
-  </h1>
-
-  <h2>
-    try editing <strong>src/routes/+page.svelte</strong>
-  </h2>
-
-  <Counter />
-</section>
+<div class="flex flex-col items-center">
+  <h1 class="py-16 text-5xl font-bold">Welcome</h1>
+  <p>to your new music laboratory</p>
+  <div class="w-1/2 py-16">
+    <Controls bind:audio />
+  </div>
+</div>
