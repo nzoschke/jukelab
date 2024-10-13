@@ -7,28 +7,26 @@
   <meta name="description" content="About JukeLab" />
 </svelte:head>
 
-<div class="flex flex-col items-center">
+<div class="flex w-full flex-col items-center space-y-8">
   <Header />
 
-  <h1 class="py-16 text-5xl font-bold">About JukeLab</h1>
+  <div class="flex w-full max-w-2xl flex-col items-center space-y-8">
+    <h1 class="text-5xl font-bold">About JukeLab</h1>
 
-  <div class="prose">
-    <p>
-      This is a <a href="https://kit.svelte.dev">SvelteKit</a> app. You can make your own by typing the
-      following into your command line and following the prompts:
-    </p>
+    <div class="prose">
+      <p>
+        This is a collection of functional and customizable music apps and an educational <a
+          href="https://kit.svelte.dev">SvelteKit</a
+        > app. You can start to hack on it by:
+      </p>
 
-    <pre>npm create svelte@latest</pre>
+      <pre>git clone https://github.com/nzoschke/jukelab.git</pre>
 
-    <p>
-      The page you're looking at is purely static HTML, with no client-side interactivity needed.
-      Because of that, we don't need to load any JavaScript. Try viewing the page's source, or
-      opening the devtools network panel and reloading.
-    </p>
-
-    <p>
-      The <a href="/sverdle">Sverdle</a> page illustrates SvelteKit's data loading and form handling.
-      Try using it with JavaScript disabled!
-    </p>
+      <p>
+        The <a href="/spotify/jukebox">jukebox</a> page illustrates music player that works like an old-school
+        jukebox. It only allows max 100 albums to curate a music vibe, and it only allows you to add
+        a song to the end of the cue for simplicity.
+      </p>
+    </div>
   </div>
 </div>
