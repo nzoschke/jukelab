@@ -49,7 +49,7 @@
   <meta name="description" content="Spotify Album" />
 </svelte:head>
 
-<AudioC bind:audio src={track.src} />
+<AudioC bind:audio token={auth.token} src={track.src} />
 
 <div class="flex h-[calc(100vh-10rem)] flex-col items-center space-y-2 p-2">
   <Title {album} {track} />

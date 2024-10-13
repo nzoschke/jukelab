@@ -29,7 +29,7 @@
   <meta name="description" content="Spotify Track" />
 </svelte:head>
 
-<AudioC bind:audio {src} />
+<AudioC bind:audio token={auth.token} {src} />
 
 <div class="flex flex-col items-center space-y-2 p-2">
   <Title {track} />
