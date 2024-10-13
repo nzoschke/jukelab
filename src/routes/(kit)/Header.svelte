@@ -16,12 +16,6 @@
       <a role="tab" href="/about" class="tab" class:tab-active={$page.url.pathname === "/about"}
         >About</a
       >
-      <a role="tab" href="/sverdle" class="tab" class:tab-active={$page.url.pathname === "/sverdle"}
-        >Sverdle</a
-      >
-      <a role="tab" href="/audio" class="tab" class:tab-active={$page.url.pathname === "/audio"}
-        >Audio</a
-      >
       <a role="tab" href="/spotify" class="tab" class:tab-active={$page.url.pathname === "/spotify"}
         >Spotify</a
       >
