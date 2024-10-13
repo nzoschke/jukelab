@@ -1,71 +1,57 @@
 <script lang="ts">
-  import { API } from "$lib/spotify/api";
-  import { Auth } from "$lib/spotify/auth";
   import { Audio } from "$lib/types/audio";
-  import { AlbumTracks, Track } from "$lib/types/music";
+  import { Track } from "$lib/types/music";
   import { onMount } from "svelte";
-  import PlaySkip from "../audio/PlaySkip.svelte";
-  import Pos from "../audio/Pos.svelte";
-  import Vol from "../audio/Vol.svelte";
+  import Controls from "../audio/Controls.svelte";
+  import { API } from "$lib/spotify/api";
   import AudioC from "./Audio.svelte";
-  import Login from "./Login.svelte";
+  import { Auth } from "$lib/spotify/auth";
   import Title from "./Title.svelte";
+  import Login from "./Login.svelte";
+
+  import Header from "../Header.svelte";
 
   const auth = Auth();
-
-  let album = $state(AlbumTracks);
-  let audio = $state(Audio);
-  let src = "spotify:album:1iVsD8ZLyrdmTJBinwqq5j";
+  let src = "spotify:track:0UK7txy2sUR6kqvEZtx72w";
   let token = $state<string>();
   let track = $state(Track);
 
-  const skip = (delta: number) => {
-    const { tracks } = album;
-
-    let n = tracks.findIndex((t) => t.src == track.src) + delta;
-    if (n >= tracks.length) n = 0;
-    if (n < 0) n = tracks.length - 1;
-
-    track = tracks[n];
-  };
-
-  // when ended, play next by updating track.src
-  $effect(() => {
-    if (audio.ended) skip(1);
-  });
+  let audio = $state(Audio);
 
   onMount(async () => {
     token = await auth.token();
-    if (!token) return;
+    if (token == "") return;
 
     const api = API();
-    album = await api.albumTracks(src);
-    track = album.tracks[0];
+    track = await api.track(src);
   });
 </script>
 
 <svelte:head>
-  <title>Spotify Album</title>
-  <meta name="description" content="Spotify Album" />
+  <title>Spotify</title>
+  <meta name="description" content="Spotify" />
 </svelte:head>
 
-<AudioC bind:audio src={track.src} />
+<div class="flex flex-col items-center">
+  <Header />
 
-<div class="flex h-[calc(100vh-10rem)] flex-col items-center space-y-2 p-2">
-  <Title {album} {track} />
+  <h1 class="py-16 text-5xl font-bold">Spotify</h1>
 
-  <div class="w-full flex-grow overflow-scroll">
-    {#each album.tracks as t}
-      <div class:font-bold={t.src == track.src}>{t.title}</div>
-    {/each}
+  <div class="prose">
+    <p>
+      JukeLab is built on <a href="https://developer.spotify.com/documentation/web-playback-sdk"
+        >Spotify Web Playback SDK</a
+      >. You can bind properties of a
+      <a href="https://developer.spotify.com/documentation/web-playback-sdk/reference#spotifyplayer"
+        >Spotify Player</a
+      > component, making it easy to build customer player UI.
+    </p>
+    <p>Note that this requires logging into Spotify Premium and an access token.</p>
   </div>
 
-  <PlaySkip bind:audio {skip} />
-
-  <div class="flex w-full items-center space-x-12">
-    <Pos bind:audio />
-    <Vol bind:audio />
+  <div class="w-1/2 py-16">
+    <AudioC bind:audio {src} />
+    <Controls bind:audio />
   </div>
-
   <Login href="/spotify" />
 </div>

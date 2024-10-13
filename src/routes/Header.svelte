@@ -13,8 +13,11 @@
   <div class="navbar-center">
     <div role="tablist" class="tabs-boxed tabs">
       <a role="tab" href="/" class="tab" class:tab-active={$page.url.pathname === "/"}>Home</a>
-      <a role="tab" href="/jukebox" class="tab" class:tab-active={$page.url.pathname === "/jukebox"}
-        >Jukebox</a
+      <a
+        role="tab"
+        href="/spotify/jukebox"
+        class="tab"
+        class:tab-active={$page.url.pathname === "/spotify/jukebox"}>Jukebox</a
       >
       <a role="tab" href="/audio" class="tab" class:tab-active={$page.url.pathname === "/audio"}
         >HTML Audio</a
