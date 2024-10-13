@@ -1,71 +1,104 @@
 <script lang="ts">
-  import { API } from "$lib/spotify/api";
-  import { Auth } from "$lib/spotify/auth";
   import { Audio } from "$lib/types/audio";
-  import { AlbumTracks, Track } from "$lib/types/music";
-  import { onMount } from "svelte";
-  import PlaySkip from "../audio/PlaySkip.svelte";
-  import Pos from "../audio/Pos.svelte";
-  import Vol from "../audio/Vol.svelte";
+  import { Track } from "$lib/types/music";
+  import Controls from "../audio/Controls.svelte";
+  import { API } from "$lib/spotify/api";
   import AudioC from "./Audio.svelte";
-  import Login from "./Login.svelte";
-  import Title from "./Title.svelte";
+  import Header from "../Header.svelte";
+  import { Icon, ArrowTopRightOnSquare } from "svelte-hero-icons";
 
-  const auth = Auth();
+  let src = "spotify:track:0UK7txy2sUR6kqvEZtx72w";
 
-  let album = $state(AlbumTracks);
-  let audio = $state(Audio);
-  let src = "spotify:album:1iVsD8ZLyrdmTJBinwqq5j";
-  let token = $state<string>();
+  let error = $state("");
+  let token = $state("");
   let track = $state(Track);
+  let audio = $state(Audio);
 
-  const skip = (delta: number) => {
-    const { tracks } = album;
+  const oninput = async () => {
+    if (token == "") {
+      error = "";
+      return;
+    }
 
-    let n = tracks.findIndex((t) => t.src == track.src) + delta;
-    if (n >= tracks.length) n = 0;
-    if (n < 0) n = tracks.length - 1;
+    const api = API(token);
+    try {
+      track = await api.track(src);
+      error = "";
+    } catch (e) {
+      if (token == "") return;
 
-    track = tracks[n];
+      error = String(e);
+      if (e instanceof Error) {
+        error = e.message;
+      }
+    }
   };
-
-  // when ended, play next by updating track.src
-  $effect(() => {
-    if (audio.ended) skip(1);
-  });
-
-  onMount(async () => {
-    token = await auth.token();
-    if (!token) return;
-
-    const api = API();
-    album = await api.albumTracks(src);
-    track = album.tracks[0];
-  });
 </script>
 
 <svelte:head>
-  <title>Spotify Album</title>
-  <meta name="description" content="Spotify Album" />
+  <title>Spotify</title>
+  <meta name="description" content="Spotify" />
 </svelte:head>
 
-<AudioC bind:audio src={track.src} />
+<div class="flex w-full flex-col items-center space-y-8">
+  <Header />
 
-<div class="flex h-[calc(100vh-10rem)] flex-col items-center space-y-2 p-2">
-  <Title {album} {track} />
+  <div class="flex w-full max-w-2xl flex-col items-center space-y-8">
+    <h1 class="text-5xl font-bold">Spotify</h1>
 
-  <div class="w-full flex-grow overflow-scroll">
-    {#each album.tracks as t}
-      <div class:font-bold={t.src == track.src}>{t.title}</div>
-    {/each}
+    <div class="prose">
+      <p>
+        JukeLab is built on <a href="https://developer.spotify.com/documentation/web-playback-sdk"
+          >Spotify Web Playback SDK</a
+        >. Just like <a href="/audio">HTML Audio</a>, you can bind properties of a
+        <a
+          href="https://developer.spotify.com/documentation/web-playback-sdk/reference#spotifyplayer"
+          >Spotify Player</a
+        > component to easily build a custom player UI.
+      </p>
+      <p>Note that this requires logging into Spotify Premium and getting an access token.</p>
+
+      <label class="form-control">
+        <div class="label">
+          <span class="label-text"
+            >Access token from <a
+              target="_blank"
+              href="https://developer.spotify.com/documentation/web-playback-sdk/tutorials/getting-started"
+              >Getting Started with Web Playback SDK
+              <Icon
+                src={ArrowTopRightOnSquare}
+                solid
+                class="mb-1 inline size-5"
+                aria-hidden="false"
+                aria-label="next"
+                role="img"
+              />
+            </a>
+          </span>
+        </div>
+        <input
+          type="text"
+          placeholder="Paste access token"
+          class="input input-bordered"
+          class:input-error={error != ""}
+          class:input-success={track.src != ""}
+          bind:value={token}
+          {oninput}
+        />
+        <div class="label">
+          <span class="label-text-alt">{error}</span>
+        </div>
+      </label>
+    </div>
+
+    <Controls bind:audio />
+
+    {#if track.src != ""}
+      <div class="flex flex-col items-center">
+        <div class="font-bold">{track.title}</div>
+        <div>{track.artist}</div>
+      </div>
+      <AudioC bind:audio src={track.src} token={async () => token} />
+    {/if}
   </div>
-
-  <PlaySkip bind:audio {skip} />
-
-  <div class="flex w-full items-center space-x-12">
-    <Pos bind:audio />
-    <Vol bind:audio />
-  </div>
-
-  <Login href="/spotify" />
 </div>

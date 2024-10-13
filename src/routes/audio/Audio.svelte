@@ -3,7 +3,7 @@
 
   let {
     audio = $bindable(Audio),
-    class: cls = "",
+    class: cls = "w-full",
     controls = false,
     loop = false,
     src = "",

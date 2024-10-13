@@ -6,12 +6,12 @@
   let {
     audio = $bindable(Audio),
     src = "",
+    token,
   }: {
     audio: Audio;
     src: string;
+    token: () => Promise<string>;
   } = $props();
-
-  const auth = Auth();
 
   let deviceId = "";
   let endedTs = 0;
@@ -77,7 +77,7 @@
         uris: [src],
       }),
       headers: {
-        Authorization: `Bearer ${await auth.token()}`,
+        Authorization: `Bearer ${await token()}`,
       },
       method: "PUT",
     });
@@ -107,7 +107,7 @@
     window.onSpotifyWebPlaybackSDKReady = async () => {
       player = new Spotify.Player({
         getOAuthToken: async (cb) => {
-          const t = await auth.token();
+          const t = await token();
           if (t) cb(t);
         },
         name: "MediaLab",
