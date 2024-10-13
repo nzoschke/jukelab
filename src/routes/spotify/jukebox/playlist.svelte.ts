@@ -66,14 +66,19 @@ export const Playlist = (src: string) => {
       localStorage.setItem(key, i);
     }
 
+    return parse(i);
+  };
+
+  const parse = (json: string): AlbumTracks[] => {
     var re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
-    albums = JSON.parse(i, (k, v) => {
+    albums = JSON.parse(json, (k, v) => {
       if (typeof v == "string" && re.test(v)) {
         return new Date(v);
       }
       return v;
     });
-    progress.value = albums.length;
+
+    progress.value = progress.max;
 
     _shuffle();
 
@@ -148,6 +153,7 @@ export const Playlist = (src: string) => {
     chunk,
     enqueue,
     find,
+    parse,
     skip,
 
     get album() {

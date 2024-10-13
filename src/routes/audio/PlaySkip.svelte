@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Icon, Backward, Forward } from "svelte-hero-icons";
-  import { Audio } from "$lib/types/audio";
+  import { Audio, ReadyState } from "$lib/types/audio";
   import Play from "./Play.svelte";
 
   let {
@@ -15,6 +15,7 @@
 <div class="flex items-center">
   <button
     class="btn btn-circle btn-md"
+    class:btn-disabled={audio.readyState != ReadyState.EnoughData}
     onclick={() => {
       skip(-1);
     }}
@@ -33,6 +34,7 @@
 
   <button
     class="btn btn-circle"
+    class:btn-disabled={audio.readyState != ReadyState.EnoughData}
     onclick={() => {
       skip(+1);
     }}

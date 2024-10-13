@@ -2,20 +2,12 @@
   import { Auth } from "$lib/spotify/auth";
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
+  import type { UserProfile } from "@spotify/web-api-ts-sdk";
   import { onMount } from "svelte";
-  import {
-    ArrowLeftOnRectangle,
-    Bars3,
-    Bell,
-    CommandLine,
-    Icon,
-    MagnifyingGlass,
-  } from "svelte-hero-icons";
+  import { ArrowLeftOnRectangle, Bars3, CommandLine, Icon } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
-  import Login from "../Login.svelte";
   import { AlbumTrack, Playlist, type Src } from "./playlist.svelte";
-  import type { UserProfile } from "@spotify/web-api-ts-sdk";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -66,7 +58,12 @@
 
   onMount(async () => {
     token = await auth.token();
-    if (!token) return;
+    if (!token) {
+      const res = await fetch("/playlist.json");
+      playlist.parse(await res.text());
+      return;
+    }
+
     profile = await auth.profile();
     await playlist.get(auth.token);
   });
