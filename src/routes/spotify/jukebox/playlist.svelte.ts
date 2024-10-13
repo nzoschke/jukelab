@@ -51,13 +51,13 @@ export const Playlist = (src: string) => {
         .filter((k) => k.startsWith(`${src}:`))
         .forEach((k) => localStorage.removeItem(k));
 
-      for (const [i, t] of playlist.tracks.entries()) {
-        albums.push(await api.trackAlbum(t.src));
-        if (i == 0) {
+      api.tracksAlbums(playlist.tracks, (album) => {
+        const n = albums.push(album);
+        if (n == 1) {
           album = albums[0];
           track = album.tracks[0];
         }
-      }
+      });
 
       i = JSON.stringify(albums);
       localStorage.setItem(key, i);
@@ -76,6 +76,8 @@ export const Playlist = (src: string) => {
     const at = find(shuffle[0]);
     album = at.album;
     track = at.track;
+
+    return albums;
   };
 
   const play = async (src: Src | undefined) => {

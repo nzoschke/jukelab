@@ -78,6 +78,13 @@ export const API = (token: () => Promise<string>) => {
     return playlist;
   };
 
+  const track = async (uri: string) => {
+    const a = await api();
+    const out = await a.tracks.get(uri.split(":")[2]);
+
+    return _track(out.album, out);
+  };
+
   const trackAlbum = async (uri: string) => {
     const a = await api();
     const out = await a.tracks.get(uri.split(":")[2]);
@@ -85,11 +92,18 @@ export const API = (token: () => Promise<string>) => {
     return albumTracks(out.album.uri);
   };
 
-  const track = async (uri: string) => {
-    const a = await api();
-    const out = await a.tracks.get(uri.split(":")[2]);
+  const tracksAlbums = async (
+    tracks: Track[],
+    cb?: (album: AlbumTracks) => void,
+  ): Promise<AlbumTracks[]> => {
+    const albums: AlbumTracks[] = [];
+    for (const [i, t] of tracks.entries()) {
+      const a = await trackAlbum(t.src);
+      albums.push(a);
+      if (cb) cb(a);
+    }
 
-    return _track(out.album, out);
+    return albums;
   };
 
   return {
@@ -98,5 +112,6 @@ export const API = (token: () => Promise<string>) => {
     playlist,
     track,
     trackAlbum,
+    tracksAlbums,
   };
 };
