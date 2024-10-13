@@ -12,7 +12,7 @@ Under the hood it is a web app built on top of [HTML Audio](https://developer.mo
 
 We recall the times when artists composed albums, fans wore out records, friends crafted mix CDs, and nerds skinned music apps.
 
-JukeLab brings back a music experience with curation and control.
+JukeLab brings back a music experience that you curate and customize.
 
 ## Developing
 
