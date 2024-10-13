@@ -15,6 +15,7 @@
   import AudioC from "../Audio.svelte";
   import Login from "../Login.svelte";
   import { AlbumTrack, Playlist, type Src } from "./playlist.svelte";
+  import type { UserProfile } from "@spotify/web-api-ts-sdk";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -23,6 +24,7 @@
 
   let audio = $state(Audio);
   let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
+  let profile = $state<UserProfile>();
   let token = $state<string>();
   let select = $state(AlbumTrack);
 
@@ -65,6 +67,7 @@
   onMount(async () => {
     token = await auth.token();
     if (!token) return;
+    profile = await auth.profile();
     await playlist.get(auth.token);
   });
 </script>
@@ -112,45 +115,61 @@
 {#snippet nav()}
   {@const { album, progress, track } = playlist}
 
-  <div class="navbar h-16 bg-base-300">
-    <div class="navbar-start">
+  <div class="navbar h-16 w-full bg-base-300">
+    <div class="navbar-start w-16">
       <label for="drawer" class="btn btn-circle btn-ghost">
         <Icon src={Bars3} class="size-5" />
       </label>
     </div>
-    <div class="navbar-center flex h-12 w-1/2 rounded border border-gray-50 bg-base-200">
-      <div class="size-10 pl-1">
-        {#if album.art != ""}
-          <img class="size-full" src={album.art} alt="" />
-        {/if}
-      </div>
-      <div class="flex-1 text-center">
-        <p class="truncate">{track.title}</p>
-        <p class="truncate">
-          {track.album}
-          {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
-        </p>
+    <div class="navbar-center flex h-14 grow justify-center">
+      <div class="flex min-w-[50%] flex-col rounded border border-gray-50 bg-base-200">
+        <div class="m-1 flex space-x-1">
+          <div class="size-12">
+            {#if album.art != ""}
+              <img class="size-full" src={album.art} alt="" />
+            {/if}
+          </div>
+          <div class="flex-1 text-center">
+            <p class="truncate">{track.title}</p>
+            <p class="truncate">
+              {track.album}
+              {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
+            </p>
+          </div>
+        </div>
+        <progress
+          class="progress progress-primary h-1"
+          max={progress.max}
+          value={progress.value}
+          class:hidden={progress.value == progress.max}
+        ></progress>
       </div>
     </div>
-    <div class="navbar-end">
-      <button class="btn btn-circle btn-ghost" aria-label="search">
-        <Icon src={MagnifyingGlass} class="size-5" />
-      </button>
-      <button class="btn btn-circle btn-ghost" aria-label="notifications">
-        <div class="indicator">
-          <Icon src={Bell} class="size-5" />
-          <span class="badge indicator-item badge-primary badge-xs"></span>
-        </div>
-      </button>
-      <Login href="/spotify/jukebox" />
+    <div class="navbar-end w-16">
+      {#if profile}
+        <button
+          class="avatar"
+          onclick={async () => {
+            auth.logout();
+          }}
+        >
+          <div class="w-12 rounded-full">
+            <img alt="" src={profile.images[0].url} />
+          </div>
+        </button>
+      {:else}
+        <button
+          class="btn btn-circle btn-ghost"
+          class:hidden={token != ""}
+          onclick={async () => {
+            await auth.login("/spotify/jukebox");
+          }}
+        >
+          Login
+        </button>
+      {/if}
     </div>
   </div>
-  <progress
-    class="progress progress-primary"
-    max={progress.max}
-    value={progress.value}
-    class:hidden={progress.value == progress.max}
-  ></progress>
 {/snippet}
 
 {#snippet main()}
