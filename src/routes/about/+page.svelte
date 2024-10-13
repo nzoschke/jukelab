@@ -1,9 +1,15 @@
+<script>
+  import Header from "../Header.svelte";
+</script>
+
 <svelte:head>
   <title>About</title>
   <meta name="description" content="About JukeLab" />
 </svelte:head>
 
 <div class="flex flex-col items-center">
+  <Header />
+
   <h1 class="py-16 text-5xl font-bold">About JukeLab</h1>
 
   <div class="prose">
