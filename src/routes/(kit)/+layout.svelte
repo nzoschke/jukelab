@@ -3,7 +3,10 @@
   import "./app.css";
 </script>
 
-<div class="app">
+<Header />
+<slot />
+
+<!-- <div class="app">
   <Header />
 
   <main>
@@ -13,9 +16,9 @@
   <footer>
     <p>visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit</p>
   </footer>
-</div>
+</div> -->
 
-<style>
+<!-- <style>
   .app {
     display: flex;
     flex-direction: column;
@@ -50,4 +53,4 @@
       padding: 12px 0;
     }
   }
-</style>
+</style> -->
