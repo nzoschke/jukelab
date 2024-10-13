@@ -74,7 +74,7 @@ const clientId = () => {
 };
 
 // get dev token. undefined means unset, "" means invalid, otherwise the valid token is returned
-const devToken = async () => {
+export const devToken = async () => {
   const { PUBLIC_SPOTIFY_TOKEN: token } = env;
   if (!token) return;
 
