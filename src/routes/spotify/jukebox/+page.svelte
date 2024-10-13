@@ -99,7 +99,7 @@
 </div>
 
 <!-- audio element -->
-<AudioC bind:audio src={playlist.track.src} />
+<AudioC bind:audio token={auth.token} src={playlist.track.src} />
 
 <!-- page sections -->
 {#snippet menu()}
