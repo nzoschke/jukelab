@@ -37,8 +37,8 @@ export const Playlist = (src: string) => {
       return all;
     }, []);
 
-  const get = async () => {
-    const api = API();
+  const get = async (token: () => Promise<string>) => {
+    const api = API(token);
     playlist = await api.playlist(src);
 
     // get from cache if snapshot id matches

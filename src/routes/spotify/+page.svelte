@@ -20,7 +20,7 @@
       return;
     }
 
-    const api = API(token);
+    const api = API(async () => token);
     try {
       track = await api.track(src);
       error = "";

@@ -65,7 +65,7 @@
   onMount(async () => {
     token = await auth.token();
     if (!token) return;
-    await playlist.get();
+    await playlist.get(auth.token);
   });
 </script>
 

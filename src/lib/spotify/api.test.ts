@@ -1,8 +1,9 @@
-import { assert, test } from "vitest";
 import { API } from "$lib/spotify/api";
-import { env } from "$env/dynamic/public";
+import { assert, test } from "vitest";
+import { Auth } from "./auth";
 
-const s = API(env.PUBLIC_SPOTIFY_TOKEN);
+const auth = Auth();
+const s = API(auth.token);
 
 test("album", async () => {
   const a = await s.album("spotify:album:1iVsD8ZLyrdmTJBinwqq5j");

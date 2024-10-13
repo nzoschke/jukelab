@@ -53,9 +53,6 @@ export const Auth = () => {
 
     const t = await devToken();
     return t || "";
-
-    // const t = await api.getAccessToken();
-    // return t?.access_token || "";
   };
 
   return {

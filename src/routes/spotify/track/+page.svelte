@@ -7,6 +7,7 @@
   import AudioC from "../Audio.svelte";
   import { Auth } from "$lib/spotify/auth";
   import Title from "../Title.svelte";
+  import Login from "../Login.svelte";
 
   const auth = Auth();
 
@@ -19,7 +20,7 @@
     token = await auth.token();
     if (token == "") return;
 
-    const api = API();
+    const api = API(auth.token);
     track = await api.track(src);
   });
 </script>
@@ -34,4 +35,5 @@
 <div class="flex flex-col items-center space-y-2 p-2">
   <Title {track} />
   <Controls bind:audio />
+  <Login href="/spotify/track" />
 </div>

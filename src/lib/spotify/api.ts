@@ -1,16 +1,13 @@
 import type { Album, AlbumTracks, Playlist, PlaylistTracks, Track } from "$lib/types/music";
 import * as s from "@spotify/web-api-ts-sdk";
-import { Auth } from "./auth";
 
 type SAlbum = s.Album | s.SimplifiedAlbum;
 type STrack = s.Track | s.SimplifiedTrack;
 
-export const API = (token?: string) => {
-  const auth = Auth();
-
+export const API = (token: () => Promise<string>) => {
   const api = async () =>
     s.SpotifyApi.withAccessToken("", {
-      access_token: token || (await auth.token()) || "",
+      access_token: await token(),
       token_type: "",
       expires_in: 3600,
       refresh_token: "",

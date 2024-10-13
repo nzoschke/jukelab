@@ -38,7 +38,7 @@
     token = await auth.token();
     if (!token) return;
 
-    const api = API();
+    const api = API(auth.token);
     album = await api.albumTracks(src);
     track = album.tracks[0];
   });
@@ -67,5 +67,5 @@
     <Vol bind:audio />
   </div>
 
-  <Login href="/spotify" />
+  <Login href="/spotify/album" />
 </div>
