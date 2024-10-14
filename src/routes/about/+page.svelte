@@ -24,8 +24,8 @@
 
       <p>
         The <a href="/spotify/jukebox">jukebox</a> page illustrates music player that works like an old-school
-        jukebox. It only allows max 100 albums to curate a music vibe, and it only allows you to add
-        a song to the end of the cue for simplicity.
+        jukebox. To curate a music vibe it only allows a limited number of albums. To keep things simple
+        it only allows you to add a song to the end of the queue.
       </p>
     </div>
   </div>

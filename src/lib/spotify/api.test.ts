@@ -1,11 +1,12 @@
-import { assert, test } from "vitest";
 import { API } from "$lib/spotify/api";
-import { env } from "$env/dynamic/public";
+import { assert, test } from "vitest";
+import { devToken } from "./auth";
 
-const s = API(env.PUBLIC_SPOTIFY_TOKEN);
+const token = (await devToken()) || "";
+const api = API(async () => token);
 
 test("album", async () => {
-  const a = await s.album("spotify:album:1iVsD8ZLyrdmTJBinwqq5j");
+  const a = await api.album("spotify:album:1iVsD8ZLyrdmTJBinwqq5j");
   assert.deepEqual(a, {
     art: "https://i.scdn.co/image/ab67616d0000b273d277db349be4465265387adf",
     artist: "The Greatest Bits",
@@ -20,7 +21,7 @@ test("album", async () => {
 });
 
 test("albumTracks", async () => {
-  const a = await s.albumTracks("spotify:album:1iVsD8ZLyrdmTJBinwqq5j");
+  const a = await api.albumTracks("spotify:album:1iVsD8ZLyrdmTJBinwqq5j");
   assert.deepEqual(a, {
     art: "https://i.scdn.co/image/ab67616d0000b273d277db349be4465265387adf",
     artist: "The Greatest Bits",
@@ -58,7 +59,7 @@ test("albumTracks", async () => {
 });
 
 test("playlist", async () => {
-  const p = await s.playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
+  const p = await api.playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
 
   assert.deepEqual(p, {
     art: "https://mosaic.scdn.co/640/ab67616d00001e027762663eeab308df9d240cd0ab67616d00001e0297f3ea19ff79fff4f30a32e7ab67616d00001e02c41f4e1133b0e6c5fcf58680ab67616d00001e02de3c04b5fc750b68899b20a9",
@@ -94,7 +95,7 @@ test("playlist", async () => {
 });
 
 test("track", async () => {
-  const t = await s.track("spotify:track:0UE1PJiUk9oFkbHIg6m2iC");
+  const t = await api.track("spotify:track:0UE1PJiUk9oFkbHIg6m2iC");
   assert.deepEqual(t, {
     album: "Super Mario 64",
     albumArtist: "The Greatest Bits",
@@ -117,7 +118,7 @@ test("track", async () => {
 });
 
 test("trackAlbum", async () => {
-  const a = await s.trackAlbum("spotify:track:0UE1PJiUk9oFkbHIg6m2iC");
+  const a = await api.trackAlbum("spotify:track:0UE1PJiUk9oFkbHIg6m2iC");
 
   assert.deepEqual(a, {
     art: "https://i.scdn.co/image/ab67616d0000b273d277db349be4465265387adf",
@@ -131,4 +132,10 @@ test("trackAlbum", async () => {
     tracks: a.tracks,
     year: new Date("2018-01-17T00:00:00.000Z"),
   });
+});
+
+test.skip("tracksAlbum", { timeout: 60000 }, async () => {
+  const p = await api.playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
+  const as = await api.tracksAlbums(p.tracks);
+  console.log(JSON.stringify(as));
 });

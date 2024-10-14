@@ -25,6 +25,7 @@ export const Playlist = (src: string) => {
   let albums = $state<AlbumTracks[]>([]);
   let history = $state<Src[]>([]);
   let playlist = $state(PlaylistTracks);
+  let progress = $state({ max: 0, value: 0 });
   let queue = $state<Src[]>([]);
   let shuffle = $state<Src[]>([]);
   let track = $state(Track);
@@ -37,9 +38,10 @@ export const Playlist = (src: string) => {
       return all;
     }, []);
 
-  const get = async () => {
-    const api = API();
+  const get = async (token: () => Promise<string>) => {
+    const api = API(token);
     playlist = await api.playlist(src);
+    progress.max = playlist.tracks.length;
 
     // get from cache if snapshot id matches
     const key = `${src}:${playlist.id}`;
@@ -51,31 +53,40 @@ export const Playlist = (src: string) => {
         .filter((k) => k.startsWith(`${src}:`))
         .forEach((k) => localStorage.removeItem(k));
 
-      for (const [i, t] of playlist.tracks.entries()) {
-        albums.push(await api.trackAlbum(t.src));
-        if (i == 0) {
+      await api.tracksAlbums(playlist.tracks, (a) => {
+        const n = albums.push(a);
+        progress.value = n;
+        if (n == 1) {
           album = albums[0];
           track = album.tracks[0];
         }
-      }
+      });
 
       i = JSON.stringify(albums);
       localStorage.setItem(key, i);
     }
 
+    return parse(i);
+  };
+
+  const parse = (json: string): AlbumTracks[] => {
     var re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
-    albums = JSON.parse(i, (k, v) => {
+    albums = JSON.parse(json, (k, v) => {
       if (typeof v == "string" && re.test(v)) {
         return new Date(v);
       }
       return v;
     });
 
+    progress.value = progress.max;
+
     _shuffle();
 
     const at = find(shuffle[0]);
     album = at.album;
     track = at.track;
+
+    return albums;
   };
 
   const play = async (src: Src | undefined) => {
@@ -142,6 +153,7 @@ export const Playlist = (src: string) => {
     chunk,
     enqueue,
     find,
+    parse,
     skip,
 
     get album() {
@@ -159,6 +171,9 @@ export const Playlist = (src: string) => {
     },
     get playlist() {
       return playlist;
+    },
+    get progress() {
+      return progress;
     },
     get queue() {
       return queue;

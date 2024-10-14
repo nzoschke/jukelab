@@ -1,14 +1,16 @@
 <script lang="ts">
-  import { Auth } from "$lib/spotify/auth";
   import { Audio, ReadyState } from "$lib/types/audio";
   import { onMount } from "svelte";
+  import type { Level } from "./jukebox/log.svelte";
 
   let {
     audio = $bindable(Audio),
+    log = (msg: string, level?: Level) => {},
     src = "",
     token,
   }: {
     audio: Audio;
+    log?: (msg: string, level?: Level) => void;
     src: string;
     token: () => Promise<string>;
   } = $props();
@@ -57,6 +59,7 @@
   };
 
   const playPause = async (paused: boolean, src: string) => {
+    log(`playPause paused=${paused} src=${src}`);
     if (!player) return;
 
     if (paused) {
@@ -103,7 +106,10 @@
     player?.seek(audio.currentTime * 1000);
   });
 
-  onMount(() => {
+  onMount(async () => {
+    const t = await token();
+    if (!t) return;
+
     window.onSpotifyWebPlaybackSDKReady = async () => {
       player = new Spotify.Player({
         getOAuthToken: async (cb) => {
@@ -121,22 +127,23 @@
       player.addListener("ready", ({ device_id }) => {
         audio.readyState = ReadyState.EnoughData;
         deviceId = device_id;
+        log(`ready ${device_id}`);
       });
 
       player.addListener("not_ready", ({ device_id }) => {
-        console.log(`not_ready ${device_id}`);
+        log(`not_ready ${device_id}`, "warning");
       });
 
       player.addListener("initialization_error", ({ message }) => {
-        console.log(`initialization_error ${message}`);
+        log(`initialization_error ${message}`, "error");
       });
 
       player.addListener("authentication_error", ({ message }) => {
-        console.log(`authentication_error ${message}`);
+        log(`authentication_error ${message}`, "error");
       });
 
       player.addListener("account_error", ({ message }) => {
-        console.log(`account_error ${message}`);
+        log(`account_error ${message}`, "error");
       });
 
       await player.connect();

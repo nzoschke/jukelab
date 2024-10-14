@@ -2,27 +2,22 @@
   import { Auth } from "$lib/spotify/auth";
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
-  import { onMount } from "svelte";
-  import {
-    ArrowLeftOnRectangle,
-    Bars3,
-    Bell,
-    CommandLine,
-    Icon,
-    MagnifyingGlass,
-  } from "svelte-hero-icons";
+  import type { UserProfile } from "@spotify/web-api-ts-sdk";
+  import { onMount, untrack } from "svelte";
+  import { QueueList, Bars3, CommandLine, Icon } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
-  import Login from "../Login.svelte";
   import { AlbumTrack, Playlist, type Src } from "./playlist.svelte";
+  import { Log } from "./log.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
   const auth = Auth();
-  const pad = (n: number) => n.toString().padStart(2, "0");
+  const log = Log();
 
   let audio = $state(Audio);
   let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
+  let profile = $state<UserProfile>();
   let token = $state<string>();
   let select = $state(AlbumTrack);
 
@@ -39,8 +34,10 @@
     el.showModal();
     setTimeout(() => {
       el.close();
-    }, 1500);
+    }, 2500);
   };
+
+  const pad = (n: number) => n.toString().padStart(2, "0");
 
   // if queued when nothing is playing, play
   $effect(() => {
@@ -64,8 +61,14 @@
 
   onMount(async () => {
     token = await auth.token();
-    if (!token) return;
-    await playlist.get();
+    if (!token) {
+      const res = await fetch("/playlist.json");
+      playlist.parse(await res.text());
+      return;
+    }
+
+    profile = await auth.profile();
+    await playlist.get(auth.token);
   });
 </script>
 
@@ -99,56 +102,110 @@
 </div>
 
 <!-- audio element -->
-<AudioC bind:audio token={auth.token} src={playlist.track.src} />
+<AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
 
-<!-- page sections -->
+<!-- page components -->
 {#snippet menu()}
   <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
-    <li>Sidebar Item 1</li>
-    <li>Sidebar Item 2</li>
+    <li><a href="/">Home</a></li>
+    <li><a href="https://github.com/nzoschke/jukelab">GitHub</a></li>
   </ul>
 {/snippet}
 
 {#snippet nav()}
-  {@const { album, track } = playlist}
-
-  <div class="navbar h-16 bg-base-300">
-    <div class="navbar-start">
-      <label for="drawer" class="btn btn-circle btn-ghost">
-        <Icon src={Bars3} class="size-5" />
-      </label>
+  <!-- component layout -->
+  <div class="navbar min-h-20 bg-base-100 p-0">
+    <div class="navbar-start w-32 p-2">
+      {@render start()}
     </div>
-    <div class="navbar-center flex h-12 w-1/2 rounded border border-gray-50 bg-base-200">
-      <div class="size-10 pl-1">
-        {#if album.art != ""}
-          <img class="size-full" src={album.art} alt="" />
-        {/if}
-      </div>
-      <div class="flex-1 text-center">
-        <p class="truncate">{track.title}</p>
-        <p class="truncate">
-          {track.album}
-          {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
-        </p>
-      </div>
+    <div class="navbar-center flex grow justify-center">
+      {@render center()}
     </div>
-    <div class="navbar-end">
-      <button class="btn btn-circle btn-ghost" aria-label="search">
-        <Icon src={MagnifyingGlass} class="size-5" />
-      </button>
-      <button class="btn btn-circle btn-ghost" aria-label="notifications">
-        <div class="indicator">
-          <Icon src={Bell} class="size-5" />
-          <span class="badge indicator-item badge-primary badge-xs"></span>
-        </div>
-      </button>
-      <Login href="/spotify/jukebox" />
+    <div class="navbar-end w-32 p-2">
+      {@render end()}
     </div>
   </div>
+
+  <!-- section layouts -->
+  {#snippet start()}
+    <label for="drawer" class="btn btn-circle btn-ghost">
+      <Icon src={Bars3} class="size-5" />
+    </label>
+  {/snippet}
+
+  {#snippet center()}
+    {@const { album, track } = playlist}
+
+    <div class="flex size-full space-x-2 rounded border bg-base-200 md:w-[32rem]">
+      <div class="avatar size-16">
+        <div class="rounded">
+          {#if album.art != ""}
+            <img class="size-full" src={album.art} alt="" />
+          {/if}
+        </div>
+      </div>
+      <div class="flex grow flex-col items-center justify-center overflow-hidden">
+        <div class="w-full overflow-hidden text-center">
+          <p class="truncate">{track.title}</p>
+          <p class="truncate">
+            {track.album}
+            {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
+          </p>
+        </div>
+      </div>
+      <div class="size-16 min-w-16"></div>
+    </div>
+  {/snippet}
+
+  {#snippet end()}
+    {#if profile}
+      <div class="group relative flex">
+        <button
+          class="avatar size-12 group-hover:opacity-0"
+          onclick={async () => {
+            auth.logout();
+          }}
+        >
+          <div class="rounded-full">
+            <img alt="" src={profile.images[0].url} />
+          </div>
+        </button>
+        <button
+          class="btn btn-circle btn-ghost absolute opacity-0 group-hover:opacity-100"
+          onclick={async () => {
+            auth.logout();
+          }}
+        >
+          Logout
+        </button>
+      </div>
+    {:else}
+      <button
+        class="btn btn-circle btn-ghost"
+        class:hidden={token != ""}
+        onclick={async () => {
+          await auth.login("/spotify/jukebox");
+        }}
+      >
+        Login
+      </button>
+    {/if}
+  {/snippet}
 {/snippet}
 
 {#snippet main()}
-  <div class="carousel size-full">
+  {@const { progress } = playlist}
+
+  <div class="carousel relative size-full">
+    <progress
+      class="progress progress-primary absolute bottom-0 h-1"
+      max={progress.max}
+      value={progress.value}
+      class:hidden={progress.value == progress.max}
+    ></progress>
+
+    <div class="skeleton size-full rounded-none" class:hidden={playlist.albums.length > 0}></div>
+
     {#each playlist.chunk(4) as albums, n}
       <div class="carousel-item size-full">
         <div class="flex size-full flex-wrap">
@@ -200,7 +257,7 @@
   {#snippet list(tab: Tabs, srcs: Src[])}
     {#each srcs as src}
       {@const { album, track } = playlist.find(src)}
-      <div class="flex items-center space-x-1 border pt-1" class:hidden={ui.tab != tab}>
+      <div class="flex items-center space-x-1 pt-1" class:hidden={ui.tab != tab}>
         <img class="h-12 w-12" src={album.art} alt="art" />
         <div class="flex flex-col overflow-hidden">
           <div class="truncate font-bold">{track.title}</div>
@@ -212,47 +269,61 @@
 {/snippet}
 
 {#snippet footer()}
-  <div class="navbar h-16 bg-base-300">
-    <div class="navbar-start"></div>
-    <div class="navbar-center">
-      <PlaySkip bind:audio skip={playlist.skip} />
+  <!-- component layout -->
+  <div class="navbar min-h-20 bg-base-100 p-0">
+    <div class="navbar-start w-32 p-2">
+      {@render start()}
     </div>
-    <div class="navbar-end">
+    <div class="navbar-center flex grow justify-center">
+      {@render center()}
+    </div>
+    <div class="navbar-end w-32 p-2">
+      {@render end()}
+    </div>
+  </div>
+
+  {#snippet start()}
+    <button
+      class="btn btn-circle btn-ghost"
+      onclick={() => {
+        ui.details = !ui.details;
+      }}
+    >
+      <Icon src={CommandLine} class="size-5" solid={ui.details} />
+    </button>
+  {/snippet}
+
+  {#snippet center()}
+    <PlaySkip bind:audio skip={playlist.skip} />
+  {/snippet}
+
+  {#snippet end()}
+    <div class="indicator">
+      <span
+        class="badge indicator-item badge-neutral badge-sm mr-2 mt-2"
+        class:hidden={!playlist.queue.length}>{playlist.queue.length}</span
+      >
       <button
         class="btn btn-circle btn-ghost"
         onclick={() => {
           ui.aside = !ui.aside;
         }}
       >
-        <Icon src={ArrowLeftOnRectangle} class="size-5" solid={ui.aside} />
-      </button>
-
-      <button
-        class="btn btn-circle btn-ghost"
-        onclick={() => {
-          ui.details = !ui.details;
-        }}
-      >
-        <Icon src={CommandLine} class="size-5" solid={ui.details} />
+        <Icon src={QueueList} class="size-5" solid={ui.aside} />
       </button>
     </div>
-  </div>
+  {/snippet}
 {/snippet}
 
 {#snippet details()}
   <div
-    class="flex h-24 min-h-24 flex-col-reverse overflow-scroll bg-base-content p-2 text-xs text-neutral-content"
+    class="flex h-24 min-h-24 flex-col-reverse overflow-scroll bg-black p-2 text-xs text-neutral-content"
     class:hidden={!ui.details}
   >
-    <div class="">
-      <pre data-prefix="$"><code>START</code></pre>
-      <pre data-prefix="$"><code>npm i daisyui</code></pre>
-      <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
-      <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
-      <pre data-prefix="$"><code>npm i daisyui</code></pre>
-      <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
-      <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
-      <pre data-prefix=">" class="text-success"><code>END!</code></pre>
+    <div>
+      {#each log.logs as l}
+        <pre data-prefix=">" class={`text-${l.level}`}><code>{l.msg}</code></pre>
+      {/each}
     </div>
   </div>
 {/snippet}
@@ -270,7 +341,7 @@
         <p class="truncate">{album.artist}</p>
       </div>
     </div>
-    <div class="overflow-scroll">
+    <div class="ml-1 overflow-scroll">
       {#each album.tracks as track, n}
         <button
           class="block w-full truncate text-left"
@@ -294,19 +365,18 @@
     <h3 class="pb-4 text-lg font-bold">Queue {pad(select.albumNum)}{pad(select.trackNum + 1)}</h3>
     <p class="text-lg font-bold">{select.track.title}</p>
     <p>{select.track.artist}</p>
-    <div class="modal-action">
-      <form method="dialog">
+    <form method="dialog">
+      <div class="modal-action justify-between">
         <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
-
-        <button class="btn btn-secondary" onclick={() => {}}>No</button>
         <button
-          class="btn btn-primary"
+          class="btn btn-accent"
           onclick={async () => {
             await enqueue(select);
           }}>OK</button
         >
-      </form>
-    </div>
+        <button class="btn btn-primary" onclick={() => {}}>NO</button>
+      </div>
+    </form>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>

@@ -1,16 +1,13 @@
 import type { Album, AlbumTracks, Playlist, PlaylistTracks, Track } from "$lib/types/music";
 import * as s from "@spotify/web-api-ts-sdk";
-import { Auth } from "./auth";
 
 type SAlbum = s.Album | s.SimplifiedAlbum;
 type STrack = s.Track | s.SimplifiedTrack;
 
-export const API = (token?: string) => {
-  const auth = Auth();
-
+export const API = (token: () => Promise<string>) => {
   const api = async () =>
     s.SpotifyApi.withAccessToken("", {
-      access_token: token || (await auth.token()) || "",
+      access_token: await token(),
       token_type: "",
       expires_in: 3600,
       refresh_token: "",
@@ -81,6 +78,13 @@ export const API = (token?: string) => {
     return playlist;
   };
 
+  const track = async (uri: string) => {
+    const a = await api();
+    const out = await a.tracks.get(uri.split(":")[2]);
+
+    return _track(out.album, out);
+  };
+
   const trackAlbum = async (uri: string) => {
     const a = await api();
     const out = await a.tracks.get(uri.split(":")[2]);
@@ -88,11 +92,18 @@ export const API = (token?: string) => {
     return albumTracks(out.album.uri);
   };
 
-  const track = async (uri: string) => {
-    const a = await api();
-    const out = await a.tracks.get(uri.split(":")[2]);
+  const tracksAlbums = async (
+    tracks: Track[],
+    cb?: (album: AlbumTracks) => void,
+  ): Promise<AlbumTracks[]> => {
+    const albums: AlbumTracks[] = [];
+    for (const t of tracks) {
+      const a = await trackAlbum(t.src);
+      albums.push(a);
+      if (cb) cb(a);
+    }
 
-    return _track(out.album, out);
+    return albums;
   };
 
   return {
@@ -101,5 +112,6 @@ export const API = (token?: string) => {
     playlist,
     track,
     trackAlbum,
+    tracksAlbums,
   };
 };
