@@ -33,11 +33,13 @@ jobs:
           path: build/
 
   deploy:
-    needs: build
-
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
+    if: github.ref == 'refs/heads/main'
+
+    needs: build
 
     permissions:
       pages: write
@@ -46,6 +48,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - if: github.ref == 'refs/heads/main'
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
