@@ -2,6 +2,7 @@
   import { page } from "$app/stores";
   import logo from "$lib/images/jukelab.svg";
   import github from "$lib/images/github.svg";
+  import { href } from "$lib/href";
 </script>
 
 <div class="navbar bg-base-100">
@@ -12,21 +13,32 @@
   </div>
   <div class="navbar-center">
     <div role="tablist" class="tabs-boxed tabs">
-      <a role="tab" href="/" class="tab" class:tab-active={$page.url.pathname === "/"}>Home</a>
-      <a role="tab" href="/audio" class="tab" class:tab-active={$page.url.pathname === "/audio"}
-        >HTML Audio</a
-      >
-      <a role="tab" href="/spotify" class="tab" class:tab-active={$page.url.pathname === "/spotify"}
-        >Spotify</a
+      <a role="tab" href={href("/")} class="tab" class:tab-active={$page.url.pathname === "/"}
+        >Home</a
       >
       <a
         role="tab"
-        href="/spotify/jukebox"
+        href={href("/audio")}
+        class="tab"
+        class:tab-active={$page.url.pathname === "/audio"}>HTML Audio</a
+      >
+      <a
+        role="tab"
+        href={href("/spotify")}
+        class="tab"
+        class:tab-active={$page.url.pathname === "/spotify"}>Spotify</a
+      >
+      <a
+        role="tab"
+        href={href("/spotify/jukebox")}
         class="tab"
         class:tab-active={$page.url.pathname === "/spotify/jukebox"}>Jukebox</a
       >
-      <a role="tab" href="/about" class="tab" class:tab-active={$page.url.pathname === "/about"}
-        >About</a
+      <a
+        role="tab"
+        href={href("/about")}
+        class="tab"
+        class:tab-active={$page.url.pathname === "/about"}>About</a
       >
     </div>
   </div>

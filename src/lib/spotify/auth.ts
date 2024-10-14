@@ -1,6 +1,6 @@
-import { SpotifyApi } from "@spotify/web-api-ts-sdk";
-import * as env from "$env/static/public";
 import { dev } from "$app/environment";
+import * as env from "$env/static/public";
+import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 
 export const Auth = () => {
   const api = SpotifyApi.withUserAuthorization(
