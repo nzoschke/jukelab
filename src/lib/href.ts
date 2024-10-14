@@ -1,8 +1,9 @@
 import { PUBLIC_ORIGIN } from "$env/static/public";
 
 export const href = (path: string) => {
-  // skip inlined data URLs
+  // skip absolute or inlined data URLs
   if (path.startsWith("data:")) return path;
+  if (path.startsWith(PUBLIC_ORIGIN)) return path;
 
   return PUBLIC_ORIGIN + path;
 };
