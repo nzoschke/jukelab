@@ -131,7 +131,7 @@
   {/snippet}
 
   {#snippet center()}
-    {@const { album, progress, track } = playlist}
+    {@const { album, track } = playlist}
 
     <div class="flex size-full space-x-2 rounded border bg-base-200 md:w-[32rem]">
       <div class="avatar size-16">
@@ -181,7 +181,16 @@
 {/snippet}
 
 {#snippet main()}
-  <div class="carousel size-full">
+  {@const { progress } = playlist}
+
+  <div class="carousel relative size-full">
+    <progress
+      class="progress progress-primary absolute bottom-0 h-1"
+      max={progress.max}
+      value={progress.value}
+      class:hidden={progress.value == progress.max}
+    ></progress>
+
     {#each playlist.chunk(4) as albums, n}
       <div class="carousel-item size-full">
         <div class="flex size-full flex-wrap">
