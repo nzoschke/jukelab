@@ -6,7 +6,7 @@ JukeLab brings an old-school jukebox to your next party. Curate a jukebox playli
 
 Visit [nzoschke.github.io/jukelab/](https://nzoschke.github.io/jukelab/) to try the development version in your web browser. [Visit jukelab.com](https://jukelab.com) or the [Apple App Store](https://apps.apple.com/app/id1480787158) get the real version for web or iOS (Android coming soon).
 
-JukeLab is a web app built on top of [HTML Audio](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio) and [Spotify for developers](https://developer.spotify.com/) with [SvelteKit](https://kit.svelte.dev/).
+JukeLab is a web app built on [HTML Audio](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio) and [Spotify for Developers](https://developer.spotify.com/) with [SvelteKit](https://kit.svelte.dev/).
 
 ## Motivation
 
