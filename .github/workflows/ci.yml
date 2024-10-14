@@ -18,12 +18,14 @@ jobs:
           cache: npm
 
       - run: npm install
+
       - env:
           PUBLIC_ORIGIN: ${{ secrets.PUBLIC_ORIGIN }}
           PUBLIC_SPOTIFY_TOKEN: ""
           PUBLIC_SPOTIFY_CLIENT_ID: ${{ secrets.PUBLIC_SPOTIFY_CLIENT_ID }}
-        run: npm run check
-      - run: npm run build
+        run: |
+          npm run check
+          npm run build
 
       - if: github.ref == 'refs/heads/master'
         uses: actions/upload-pages-artifact@v3
