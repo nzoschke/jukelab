@@ -101,7 +101,7 @@
 <!-- audio element -->
 <AudioC bind:audio token={auth.token} src={playlist.track.src} />
 
-<!-- page sections -->
+<!-- page components -->
 {#snippet menu()}
   <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
     <li>Sidebar Item 1</li>
@@ -110,63 +110,74 @@
 {/snippet}
 
 {#snippet nav()}
-  {@const { album, progress, track } = playlist}
-
-  <div class="navbar h-16 w-full bg-base-300">
-    <div class="navbar-start w-16">
-      <label for="drawer" class="btn btn-circle btn-ghost">
-        <Icon src={Bars3} class="size-5" />
-      </label>
+  <!-- component layout -->
+  <div class="navbar bg-base-100 p-0">
+    <div class="navbar-start w-32 p-2">
+      {@render start()}
     </div>
-    <div class="navbar-center flex h-14 grow justify-center">
-      <div class="flex min-w-[50%] flex-col rounded border border-gray-50 bg-base-200">
-        <div class="m-1 flex space-x-1">
-          <div class="size-12">
-            {#if album.art != ""}
-              <img class="size-full" src={album.art} alt="" />
-            {/if}
-          </div>
-          <div class="flex-1 text-center">
-            <p class="truncate">{track.title}</p>
-            <p class="truncate">
-              {track.album}
-              {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
-            </p>
-          </div>
-        </div>
-        <progress
-          class="progress progress-primary h-1"
-          max={progress.max}
-          value={progress.value}
-          class:hidden={progress.value == progress.max}
-        ></progress>
-      </div>
+    <div class="navbar-center flex grow justify-center">
+      {@render center()}
     </div>
-    <div class="navbar-end w-16">
-      {#if profile}
-        <button
-          class="avatar"
-          onclick={async () => {
-            auth.logout();
-          }}
-        >
-          <div class="w-12 rounded-full">
-            <img alt="" src={profile.images[0].url} />
-          </div>
-        </button>
-      {:else}
-        <button
-          class="btn btn-circle btn-ghost"
-          class:hidden={token != ""}
-          onclick={async () => {
-            await auth.login("/spotify/jukebox");
-          }}
-        >
-          Login
-        </button>
-      {/if}
+    <div class="navbar-end w-32 p-2">
+      {@render end()}
     </div>
   </div>
+
+  <!-- section layouts -->
+  {#snippet start()}
+    <label for="drawer" class="btn btn-circle btn-ghost">
+      <Icon src={Bars3} class="size-5" />
+    </label>
+  {/snippet}
+
+  {#snippet center()}
+    {@const { album, progress, track } = playlist}
+
+    <div class="flex size-full space-x-2 rounded border bg-base-200 md:w-[32rem]">
+      <div class="avatar size-16">
+        <div class="rounded">
+          {#if album.art != ""}
+            <img class="size-full" src={album.art} alt="" />
+          {/if}
+        </div>
+      </div>
+      <div class="flex grow flex-col items-center justify-center overflow-hidden">
+        <div class="w-full overflow-hidden text-center">
+          <p class="truncate">{track.title}</p>
+          <p class="truncate">
+            {track.album}
+            {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
+          </p>
+        </div>
+      </div>
+      <div class="size-16 min-w-16"></div>
+    </div>
+  {/snippet}
+
+  {#snippet end()}
+    {#if profile}
+      <button
+        class="avatar"
+        onclick={async () => {
+          auth.logout();
+        }}
+      >
+        <div class="w-12 rounded-full">
+          <img alt="" src={profile.images[0].url} />
+        </div>
+      </button>
+    {:else}
+      <button
+        class="btn btn-circle btn-ghost"
+        class:hidden={token != ""}
+        onclick={async () => {
+          await auth.login("/spotify/jukebox");
+        }}
+      >
+        Login
+      </button>
+    {/if}
+  {/snippet}
 {/snippet}
 
 {#snippet main()}
