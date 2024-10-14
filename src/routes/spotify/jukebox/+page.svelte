@@ -3,11 +3,12 @@
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
   import type { UserProfile } from "@spotify/web-api-ts-sdk";
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
   import { QueueList, Bars3, CommandLine, Icon } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import { AlbumTrack, Playlist, type Src } from "./playlist.svelte";
+  import { Log } from "./log.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -15,6 +16,7 @@
   const pad = (n: number) => n.toString().padStart(2, "0");
 
   let audio = $state(Audio);
+  let logs = $state(["init"]);
   let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
   let profile = $state<UserProfile>();
   let token = $state<string>();
@@ -99,7 +101,17 @@
 </div>
 
 <!-- audio element -->
-<AudioC bind:audio token={auth.token} src={playlist.track.src} />
+<AudioC
+  bind:audio
+  log={(msg) => {
+    console.log("LOG", msg);
+    untrack(() => {
+      logs.push(msg);
+    });
+  }}
+  token={auth.token}
+  src={playlist.track.src}
+/>
 
 <!-- page components -->
 {#snippet menu()}
@@ -317,15 +329,10 @@
     class="flex h-24 min-h-24 flex-col-reverse overflow-scroll bg-black p-2 text-xs text-neutral-content"
     class:hidden={!ui.details}
   >
-    <div class="">
-      <pre data-prefix="$"><code>START</code></pre>
-      <pre data-prefix="$"><code>npm i daisyui</code></pre>
-      <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
-      <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
-      <pre data-prefix="$"><code>npm i daisyui</code></pre>
-      <pre data-prefix=">" class="text-warning"><code>installing...</code></pre>
-      <pre data-prefix=">" class="text-success"><code>Done!</code></pre>
-      <pre data-prefix=">" class="text-success"><code>END!</code></pre>
+    <div>
+      {#each logs as log}
+        <pre data-prefix=">" class="text-success"><code>{log}</code></pre>
+      {/each}
     </div>
   </div>
 {/snippet}

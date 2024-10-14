@@ -5,10 +5,12 @@
 
   let {
     audio = $bindable(Audio),
+    log,
     src = "",
     token,
   }: {
     audio: Audio;
+    log: (msg: string) => void;
     src: string;
     token: () => Promise<string>;
   } = $props();
@@ -57,6 +59,8 @@
   };
 
   const playPause = async (paused: boolean, src: string) => {
+    log(`playPause ${src}`);
+
     if (!player) return;
 
     if (paused) {
@@ -127,19 +131,19 @@
       });
 
       player.addListener("not_ready", ({ device_id }) => {
-        console.log(`not_ready ${device_id}`);
+        log(`not_ready ${device_id}`);
       });
 
       player.addListener("initialization_error", ({ message }) => {
-        console.log(`initialization_error ${message}`);
+        log(`initialization_error ${message}`);
       });
 
       player.addListener("authentication_error", ({ message }) => {
-        console.log(`authentication_error ${message}`);
+        log(`authentication_error ${message}`);
       });
 
       player.addListener("account_error", ({ message }) => {
-        console.log(`account_error ${message}`);
+        log(`account_error ${message}`);
       });
 
       await player.connect();
