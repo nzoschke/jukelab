@@ -1,14 +1,16 @@
 import { untrack } from "svelte";
 
-export interface Line {
-  level: string;
+export type Level = "success" | "error" | "warning";
+
+export interface Log {
+  level: Level;
   msg: string;
 }
 
 export const Log = () => {
-  let logs = $state<Line[]>([]);
+  let logs = $state<Log[]>([]);
 
-  const log = (msg: string, level?: string) => {
+  const log = (msg: string, level?: Level) => {
     untrack(() => {
       logs.push({
         level: level || "success",
@@ -19,6 +21,9 @@ export const Log = () => {
 
   return {
     log,
-    logs,
+
+    get logs() {
+      return logs;
+    },
   };
 };

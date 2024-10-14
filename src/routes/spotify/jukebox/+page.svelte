@@ -13,10 +13,9 @@
   type Tabs = "queue" | "shuffle" | "history";
 
   const auth = Auth();
-  const pad = (n: number) => n.toString().padStart(2, "0");
+  const log = Log();
 
   let audio = $state(Audio);
-  let logs = $state(["init"]);
   let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
   let profile = $state<UserProfile>();
   let token = $state<string>();
@@ -37,6 +36,8 @@
       el.close();
     }, 2500);
   };
+
+  const pad = (n: number) => n.toString().padStart(2, "0");
 
   // if queued when nothing is playing, play
   $effect(() => {
@@ -101,17 +102,7 @@
 </div>
 
 <!-- audio element -->
-<AudioC
-  bind:audio
-  log={(msg) => {
-    console.log("LOG", msg);
-    untrack(() => {
-      logs.push(msg);
-    });
-  }}
-  token={auth.token}
-  src={playlist.track.src}
-/>
+<AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
 
 <!-- page components -->
 {#snippet menu()}
@@ -330,8 +321,8 @@
     class:hidden={!ui.details}
   >
     <div>
-      {#each logs as log}
-        <pre data-prefix=">" class="text-success"><code>{log}</code></pre>
+      {#each log.logs as l}
+        <pre data-prefix=">" class={`text-${l.level}`}><code>{l.msg}</code></pre>
       {/each}
     </div>
   </div>
