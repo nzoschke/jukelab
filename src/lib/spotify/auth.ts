@@ -1,5 +1,5 @@
 import { SpotifyApi } from "@spotify/web-api-ts-sdk";
-import { env } from "$env/dynamic/public";
+import * as env from "$env/static/public";
 import { dev } from "$app/environment";
 
 export const Auth = () => {

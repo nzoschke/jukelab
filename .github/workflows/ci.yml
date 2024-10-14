@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          cache: npm
+
+      - run: npm install
+
+      - env:
+          PUBLIC_ORIGIN: ${{ secrets.PUBLIC_ORIGIN }}
+          PUBLIC_SPOTIFY_TOKEN: ""
+          PUBLIC_SPOTIFY_CLIENT_ID: ${{ secrets.PUBLIC_SPOTIFY_CLIENT_ID }}
+        run: |
+          npm run check
+          npm run build
+
+      - if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/
