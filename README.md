@@ -4,11 +4,11 @@ JukeLab brings an old-school jukebox to your next party. Curate a jukebox playli
 
 ![JukeLab Screenshot](static/jukebox.png?raw=true)
 
-Visit [https://nzoschke.github.io/jukelab/](https://nzoschke.github.io/jukelab/) to try the development version in your web browser. [Visit](https://jukelab.com) or [the Apple App Store](https://apps.apple.com/app/id1480787158) get the real version for web, iOS or Android (coming soon).
+Visit [nzoschke.github.io/jukelab/](https://nzoschke.github.io/jukelab/) to try the development version in your web browser. [Visit jukelab.com](https://jukelab.com) or the [Apple App Store](https://apps.apple.com/app/id1480787158) get the real version for web or iOS (Android coming soon).
 
-Under the hood it is a web app built on top of [HTML Audio](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio) and [Spotify for developers](https://developer.spotify.com/).
+JukeLab is a web app built on [HTML Audio](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio) and [Spotify for Developers](https://developer.spotify.com/) with [SvelteKit](https://kit.svelte.dev/).
 
-## Why JukeLab?
+## Motivation
 
 We recall the times when artists composed albums, fans wore out records, friends crafted mix CDs, and nerds skinned music apps.
 
@@ -16,7 +16,7 @@ JukeLab brings back a similar music experience that you can curate and customize
 
 ## Developing
 
-JukeLab is built on TypeScript and Svelte.
+JukeLab is built on TypeScript and Svelte 5.
 
 On Mac we recommend [Homebrew](https://brew.sh/) to install development tools:
 
