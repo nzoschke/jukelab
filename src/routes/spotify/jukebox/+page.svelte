@@ -111,7 +111,7 @@
 
 {#snippet nav()}
   <!-- component layout -->
-  <div class="navbar bg-base-100 p-0">
+  <div class="navbar min-h-20 bg-base-100 p-0">
     <div class="navbar-start w-32 p-2">
       {@render start()}
     </div>
@@ -254,7 +254,7 @@
   {#snippet list(tab: Tabs, srcs: Src[])}
     {#each srcs as src}
       {@const { album, track } = playlist.find(src)}
-      <div class="flex items-center space-x-1 border pt-1" class:hidden={ui.tab != tab}>
+      <div class="flex items-center space-x-1 pt-1" class:hidden={ui.tab != tab}>
         <img class="h-12 w-12" src={album.art} alt="art" />
         <div class="flex flex-col overflow-hidden">
           <div class="truncate font-bold">{track.title}</div>
@@ -267,7 +267,7 @@
 
 {#snippet footer()}
   <!-- component layout -->
-  <div class="navbar bg-base-100 p-0">
+  <div class="navbar min-h-20 bg-base-100 p-0">
     <div class="navbar-start w-32 p-2">
       {@render start()}
     </div>
