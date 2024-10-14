@@ -5,12 +5,12 @@
 
   let {
     audio = $bindable(Audio),
-    log,
+    log = (msg: string, level?: Level) => {},
     src = "",
     token,
   }: {
     audio: Audio;
-    log: (msg: string, level?: Level) => void;
+    log?: (msg: string, level?: Level) => void;
     src: string;
     token: () => Promise<string>;
   } = $props();
