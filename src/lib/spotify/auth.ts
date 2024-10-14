@@ -1,5 +1,6 @@
 import { dev } from "$app/environment";
 import * as env from "$env/static/public";
+import { href } from "$lib/href";
 import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 
 export const Auth = () => {
@@ -21,8 +22,8 @@ export const Auth = () => {
     return api.authenticate();
   };
 
-  const login = async (href: string) => {
-    localStorage.setItem("spotify-sdk:href", new URL(href, env.PUBLIC_ORIGIN).href);
+  const login = async (path: string) => {
+    localStorage.setItem("spotify-sdk:href", href(path));
     return api.authenticate();
   };
 
@@ -39,9 +40,9 @@ export const Auth = () => {
 
   const redirect = () => {
     const k = "spotify-sdk:href";
-    const href = localStorage.getItem(k) || new URL("/spotify", env.PUBLIC_ORIGIN).href;
+    const h = localStorage.getItem(k) || href("/spotify");
     localStorage.removeItem(k);
-    window.location.href = href;
+    window.location.href = h;
   };
 
   // token is the current access token. "" implies not authenticated
