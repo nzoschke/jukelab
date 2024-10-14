@@ -3,6 +3,7 @@
   import Controls from "./Controls.svelte";
   import { Audio } from "$lib/types/audio";
   import Header from "../Header.svelte";
+  import { href } from "$lib/href";
 
   let audio = $state(Audio);
   let controls = $state(true);
@@ -39,6 +40,6 @@
 
     <Controls bind:audio />
 
-    <AudioC bind:audio src="/steps.mp3" {controls} />
+    <AudioC bind:audio src={href("/steps.mp3")} {controls} />
   </div>
 </div>
