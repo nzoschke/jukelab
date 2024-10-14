@@ -9,8 +9,8 @@
 </script>
 
 <svelte:head>
-  <title>Home</title>
-  <meta name="description" content="JukeLab" />
+  <title>JukeLab Playground</title>
+  <meta name="description" content="JukeLab Playground" />
 </svelte:head>
 
 <div class="flex flex-col items-center">
