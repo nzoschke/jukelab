@@ -266,36 +266,49 @@
 {/snippet}
 
 {#snippet footer()}
-  <div class="navbar h-16 bg-base-300">
-    <div class="navbar-start"></div>
-    <div class="navbar-center">
-      <PlaySkip bind:audio skip={playlist.skip} />
+  <!-- component layout -->
+  <div class="navbar bg-base-100 p-0">
+    <div class="navbar-start w-32 p-2">
+      {@render start()}
     </div>
-    <div class="navbar-end">
-      <button
-        class="btn btn-circle btn-ghost"
-        onclick={() => {
-          ui.aside = !ui.aside;
-        }}
-      >
-        <Icon src={ArrowLeftOnRectangle} class="size-5" solid={ui.aside} />
-      </button>
-
-      <button
-        class="btn btn-circle btn-ghost"
-        onclick={() => {
-          ui.details = !ui.details;
-        }}
-      >
-        <Icon src={CommandLine} class="size-5" solid={ui.details} />
-      </button>
+    <div class="navbar-center flex grow justify-center">
+      {@render center()}
+    </div>
+    <div class="navbar-end w-32 p-2">
+      {@render end()}
     </div>
   </div>
+
+  {#snippet start()}
+    <button
+      class="btn btn-circle btn-ghost"
+      onclick={() => {
+        ui.details = !ui.details;
+      }}
+    >
+      <Icon src={CommandLine} class="size-5" solid={ui.details} />
+    </button>
+  {/snippet}
+
+  {#snippet center()}
+    <PlaySkip bind:audio skip={playlist.skip} />
+  {/snippet}
+
+  {#snippet end()}
+    <button
+      class="btn btn-circle btn-ghost"
+      onclick={() => {
+        ui.aside = !ui.aside;
+      }}
+    >
+      <Icon src={ArrowLeftOnRectangle} class="size-5" solid={ui.aside} />
+    </button>
+  {/snippet}
 {/snippet}
 
 {#snippet details()}
   <div
-    class="flex h-24 min-h-24 flex-col-reverse overflow-scroll bg-base-content p-2 text-xs text-neutral-content"
+    class="flex h-24 min-h-24 flex-col-reverse overflow-scroll bg-black p-2 text-xs text-neutral-content"
     class:hidden={!ui.details}
   >
     <div class="">
