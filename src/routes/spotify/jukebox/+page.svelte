@@ -4,7 +4,7 @@
   import { AlbumTracks } from "$lib/types/music";
   import type { UserProfile } from "@spotify/web-api-ts-sdk";
   import { onMount } from "svelte";
-  import { ArrowLeftOnRectangle, Bars3, CommandLine, Icon } from "svelte-hero-icons";
+  import { QueueList, Bars3, CommandLine, Icon } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import { AlbumTrack, Playlist, type Src } from "./playlist.svelte";
@@ -295,14 +295,20 @@
   {/snippet}
 
   {#snippet end()}
-    <button
-      class="btn btn-circle btn-ghost"
-      onclick={() => {
-        ui.aside = !ui.aside;
-      }}
-    >
-      <Icon src={ArrowLeftOnRectangle} class="size-5" solid={ui.aside} />
-    </button>
+    <div class="indicator">
+      <span
+        class="badge indicator-item badge-neutral badge-sm mr-2 mt-2"
+        class:hidden={!playlist.queue.length}>{playlist.queue.length}</span
+      >
+      <button
+        class="btn btn-circle btn-ghost"
+        onclick={() => {
+          ui.aside = !ui.aside;
+        }}
+      >
+        <Icon src={QueueList} class="size-5" solid={ui.aside} />
+      </button>
+    </div>
   {/snippet}
 {/snippet}
 
