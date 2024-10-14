@@ -103,7 +103,10 @@
     player?.seek(audio.currentTime * 1000);
   });
 
-  onMount(() => {
+  onMount(async () => {
+    const t = await token();
+    if (!t) return;
+
     window.onSpotifyWebPlaybackSDKReady = async () => {
       player = new Spotify.Player({
         getOAuthToken: async (cb) => {

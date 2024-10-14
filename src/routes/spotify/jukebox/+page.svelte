@@ -33,7 +33,7 @@
     el.showModal();
     setTimeout(() => {
       el.close();
-    }, 1500);
+    }, 2500);
   };
 
   // if queued when nothing is playing, play
@@ -156,16 +156,26 @@
 
   {#snippet end()}
     {#if profile}
-      <button
-        class="avatar"
-        onclick={async () => {
-          auth.logout();
-        }}
-      >
-        <div class="w-12 rounded-full">
-          <img alt="" src={profile.images[0].url} />
-        </div>
-      </button>
+      <div class="group relative flex">
+        <button
+          class="avatar size-12 group-hover:opacity-0"
+          onclick={async () => {
+            auth.logout();
+          }}
+        >
+          <div class="rounded-full">
+            <img alt="" src={profile.images[0].url} />
+          </div>
+        </button>
+        <button
+          class="btn btn-circle btn-ghost absolute opacity-0 group-hover:opacity-100"
+          onclick={async () => {
+            auth.logout();
+          }}
+        >
+          Logout
+        </button>
+      </div>
     {:else}
       <button
         class="btn btn-circle btn-ghost"
@@ -190,6 +200,8 @@
       value={progress.value}
       class:hidden={progress.value == progress.max}
     ></progress>
+
+    <div class="skeleton size-full rounded-none" class:hidden={playlist.albums.length > 0}></div>
 
     {#each playlist.chunk(4) as albums, n}
       <div class="carousel-item size-full">
@@ -336,19 +348,18 @@
     <h3 class="pb-4 text-lg font-bold">Queue {pad(select.albumNum)}{pad(select.trackNum + 1)}</h3>
     <p class="text-lg font-bold">{select.track.title}</p>
     <p>{select.track.artist}</p>
-    <div class="modal-action">
-      <form method="dialog">
+    <form method="dialog">
+      <div class="modal-action justify-between">
         <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
-
-        <button class="btn btn-secondary" onclick={() => {}}>No</button>
         <button
-          class="btn btn-primary"
+          class="btn btn-accent"
           onclick={async () => {
             await enqueue(select);
           }}>OK</button
         >
-      </form>
-    </div>
+        <button class="btn btn-primary" onclick={() => {}}>NO</button>
+      </div>
+    </form>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>
