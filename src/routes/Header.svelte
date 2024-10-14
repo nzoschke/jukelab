@@ -17,7 +17,7 @@
   </div>
   <div class="navbar-center">
     <div role="tablist" class="tabs-boxed tabs">
-      {@render tab("Home", "")}
+      {@render tab("Home", "/")}
       {@render tab("HTML Audio", "/audio")}
       {@render tab("Spotify", "/spotify")}
       {@render tab("Jukebox", "/spotify/jukebox")}
