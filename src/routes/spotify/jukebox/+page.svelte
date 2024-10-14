@@ -341,7 +341,7 @@
         <p class="truncate">{album.artist}</p>
       </div>
     </div>
-    <div class="overflow-scroll">
+    <div class="ml-1 overflow-scroll">
       {#each album.tracks as track, n}
         <button
           class="block w-full truncate text-left"
