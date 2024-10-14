@@ -104,8 +104,8 @@
 <!-- page components -->
 {#snippet menu()}
   <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
-    <li>Sidebar Item 1</li>
-    <li>Sidebar Item 2</li>
+    <li><a href="/">Home</a></li>
+    <li><a href="https://github.com/nzoschke/jukelab">GitHub</a></li>
   </ul>
 {/snippet}
 
