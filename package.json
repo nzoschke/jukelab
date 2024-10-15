@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": ">=22"
+  },
   "name": "jukelab",
   "version": "0.0.1",
   "scripts": {
