@@ -11,6 +11,7 @@ export const Log = () => {
   let logs = $state<Log[]>([]);
 
   const log = (msg: string, level?: Level) => {
+    console.log(msg);
     untrack(() => {
       logs.push({
         level: level || "success",
