@@ -52,5 +52,8 @@
     "*.js": "eslint --cache --fix",
     "**/*": "prettier --write --ignore-unknown"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "gsap": "^3.12.5"
+  }
 }
