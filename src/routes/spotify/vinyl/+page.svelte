@@ -276,22 +276,8 @@
     </div>
   {/each}
   <div class="controls">
-    <button class="next"
-      ><span>Previous album</span>
-      <svg viewBox="0 0 448 512" width="100">
-        <path
-          d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"
-        ></path>
-      </svg>
-    </button>
-    <button class="prev"
-      ><span>Next album</span>
-      <svg viewBox="0 0 448 512" width="100">
-        <path
-          d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"
-        ></path>
-      </svg>
-    </button>
+    <button class="prev btn btn-circle">Prev</button>
+    <button class="next btn btn-circle">Next</button>
   </div>
 </div>
 <div class="drag-proxy"></div>
@@ -319,69 +305,6 @@
     height: 44px;
     width: 20vmin;
     z-index: 300;
-  }
-  button {
-    height: 48px;
-    width: 48px;
-    border-radius: 50%;
-    position: absolute;
-    top: 0%;
-    outline: transparent;
-    cursor: pointer;
-    background: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    border: 0;
-    transition: transform 0.1s;
-    transform: translate(0, calc(var(--y, 0)));
-  }
-  button:before {
-    border: 2px solid #e6e6e6;
-    background: linear-gradient(rgba(204, 204, 204, 0.65), #000) #000;
-    content: "";
-    box-sizing: border-box;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: 80%;
-    width: 80%;
-    border-radius: 50%;
-  }
-  button:active:before {
-    background: linear-gradient(#000, rgba(204, 204, 204, 0.65)) #000;
-  }
-  button:nth-of-type(1) {
-    right: 100%;
-  }
-  button:nth-of-type(2) {
-    left: 100%;
-  }
-  button span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
-  button:hover {
-    --y: -5%;
-  }
-  button svg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(0deg) translate(2%, 0);
-    height: 30%;
-    fill: #e6e6e6;
-  }
-  button:nth-of-type(1) svg {
-    transform: translate(-50%, -50%) rotate(180deg) translate(2%, 0);
   }
   .boxes {
     height: 100vh;
