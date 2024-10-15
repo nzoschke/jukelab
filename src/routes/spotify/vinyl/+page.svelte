@@ -42,7 +42,6 @@
             scale: 1,
             duration: 0.1,
           },
-
           0,
         )
         .to(
@@ -52,7 +51,6 @@
             scale: 0.5,
             duration: 0.1,
           },
-
           0.9,
         )
 
@@ -62,14 +60,12 @@
           {
             xPercent: 250,
           },
-
           {
             xPercent: -350,
             duration: 1,
             immediateRender: false,
             ease: "power1.inOut",
           },
-
           0,
         )
 
@@ -79,14 +75,12 @@
           {
             rotateY: -50,
           },
-
           {
             rotateY: 50,
             immediateRender: false,
             duration: 1,
             ease: "power4.inOut",
           },
-
           0,
         )
 
@@ -100,7 +94,6 @@
             repeat: 1,
             yoyo: true,
           },
-
           0.4,
         )
         .fromTo(
@@ -108,7 +101,6 @@
           {
             zIndex: 1,
           },
-
           {
             zIndex: BOXES.length,
             repeat: 1,
@@ -117,7 +109,6 @@
             duration: 0.5,
             immediateRender: false,
           },
-
           0,
         );
 
@@ -132,7 +123,6 @@
       {
         totalTime: START_TIME,
       },
-
       {
         totalTime: `+=${CYCLE_DURATION}`,
         duration: 1,
@@ -234,6 +224,7 @@
         if (CURRENT > TARGET && CURRENT - TARGET > BOXES.length * 0.5) {
           BUMP = BOXES.length + BUMP;
         }
+
         scrollToPosition(pos(SCRUB.vars.position) + BUMP * (1 / BOXES.length));
       }
     });
