@@ -6,6 +6,19 @@
 
   gsap.registerPlugin(ScrollTrigger, Draggable);
 
+  const srcs = [
+    "https://i.scdn.co/image/ab67616d00001e020ecc8c4fd215d9eb83cbfdb3",
+    "https://i.scdn.co/image/ab67616d00001e02d9194aa18fa4c9362b47464f",
+    "https://i.scdn.co/image/ab67616d00001e02a7ea08ab3914c5fb2084a8ac",
+    "https://i.scdn.co/image/ab67616d00001e0213ca80c3035333e5a6fcea59",
+    "https://i.scdn.co/image/ab67616d00001e02df04e6071763615d44643725",
+    "https://i.scdn.co/image/ab67616d00001e0239c7302c04f8d06f60e14403",
+    "https://i.scdn.co/image/ab67616d00001e021c0bcf8b536295438d26c70d",
+    "https://i.scdn.co/image/ab67616d00001e029bbd79106e510d13a9a5ec33",
+    "https://i.scdn.co/image/ab67616d00001e021d97ca7376f835055f828139",
+    "https://www.udiscovermusic.com/wp-content/uploads/2015/10/Kanye-West-Yeezus.jpg",
+  ];
+
   onMount(() => {
     gsap.set(".box", {
       yPercent: -50,
@@ -256,66 +269,12 @@
 </script>
 
 <div class="boxes">
-  <div class="box">
-    <span>1</span><img
-      src="https://i.scdn.co/image/ab67616d00001e020ecc8c4fd215d9eb83cbfdb3"
-      alt="moby"
-    />
-  </div>
-  <div class="box">
-    <span>2</span><img
-      src="https://i.scdn.co/image/ab67616d00001e02d9194aa18fa4c9362b47464f"
-      alt="ye"
-    />
-  </div>
-  <div class="box">
-    <span>3</span><img
-      src="https://i.scdn.co/image/ab67616d00001e02a7ea08ab3914c5fb2084a8ac"
-      alt="beastie"
-    />
-  </div>
-  <div class="box">
-    <span>4</span><img
-      src="https://i.scdn.co/image/ab67616d00001e0213ca80c3035333e5a6fcea59"
-      alt="marvin"
-    />
-  </div>
-  <div class="box">
-    <span>5</span><img
-      src="https://i.scdn.co/image/ab67616d00001e02df04e6071763615d44643725"
-      alt="maribou"
-    />
-  </div>
-  <div class="box">
-    <span>6</span><img
-      src="https://i.scdn.co/image/ab67616d00001e0239c7302c04f8d06f60e14403"
-      alt="caribou"
-    />
-  </div>
-  <div class="box">
-    <span>7</span><img
-      src="https://i.scdn.co/image/ab67616d00001e021c0bcf8b536295438d26c70d"
-      alt="justice"
-    />
-  </div>
-  <div class="box">
-    <span>8</span><img
-      src="https://i.scdn.co/image/ab67616d00001e029bbd79106e510d13a9a5ec33"
-      alt="kayne"
-    />
-  </div>
-  <div class="box">
-    <span>9</span><img
-      src="https://i.scdn.co/image/ab67616d00001e021d97ca7376f835055f828139"
-      alt="daft"
-    />
-  </div>
-  <div class="box">
-    <span>10</span><img
-      src="https://www.udiscovermusic.com/wp-content/uploads/2015/10/Kanye-West-Yeezus.jpg"
-      alt="yeezus"
-    />
-  </div>
+  {#each srcs as src, i}
+    <div class="box">
+      <span>{i}</span>
+      <img {src} alt="" />
+    </div>
+  {/each}
   <div class="controls">
     <button class="next"
       ><span>Previous album</span>
