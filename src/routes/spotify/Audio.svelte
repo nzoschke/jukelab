@@ -116,7 +116,7 @@
           const t = await token();
           if (t) cb(t);
         },
-        name: "MediaLab",
+        name: "JukeLab",
         volume: 1.0,
       });
 
