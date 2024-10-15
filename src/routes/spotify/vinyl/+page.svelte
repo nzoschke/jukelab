@@ -1,25 +1,16 @@
 <script lang="ts">
   import { gsap } from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { Draggable } from "gsap/Draggable";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { onMount } from "svelte";
+  import type { PageData } from "./$types";
+
+  export let data: PageData;
+  const { srcs } = data;
 
   gsap.registerPlugin(ScrollTrigger, Draggable);
 
-  const srcs = [
-    "https://i.scdn.co/image/ab67616d00001e020ecc8c4fd215d9eb83cbfdb3",
-    "https://i.scdn.co/image/ab67616d00001e02d9194aa18fa4c9362b47464f",
-    "https://i.scdn.co/image/ab67616d00001e02a7ea08ab3914c5fb2084a8ac",
-    "https://i.scdn.co/image/ab67616d00001e0213ca80c3035333e5a6fcea59",
-    "https://i.scdn.co/image/ab67616d00001e02df04e6071763615d44643725",
-    "https://i.scdn.co/image/ab67616d00001e0239c7302c04f8d06f60e14403",
-    "https://i.scdn.co/image/ab67616d00001e021c0bcf8b536295438d26c70d",
-    "https://i.scdn.co/image/ab67616d00001e029bbd79106e510d13a9a5ec33",
-    "https://i.scdn.co/image/ab67616d00001e021d97ca7376f835055f828139",
-    "https://www.udiscovermusic.com/wp-content/uploads/2015/10/Kanye-West-Yeezus.jpg",
-  ];
-
-  onMount(() => {
+  onMount(async () => {
     gsap.set(".box", {
       yPercent: -50,
     });
@@ -310,7 +301,7 @@
 </script>
 
 <div class="boxes absolute h-svh w-svw touch-none overflow-hidden">
-  {#each srcs as src, i}
+  {#each srcs as src}
     <div class="box absolute left-1/2 top-1/2 h-[20vmin] min-h-[200px] w-[20vmin] min-w-[200px]">
       <div class="vinyl skeleton absolute -top-10 size-full rounded-full"></div>
       <img class="absolute size-full object-cover" {src} alt="" />
