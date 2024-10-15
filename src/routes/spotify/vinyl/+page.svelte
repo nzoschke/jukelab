@@ -14,7 +14,7 @@
     const STAGGER = 0.1;
     const DURATION = 1;
     const OFFSET = 0;
-    const BOXES = gsap.utils.toArray(".box");
+    const BOXES = gsap.utils.toArray<HTMLDivElement>(".box");
 
     const LOOP = gsap.timeline({
       paused: true,
@@ -180,7 +180,7 @@
       },
     });
 
-    const WRAP = (iterationDelta, scrollTo) => {
+    const WRAP = (iterationDelta: number, scrollTo: number) => {
       iteration += iterationDelta;
       TRIGGER.scroll(scrollTo);
       TRIGGER.update();
@@ -188,10 +188,10 @@
 
     const SNAP = gsap.utils.snap(1 / BOXES.length);
 
-    const progressToScroll = (progress) =>
+    const progressToScroll = (progress: number) =>
       gsap.utils.clamp(1, TRIGGER.end - 1, gsap.utils.wrap(0, 1, progress) * TRIGGER.end);
 
-    const scrollToPosition = (position) => {
+    const scrollToPosition = (position: number) => {
       const SNAP_POS = SNAP(position);
       const PROGRESS = (SNAP_POS - LOOP_HEAD.duration() * iteration) / LOOP_HEAD.duration();
       const SCROLL = progressToScroll(PROGRESS);
@@ -209,8 +209,9 @@
       if (event.code === "ArrowRight" || event.code === "KeyD") PREV();
     });
 
-    document.querySelector(".boxes").addEventListener("click", (e) => {
-      const BOX = e.target.closest(".box");
+    document.querySelector(".boxes")!.addEventListener("click", (e) => {
+      const t = e.target as HTMLDivElement;
+      const BOX = t.closest(".box") as HTMLDivElement;
       if (BOX) {
         let TARGET = BOXES.indexOf(BOX);
         let CURRENT = gsap.utils.wrap(
@@ -232,8 +233,8 @@
 
     window.BOXES = BOXES;
 
-    document.querySelector(".next").addEventListener("click", NEXT);
-    document.querySelector(".prev").addEventListener("click", PREV);
+    document.querySelector(".next")!.addEventListener("click", NEXT);
+    document.querySelector(".prev")!.addEventListener("click", PREV);
 
     // Dragging
     // let startX = 0
