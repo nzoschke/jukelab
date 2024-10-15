@@ -238,38 +238,8 @@
       }
     });
 
-    // window.BOXES = BOXES;
-
     document.querySelector(".next")!.addEventListener("click", NEXT);
     document.querySelector(".prev")!.addEventListener("click", PREV);
-
-    // Dragging
-    // let startX = 0
-    // let startOffset = 0
-
-    // const onPointerMove = e => {
-    //   e.preventDefault()
-    //   SCRUB.vars.position = startOffset + (startX - e.pageX) * 0.001
-    //   SCRUB.invalidate().restart() // same thing as we do in the ScrollTrigger's onUpdate
-    // }
-
-    // const onPointerUp = e => {
-    //   document.removeEventListener('pointermove', onPointerMove)
-    //   document.removeEventListener('pointerup', onPointerUp)
-    //   document.removeEventListener('pointercancel', onPointerUp)
-    //   scrollToPosition(SCRUB.vars.position)
-    // }
-
-    // // when the user presses on anything except buttons, start a drag...
-    // document.addEventListener('pointerdown', e => {
-    //   if (e.target.tagName.toLowerCase() !== 'button') {
-    //     document.addEventListener('pointermove', onPointerMove)
-    //     document.addEventListener('pointerup', onPointerUp)
-    //     document.addEventListener('pointercancel', onPointerUp)
-    //     startX = e.pageX
-    //     startOffset = SCRUB.vars.position
-    //   }
-    // })
 
     gsap.set(".box", { display: "block" });
 
@@ -295,94 +265,64 @@
 </script>
 
 <div class="boxes">
-  <div
-    class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e020ecc8c4fd215d9eb83cbfdb3);"
-  >
+  <div class="box">
     <span>1</span><img
       src="https://i.scdn.co/image/ab67616d00001e020ecc8c4fd215d9eb83cbfdb3"
       alt="moby"
     />
   </div>
-  <div
-    class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e02d9194aa18fa4c9362b47464f);"
-  >
+  <div class="box">
     <span>2</span><img
       src="https://i.scdn.co/image/ab67616d00001e02d9194aa18fa4c9362b47464f"
       alt="ye"
     />
   </div>
-  <div
-    class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e02a7ea08ab3914c5fb2084a8ac);"
-  >
+  <div class="box">
     <span>3</span><img
       src="https://i.scdn.co/image/ab67616d00001e02a7ea08ab3914c5fb2084a8ac"
       alt="beastie"
     />
   </div>
-  <div
-    class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e0213ca80c3035333e5a6fcea59);"
-  >
+  <div class="box">
     <span>4</span><img
       src="https://i.scdn.co/image/ab67616d00001e0213ca80c3035333e5a6fcea59"
       alt="marvin"
     />
   </div>
-  <div
-    class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e02df04e6071763615d44643725);"
-  >
+  <div class="box">
     <span>5</span><img
       src="https://i.scdn.co/image/ab67616d00001e02df04e6071763615d44643725"
       alt="maribou"
     />
   </div>
-  <div
-    class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e0239c7302c04f8d06f60e14403);"
-  >
+  <div class="box">
     <span>6</span><img
       src="https://i.scdn.co/image/ab67616d00001e0239c7302c04f8d06f60e14403"
       alt="caribou"
     />
   </div>
-  <div
-    class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e021c0bcf8b536295438d26c70d);"
-  >
+  <div class="box">
     <span>7</span><img
       src="https://i.scdn.co/image/ab67616d00001e021c0bcf8b536295438d26c70d"
       alt="justice"
     />
   </div>
-  <div
-    class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e029bbd79106e510d13a9a5ec33);"
-  >
+  <div class="box">
     <span>8</span><img
       src="https://i.scdn.co/image/ab67616d00001e029bbd79106e510d13a9a5ec33"
       alt="kayne"
     />
   </div>
-  <div
-    class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e021d97ca7376f835055f828139);"
-  >
+  <div class="box">
     <span>9</span><img
       src="https://i.scdn.co/image/ab67616d00001e021d97ca7376f835055f828139"
       alt="daft"
     />
   </div>
-  <div
-    class="box"
-    style="--src: url(https://www.udiscovermusic.com/wp-content/uploads/2015/10/Kanye-West-Yeezus.jpg);"
-  >
+  <div class="box">
     <span>10</span><img
       src="https://www.udiscovermusic.com/wp-content/uploads/2015/10/Kanye-West-Yeezus.jpg"
-      alt="yeezue"
+      alt="yeezus"
     />
   </div>
   <div class="controls">
@@ -420,15 +360,6 @@
     --bg: #1a1a1a;
     --min-size: 200px;
   }
-  /* body {
-    display: grid;
-    place-items: center;
-    min-height: 100vh;
-    padding: 0;
-    margin: 0;
-    overflow-y: hidden;
-    background: var(--bg);
-  } */
   .drag-proxy {
     visibility: hidden;
     position: absolute;
