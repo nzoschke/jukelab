@@ -38,13 +38,28 @@
     const SHIFTS = [...BOXES, ...BOXES, ...BOXES];
 
     SHIFTS.forEach((BOX, index) => {
+      let q = gsap.utils.selector(BOX);
+      let LABEL = q(".label");
+      let VINYL = q(".vinyl");
+
       const BOX_TL = gsap
         .timeline()
+
+        // Initial
         .set(BOX, {
           xPercent: 250,
           rotateY: -50,
           opacity: 0,
           scale: 0.5,
+        })
+
+        .set(LABEL, {
+          opacity: 0,
+        })
+
+        .set(VINYL, {
+          opacity: 0,
+          top: 0,
         })
 
         // Opacity && Scale
@@ -57,6 +72,7 @@
           },
           0,
         )
+
         .to(
           BOX,
           {
@@ -109,6 +125,7 @@
           },
           0.4,
         )
+
         .fromTo(
           BOX,
           {
@@ -123,6 +140,30 @@
             immediateRender: false,
           },
           0,
+        )
+
+        // Label Opacity
+        .to(
+          LABEL,
+          {
+            opacity: 1,
+            duration: 0.1,
+            repeat: 1,
+            yoyo: true,
+          },
+          0.4,
+        )
+
+        .to(
+          VINYL,
+          {
+            opacity: 1,
+            duration: 0.1,
+            top: -40,
+            repeat: 1,
+            yoyo: true,
+          },
+          0.4,
         );
 
       LOOP.add(BOX_TL, index * STAGGER);
@@ -271,9 +312,9 @@
 <div class="boxes absolute h-svh w-svw touch-none overflow-hidden">
   {#each srcs as src, i}
     <div class="box absolute left-1/2 top-1/2 h-[20vmin] min-h-[200px] w-[20vmin] min-w-[200px]">
-      <div class="skeleton absolute -top-8 size-full rounded-full"></div>
+      <div class="vinyl skeleton absolute -top-10 size-full rounded-full"></div>
       <img class="absolute size-full object-cover" {src} alt="" />
-      <div class="absolute size-full p-2">
+      <div class="label absolute size-full p-2">
         <div class="size-full border bg-black opacity-85">HELLO WORLD</div>
       </div>
     </div>
