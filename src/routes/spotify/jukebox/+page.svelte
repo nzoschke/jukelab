@@ -195,16 +195,7 @@
 {/snippet}
 
 {#snippet main()}
-  {@const { progress } = playlist}
-
-  <div class="carousel relative size-full">
-    <progress
-      class="progress progress-primary absolute bottom-0 h-1"
-      max={progress.max}
-      value={progress.value}
-      class:hidden={progress.value == progress.max}
-    ></progress>
-
+  <div class="carousel size-full">
     <div class="skeleton size-full rounded-none" class:hidden={playlist.albums.length > 0}></div>
 
     {#each playlist.chunk(4) as albums, n}
@@ -270,8 +261,17 @@
 {/snippet}
 
 {#snippet footer()}
+  {@const { progress } = playlist}
+
   <!-- component layout -->
-  <div class="navbar min-h-20 bg-base-100 p-0">
+  <div class="navbar relative min-h-20 bg-base-100 p-0">
+    <progress
+      class="progress progress-primary absolute -top-1 h-1"
+      max={progress.max}
+      value={progress.value}
+      class:hidden={progress.value == progress.max}
+    ></progress>
+
     <div class="navbar-start w-32 p-2">
       {@render start()}
     </div>
@@ -330,35 +330,39 @@
 {/snippet}
 
 {#snippet _album(n: number, album: AlbumTracks)}
-  <div class="flex flex-1 flex-col overflow-hidden">
-    <div class="flex">
-      <div
-        class="flex aspect-square size-12 items-center justify-center bg-black text-2xl font-bold text-white"
-      >
-        {pad(n)}
-      </div>
-      <div class="ml-1 flex flex-col overflow-hidden">
-        <p class="truncate font-bold">{album.title}</p>
-        <p class="truncate">{album.artist}</p>
-      </div>
-    </div>
-    <div class="ml-1 overflow-scroll">
-      {#each album.tracks as track, n}
-        <button
-          class="block w-full truncate text-left"
-          onclick={() => {
-            select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
-            const el = document.getElementById("select") as HTMLDialogElement;
-            el.showModal();
-          }}
+  {#if !album}
+    <!-- TODO: JukeLab placeholder -->
+  {:else}
+    <div class="flex flex-1 flex-col overflow-hidden">
+      <div class="flex">
+        <div
+          class="flex aspect-square size-12 items-center justify-center bg-black text-2xl font-bold text-white"
         >
-          <span class="font-mono font-bold">{pad(n + 1)}</span>
-          {track.title}
-        </button>
-      {/each}
+          {pad(n)}
+        </div>
+        <div class="ml-1 flex flex-col overflow-hidden">
+          <p class="truncate font-bold">{album.title}</p>
+          <p class="truncate">{album.artist}</p>
+        </div>
+      </div>
+      <div class="ml-1 overflow-scroll">
+        {#each album.tracks as track, n}
+          <button
+            class="block w-full truncate text-left"
+            onclick={() => {
+              select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
+              const el = document.getElementById("select") as HTMLDialogElement;
+              el.showModal();
+            }}
+          >
+            <span class="font-mono font-bold">{pad(n + 1)}</span>
+            {track.title}
+          </button>
+        {/each}
+      </div>
     </div>
-  </div>
-  <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
+    <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
+  {/if}
 {/snippet}
 
 <dialog id="select" class="modal">
