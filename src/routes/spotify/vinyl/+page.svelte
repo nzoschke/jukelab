@@ -335,12 +335,6 @@
     </button>
   </div>
 </div>
-<svg class="scroll-icon" viewBox="0 0 24 24">
-  <path
-    fill="currentColor"
-    d="M20 6H23L19 2L15 6H18V18H15L19 22L23 18H20V6M9 3.09C11.83 3.57 14 6.04 14 9H9V3.09M14 11V15C14 18.3 11.3 21 8 21S2 18.3 2 15V11H14M7 9H2C2 6.04 4.17 3.57 7 3.09V9Z"
-  ></path>
-</svg>
 <div class="drag-proxy"></div>
 
 <style>
@@ -430,15 +424,6 @@
   button:nth-of-type(1) svg {
     transform: translate(-50%, -50%) rotate(180deg) translate(2%, 0);
   }
-  .scroll-icon {
-    height: 30px;
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    color: #e6e6e6;
-    -webkit-animation: action 4s infinite;
-    animation: action 4s infinite;
-  }
   .boxes {
     height: 100vh;
     width: 100%;
@@ -505,30 +490,6 @@
     .box:after,
     .box:before {
       display: none;
-    }
-  }
-  @-webkit-keyframes action {
-    0%,
-    25%,
-    50%,
-    100% {
-      transform: translate(0, 0);
-    }
-    12.5%,
-    37.5% {
-      transform: translate(0, 25%);
-    }
-  }
-  @keyframes action {
-    0%,
-    25%,
-    50%,
-    100% {
-      transform: translate(0, 0);
-    }
-    12.5%,
-    37.5% {
-      transform: translate(0, 25%);
     }
   }
 </style>
