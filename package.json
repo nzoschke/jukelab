@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": ">=22"
+  },
   "name": "jukelab",
   "version": "0.0.1",
   "scripts": {
@@ -25,6 +28,7 @@
     "@sveltejs/vite-plugin-svelte": "^4.0.0-next.6",
     "@tailwindcss/typography": "^0.5.15",
     "@types/eslint": "^9.6.0",
+    "@types/node": "^22.7.5",
     "@types/spotify-web-playback-sdk": "^0.1.19",
     "autoprefixer": "^10.4.20",
     "daisyui": "^4.12.12",
