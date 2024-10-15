@@ -292,70 +292,98 @@
 <div class="boxes">
   <div
     class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e020ecc8c4fd215d9eb83cbfdb3)"
+    style="--src: url(https://i.scdn.co/image/ab67616d00001e020ecc8c4fd215d9eb83cbfdb3);"
   >
-    <span>1</span><img src="https://i.scdn.co/image/ab67616d00001e020ecc8c4fd215d9eb83cbfdb3" />
+    <span>1</span><img
+      src="https://i.scdn.co/image/ab67616d00001e020ecc8c4fd215d9eb83cbfdb3"
+      alt="moby"
+    />
   </div>
   <div
     class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e02d9194aa18fa4c9362b47464f)"
+    style="--src: url(https://i.scdn.co/image/ab67616d00001e02d9194aa18fa4c9362b47464f);"
   >
-    <span>2</span><img src="https://i.scdn.co/image/ab67616d00001e02d9194aa18fa4c9362b47464f" />
+    <span>2</span><img
+      src="https://i.scdn.co/image/ab67616d00001e02d9194aa18fa4c9362b47464f"
+      alt="ye"
+    />
   </div>
   <div
     class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e02a7ea08ab3914c5fb2084a8ac)"
+    style="--src: url(https://i.scdn.co/image/ab67616d00001e02a7ea08ab3914c5fb2084a8ac);"
   >
-    <span>3</span><img src="https://i.scdn.co/image/ab67616d00001e02a7ea08ab3914c5fb2084a8ac" />
+    <span>3</span><img
+      src="https://i.scdn.co/image/ab67616d00001e02a7ea08ab3914c5fb2084a8ac"
+      alt="beastie"
+    />
   </div>
   <div
     class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e0213ca80c3035333e5a6fcea59)"
+    style="--src: url(https://i.scdn.co/image/ab67616d00001e0213ca80c3035333e5a6fcea59);"
   >
-    <span>4</span><img src="https://i.scdn.co/image/ab67616d00001e0213ca80c3035333e5a6fcea59" />
+    <span>4</span><img
+      src="https://i.scdn.co/image/ab67616d00001e0213ca80c3035333e5a6fcea59"
+      alt="marvin"
+    />
   </div>
   <div
     class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e02df04e6071763615d44643725)"
+    style="--src: url(https://i.scdn.co/image/ab67616d00001e02df04e6071763615d44643725);"
   >
-    <span>5</span><img src="https://i.scdn.co/image/ab67616d00001e02df04e6071763615d44643725" />
+    <span>5</span><img
+      src="https://i.scdn.co/image/ab67616d00001e02df04e6071763615d44643725"
+      alt="maribou"
+    />
   </div>
   <div
     class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e0239c7302c04f8d06f60e14403)"
+    style="--src: url(https://i.scdn.co/image/ab67616d00001e0239c7302c04f8d06f60e14403);"
   >
-    <span>6</span><img src="https://i.scdn.co/image/ab67616d00001e0239c7302c04f8d06f60e14403" />
+    <span>6</span><img
+      src="https://i.scdn.co/image/ab67616d00001e0239c7302c04f8d06f60e14403"
+      alt="caribou"
+    />
   </div>
   <div
     class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e021c0bcf8b536295438d26c70d)"
+    style="--src: url(https://i.scdn.co/image/ab67616d00001e021c0bcf8b536295438d26c70d);"
   >
-    <span>7</span><img src="https://i.scdn.co/image/ab67616d00001e021c0bcf8b536295438d26c70d" />
+    <span>7</span><img
+      src="https://i.scdn.co/image/ab67616d00001e021c0bcf8b536295438d26c70d"
+      alt="justice"
+    />
   </div>
   <div
     class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e029bbd79106e510d13a9a5ec33)"
+    style="--src: url(https://i.scdn.co/image/ab67616d00001e029bbd79106e510d13a9a5ec33);"
   >
-    <span>8</span><img src="https://i.scdn.co/image/ab67616d00001e029bbd79106e510d13a9a5ec33" />
+    <span>8</span><img
+      src="https://i.scdn.co/image/ab67616d00001e029bbd79106e510d13a9a5ec33"
+      alt="kayne"
+    />
   </div>
   <div
     class="box"
-    style="--src: url(https://i.scdn.co/image/ab67616d00001e021d97ca7376f835055f828139)"
+    style="--src: url(https://i.scdn.co/image/ab67616d00001e021d97ca7376f835055f828139);"
   >
-    <span>9</span><img src="https://i.scdn.co/image/ab67616d00001e021d97ca7376f835055f828139" />
+    <span>9</span><img
+      src="https://i.scdn.co/image/ab67616d00001e021d97ca7376f835055f828139"
+      alt="daft"
+    />
   </div>
   <div
     class="box"
-    style="--src: url(https://www.udiscovermusic.com/wp-content/uploads/2015/10/Kanye-West-Yeezus.jpg)"
+    style="--src: url(https://www.udiscovermusic.com/wp-content/uploads/2015/10/Kanye-West-Yeezus.jpg);"
   >
     <span>10</span><img
       src="https://www.udiscovermusic.com/wp-content/uploads/2015/10/Kanye-West-Yeezus.jpg"
+      alt="yeezue"
     />
   </div>
   <div class="controls">
     <button class="next"
       ><span>Previous album</span>
-      <svg viewBox="0 0 448 512" width="100" title="Previous Album">
+      <svg viewBox="0 0 448 512" width="100">
         <path
           d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"
         ></path>
@@ -363,7 +391,7 @@
     </button>
     <button class="prev"
       ><span>Next album</span>
-      <svg viewBox="0 0 448 512" width="100" title="Next Album">
+      <svg viewBox="0 0 448 512" width="100">
         <path
           d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"
         ></path>
@@ -387,7 +415,7 @@
     --bg: #1a1a1a;
     --min-size: 200px;
   }
-  body {
+  /* body {
     display: grid;
     place-items: center;
     min-height: 100vh;
@@ -395,7 +423,7 @@
     margin: 0;
     overflow-y: hidden;
     background: var(--bg);
-  }
+  } */
   .drag-proxy {
     visibility: hidden;
     position: absolute;
