@@ -6,7 +6,7 @@
   import type { PageData } from "./$types";
 
   export let data: PageData;
-  const { srcs } = data;
+  const { playlist } = data;
 
   gsap.registerPlugin(ScrollTrigger, Draggable);
 
@@ -199,7 +199,7 @@
     const TRIGGER = ScrollTrigger.create({
       start: 0,
       end: "+=2000",
-      horizontal: false,
+      horizontal: true,
       pin: ".boxes",
       onUpdate: (self) => {
         const SCROLL = self.scroll();
@@ -301,12 +301,20 @@
 </script>
 
 <div class="boxes absolute h-svh w-svw touch-none overflow-hidden">
-  {#each srcs as src}
+  {#each playlist.albums as album}
     <div class="box absolute left-1/2 top-1/2 h-[20vmin] min-h-[200px] w-[20vmin] min-w-[200px]">
       <div class="vinyl skeleton absolute -top-10 size-full rounded-full"></div>
-      <img class="absolute size-full object-cover" {src} alt="" />
+      <img class="absolute size-full object-cover" src={album.art} alt="" />
       <div class="label absolute size-full p-2">
-        <div class="size-full border bg-black opacity-85">HELLO WORLD</div>
+        <div class="flex size-full flex-col border bg-black p-1 text-xs opacity-85">
+          <p class="truncate font-bold">{album.title}</p>
+          <p class="truncate">{album.artist}</p>
+          <div class="flex-1 overflow-scroll text-[10px]">
+            {#each album.tracks as track}
+              <p class="truncate">{track.title}</p>
+            {/each}
+          </div>
+        </div>
       </div>
     </div>
   {/each}
@@ -335,8 +343,7 @@
     transform-style: preserve-3d;
     perspective: 800px;
   }
-  .box {
-    transform-style: preserve-3d;
+  .box img {
     -webkit-box-reflect: below 0.5vmin linear-gradient(transparent 0 50%, #fff 100%);
   }
 </style>
