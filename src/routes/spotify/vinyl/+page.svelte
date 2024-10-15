@@ -158,6 +158,8 @@
       ease: "power3",
     });
 
+    SCRUB.vars.position;
+
     let iteration = 0;
     const TRIGGER = ScrollTrigger.create({
       start: 0,
@@ -199,10 +201,15 @@
       TRIGGER.scroll(SCROLL);
     };
 
-    ScrollTrigger.addEventListener("scrollEnd", () => scrollToPosition(SCRUB.vars.position));
+    const pos = (v: gsap.TweenValue | undefined): number => {
+      if (!v) return 0;
+      return Number(v);
+    };
 
-    const NEXT = () => scrollToPosition(SCRUB.vars.position - 1 / BOXES.length);
-    const PREV = () => scrollToPosition(SCRUB.vars.position + 1 / BOXES.length);
+    ScrollTrigger.addEventListener("scrollEnd", () => scrollToPosition(pos(SCRUB.vars.position)));
+
+    const NEXT = () => scrollToPosition(pos(SCRUB.vars.position) - 1 / BOXES.length);
+    const PREV = () => scrollToPosition(pos(SCRUB.vars.position) + 1 / BOXES.length);
 
     document.addEventListener("keydown", (event) => {
       if (event.code === "ArrowLeft" || event.code === "KeyA") NEXT();
@@ -217,7 +224,7 @@
         let CURRENT = gsap.utils.wrap(
           0,
           BOXES.length,
-          Math.floor(BOXES.length * SCRUB.vars.position),
+          Math.floor(BOXES.length * pos(SCRUB.vars.position)),
         );
 
         let BUMP = TARGET - CURRENT;
@@ -227,11 +234,11 @@
         if (CURRENT > TARGET && CURRENT - TARGET > BOXES.length * 0.5) {
           BUMP = BOXES.length + BUMP;
         }
-        scrollToPosition(SCRUB.vars.position + BUMP * (1 / BOXES.length));
+        scrollToPosition(pos(SCRUB.vars.position) + BUMP * (1 / BOXES.length));
       }
     });
 
-    window.BOXES = BOXES;
+    // window.BOXES = BOXES;
 
     document.querySelector(".next")!.addEventListener("click", NEXT);
     document.querySelector(".prev")!.addEventListener("click", PREV);
@@ -281,7 +288,7 @@
         SCRUB.invalidate().restart(); // same thing as we do in the ScrollTrigger's onUpdate
       },
       onDragEnd() {
-        scrollToPosition(SCRUB.vars.position);
+        scrollToPosition(pos(SCRUB.vars.position));
       },
     });
   });
