@@ -1,15 +1,12 @@
 <script lang="ts">
-</script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { Draggable } from "gsap/Draggable";
+  import { onMount } from "svelte";
 
-<svelte:head>
-  <script type="module">
-    import gsap from "https://cdn.skypack.dev/gsap@3.7.0";
-    import ScrollTrigger from "https://cdn.skypack.dev/gsap@3.7.0/ScrollTrigger";
-    import Draggable from "https://cdn.skypack.dev/gsap@3.7.0/Draggable";
+  gsap.registerPlugin(ScrollTrigger, Draggable);
 
-    gsap.registerPlugin(ScrollTrigger);
-    gsap.registerPlugin(Draggable);
-
+  onMount(() => {
     gsap.set(".box", {
       yPercent: -50,
     });
@@ -286,8 +283,8 @@
         scrollToPosition(SCRUB.vars.position);
       },
     });
-  </script>
-</svelte:head>
+  });
+</script>
 
 <div class="boxes">
   <div
