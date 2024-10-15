@@ -271,8 +271,11 @@
 <div class="boxes">
   {#each srcs as src, i}
     <div class="box">
-      <span>{i}</span>
-      <img {src} alt="" />
+      <div class="skeleton absolute -top-8 size-full rounded-full"></div>
+      <img class="absolute size-full object-cover" {src} alt="" />
+      <div class="absolute size-full p-2">
+        <div class="size-full border bg-black opacity-85">HELLO WORLD</div>
+      </div>
     </div>
   {/each}
   <div class="controls">
@@ -325,53 +328,6 @@
     min-height: var(--min-size);
     min-width: var(--min-size);
     display: none;
-  }
-  .box:after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    height: 100%;
-    width: 100%;
-    background-image: var(--src);
-    background-size: cover;
-    transform: translate(-50%, -50%) rotate(180deg) translate(0, -100%) translate(0, -0.5vmin);
-    opacity: 0.75;
-  }
-  .box:before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    height: 100%;
-    width: 100%;
-    background: linear-gradient(var(--bg) 50%, transparent);
-    transform: translate(-50%, -50%) rotate(180deg) translate(0, -100%) translate(0, -0.5vmin)
-      scale(1.01);
-    z-index: 2;
-  }
-  .box img {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    -o-object-fit: cover;
-    object-fit: cover;
-  }
-  .box:nth-of-type(odd) {
-    background: #b3f075;
-  }
-  .box:nth-of-type(even) {
-    background: #66b814;
-  }
-  @supports (-webkit-box-reflect: below) {
-    .box {
-      -webkit-box-reflect: below 0.5vmin linear-gradient(transparent 0 50%, #fff 100%);
-    }
-    .box:after,
-    .box:before {
-      display: none;
-    }
+    -webkit-box-reflect: below 0.5vmin linear-gradient(transparent 0 50%, #fff 100%);
   }
 </style>
