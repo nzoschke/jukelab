@@ -15,6 +15,7 @@
     token: () => Promise<string>;
   } = $props();
 
+  let active = false;
   let deviceId = "";
   let endedTs = 0;
   let player: Spotify.Player | undefined;
@@ -87,6 +88,13 @@
   };
 
   $effect(() => {
+    if (!active && !audio.paused) {
+      player?.activateElement();
+      active = true;
+    }
+  });
+
+  $effect(() => {
     playPause(audio.paused, src);
   });
 
@@ -147,7 +155,6 @@
       });
 
       await player.connect();
-      await player.activateElement();
 
       setInterval(async () => {
         onState(await player?.getCurrentState());
