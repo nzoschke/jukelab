@@ -268,9 +268,9 @@
   });
 </script>
 
-<div class="boxes">
+<div class="boxes absolute h-svh w-svw touch-none overflow-hidden">
   {#each srcs as src, i}
-    <div class="box">
+    <div class="box absolute left-1/2 top-1/2 h-[20vmin] min-h-[200px] w-[20vmin] min-w-[200px]">
       <div class="skeleton absolute -top-8 size-full rounded-full"></div>
       <img class="absolute size-full object-cover" {src} alt="" />
       <div class="absolute size-full p-2">
@@ -278,9 +278,11 @@
       </div>
     </div>
   {/each}
-  <div class="controls">
-    <button class="prev btn btn-circle">Prev</button>
-    <button class="next btn btn-circle">Next</button>
+  <div
+    class="controls absolute bottom-36 left-1/2 z-[300] flex w-48 -translate-x-1/2 -translate-y-1/2 justify-between"
+  >
+    <button class="prev btn btn-circle btn-lg">Prev</button>
+    <button class="next btn btn-circle btn-lg">Next</button>
   </div>
 </div>
 <div class="drag-proxy"></div>
@@ -297,37 +299,12 @@
     visibility: hidden;
     position: absolute;
   }
-  .controls {
-    position: absolute;
-    top: calc(50% + clamp(var(--min-size), 20vmin, 20vmin));
-    left: 50%;
-    transform: translate(-50%, -50%) scale(1.5);
-    display: flex;
-    justify-content: space-between;
-    min-width: var(--min-size);
-    height: 44px;
-    width: 20vmin;
-    z-index: 300;
-  }
   .boxes {
-    height: 100vh;
-    width: 100%;
-    overflow: hidden;
-    position: absolute;
     transform-style: preserve-3d;
     perspective: 800px;
-    touch-action: none;
   }
   .box {
     transform-style: preserve-3d;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    height: 20vmin;
-    width: 20vmin;
-    min-height: var(--min-size);
-    min-width: var(--min-size);
-    display: none;
     -webkit-box-reflect: below 0.5vmin linear-gradient(transparent 0 50%, #fff 100%);
   }
 </style>
