@@ -47,7 +47,22 @@
 
   const pad = (n: number) => n.toString().padStart(2, "0");
 
+  let page = 0;
+  const pages = $derived(playlist.albums.length / 4);
+  const pageScroll = (delta: number) => {
+    page += delta;
+    if (page < 0) page = 0;
+    if (page >= pages) page = pages - 1;
+
+    const el = document.getElementById("carousel") as HTMLDivElement;
+    el.scrollLeft = page * (el.scrollWidth / pages);
+  };
+
   const onkeydown = (event: KeyboardEvent) => {
+    if (event.metaKey) return;
+
+    if (event.key == "ArrowRight") pageScroll(+1);
+    if (event.key == "ArrowLeft") pageScroll(-1);
     console.log("event", event);
   };
 
@@ -208,7 +223,7 @@
 {/snippet}
 
 {#snippet main()}
-  <div class="carousel size-full">
+  <div id="carousel" class="carousel size-full">
     <div class="skeleton size-full rounded-none" class:hidden={playlist.albums.length > 0}></div>
 
     {#each playlist.chunk(4) as albums, n}
@@ -279,13 +294,23 @@
   <!-- component layout -->
   <div class="flex flex-col">
     <div class="flex items-center justify-center border border-red-500">
-      <button class="btn btn-square btn-primary">
+      <button
+        class="btn btn-square btn-primary"
+        onclick={() => {
+          pageScroll(-1);
+        }}
+      >
         <Icon src={ChevronLeft} class="size-5" />
       </button>
       {#each Array(9) as _, i}
         <button class="btn btn-square btn-primary">{i}</button>
       {/each}
-      <button class="btn btn-square btn-primary">
+      <button
+        class="btn btn-square btn-primary"
+        onclick={() => {
+          pageScroll(+1);
+        }}
+      >
         <Icon src={ChevronRight} class="size-5" />
       </button>
     </div>
