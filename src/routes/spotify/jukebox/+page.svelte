@@ -2,22 +2,23 @@
   import { href } from "$lib/href";
   import { Auth } from "$lib/spotify/auth";
   import { Audio } from "$lib/types/audio";
-  import { Album, AlbumTracks, Track } from "$lib/types/music";
+  import { AlbumTracks } from "$lib/types/music";
   import type { UserProfile } from "@spotify/web-api-ts-sdk";
   import { onMount } from "svelte";
   import {
     Bars3,
+    ChevronLeft,
+    ChevronRight,
     CommandLine,
     Icon,
     QueueList,
-    ChevronLeft,
-    ChevronRight,
     XMark,
   } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import { Log } from "./log.svelte";
-  import { AlbumTrack, Playlist, type Src } from "./playlist.svelte";
+  import { Playlist, type Src } from "./playlist.svelte";
+  import { Select } from "./select.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -27,25 +28,14 @@
   let audio = $state(Audio);
   let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
   let profile = $state<UserProfile>();
+  let select = Select(playlist);
   let token = $state<string>();
-  let selectNum = $state("____");
-  let selectTrack = $state(AlbumTrack);
 
   let ui = $state({
     aside: false,
     details: false,
     tab: "queue" as Tabs,
   });
-
-  const enqueue = async (at: AlbumTrack) => {
-    await playlist.enqueue(at);
-
-    const el = document.getElementById("enqueue") as HTMLDialogElement;
-    el.showModal();
-    setTimeout(() => {
-      el.close();
-    }, 2500);
-  };
 
   const pad = (n: number) => n.toString().padStart(2, "0");
 
@@ -60,60 +50,10 @@
     el.scrollLeft = page * (el.scrollWidth / pages);
   };
 
-  let selectTimeout = setTimeout(() => {}, 0);
-
-  const select = (album: Album, track: Track) => {
-    selectTrack = playlist.find({ albumSrc: album.src, trackSrc: track.src });
-    const el = document.getElementById("select") as HTMLDialogElement;
-    el.showModal();
-  };
-
-  const selectChar = (c: string) => {
-    // reset partial selection after 15s
-    clearTimeout(selectTimeout);
-    selectTimeout = setTimeout(() => {
-      selectNum = "____";
-    }, 15 * 1000);
-
-    selectNum = c == "X" ? "____" : selectNum.replace("_", c);
-    if (selectNum == "XXXX" || selectNum.indexOf("_") >= 0) return;
-
-    // process 4 digits
-    clearTimeout(selectTimeout);
-    setTimeout(() => {
-      selectNum = "____";
-    }, 1000);
-
-    // albums start at 00, tracks at 01
-    const ai = parseInt(selectNum.slice(0, 2));
-    const ti = parseInt(selectNum.slice(2, 4)) - 1;
-
-    if (ti < 0) {
-      selectNum = "XXXX";
-      return;
-    }
-
-    const album = playlist.albums.at(ai);
-    if (!album) {
-      selectNum = "XXXX";
-      return;
-    }
-
-    const track = album.tracks.at(ti);
-    if (!track) {
-      selectNum = "XXXX";
-      return;
-    }
-
-    select(album, track);
-  };
-
   const onkeydown = (event: KeyboardEvent) => {
     if (event.metaKey) return;
-
     if (event.key == "ArrowRight") pageScroll(+1);
     if (event.key == "ArrowLeft") pageScroll(-1);
-    console.log("event", event);
   };
 
   // if queued when nothing is playing, play
@@ -345,7 +285,7 @@
   <div class="flex flex-col">
     <div class="flex items-center justify-center border border-red-500">
       <div class="font-mono">
-        SELECT: {selectNum}
+        SELECT: {select.num}
       </div>
       <button
         class="btn btn-square btn-primary"
@@ -359,14 +299,14 @@
         <button
           class="btn btn-square btn-primary"
           onclick={() => {
-            selectChar(i.toString());
+            select.char(i.toString());
           }}>{i}</button
         >
       {/each}
       <button
         class="btn btn-square btn-primary"
         onclick={() => {
-          selectChar("X");
+          select.char("x");
         }}
       >
         <Icon src={XMark} class="size-5" />
@@ -467,7 +407,7 @@
           <button
             class="block w-full truncate text-left"
             onclick={() => {
-              select(album, track);
+              select.select(album, track);
             }}
           >
             <span class="font-mono font-bold">{pad(n + 1)}</span>
@@ -483,17 +423,17 @@
 <dialog id="select" class="modal">
   <div class="modal-box text-center">
     <h3 class="pb-4 text-lg font-bold">
-      Queue {pad(selectTrack.albumNum)}{pad(selectTrack.trackNum + 1)}
+      Queue {pad(select.track.albumNum)}{pad(select.track.trackNum + 1)}
     </h3>
-    <p class="text-lg font-bold">{selectTrack.track.title}</p>
-    <p>{selectTrack.track.artist}</p>
+    <p class="text-lg font-bold">{select.track.track.title}</p>
+    <p>{select.track.track.artist}</p>
     <form method="dialog">
       <div class="modal-action justify-between">
         <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
         <button
           class="btn btn-accent"
           onclick={async () => {
-            await enqueue(selectTrack);
+            await select.enqueue();
           }}>OK</button
         >
         <button class="btn btn-primary" onclick={() => {}}>NO</button>
@@ -508,10 +448,10 @@
 <dialog id="enqueue" class="modal">
   <div class="modal-box text-center">
     <h3 class="pb-4 text-lg font-bold">
-      Queued {pad(selectTrack.albumNum)}{pad(selectTrack.trackNum + 1)}
+      Queued {pad(select.track.albumNum)}{pad(select.track.trackNum + 1)}
     </h3>
-    <p class="text-lg font-bold">{selectTrack.track.title}</p>
-    <p>{selectTrack.track.artist}</p>
+    <p class="text-lg font-bold">{select.track.track.title}</p>
+    <p>{select.track.track.artist}</p>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>
