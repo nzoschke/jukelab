@@ -2,7 +2,7 @@
   import { href } from "$lib/href";
   import { Auth } from "$lib/spotify/auth";
   import { Audio } from "$lib/types/audio";
-  import { AlbumTracks } from "$lib/types/music";
+  import { AlbumTracks, PlaylistTracks } from "$lib/types/music";
   import type { UserProfile } from "@spotify/web-api-ts-sdk";
   import { onMount } from "svelte";
   import {
@@ -12,6 +12,7 @@
     QueueList,
     ChevronLeft,
     ChevronRight,
+    XMark,
   } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
@@ -27,6 +28,7 @@
   let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
   let profile = $state<UserProfile>();
   let token = $state<string>();
+  let sel = $state("____");
   let select = $state(AlbumTrack);
 
   let ui = $state({
@@ -56,6 +58,48 @@
 
     const el = document.getElementById("carousel") as HTMLDivElement;
     el.scrollLeft = page * (el.scrollWidth / pages);
+  };
+
+  let selTimeout = setTimeout(() => {}, 0);
+  const selAdd = (c: string) => {
+    // reset partial selection after 15s
+    clearTimeout(selTimeout);
+    selTimeout = setTimeout(() => {
+      sel = "____";
+    }, 15 * 1000);
+
+    sel = c == "X" ? "____" : sel.replace("_", c);
+    if (sel == "XXXX" || sel.indexOf("_") >= 0) return;
+
+    // process 4 digits
+    clearTimeout(selTimeout);
+    setTimeout(() => {
+      sel = "____";
+    }, 1000);
+
+    // playlists start at 00, tracks at 01
+    const pi = parseInt(sel.slice(0, 2));
+    const ti = parseInt(sel.slice(2, 4)) - 1;
+
+    if (ti < 0) {
+      sel = "XXXX";
+      return;
+    }
+
+    const album = playlist.albums.at(pi);
+    if (!album) {
+      sel = "XXXX";
+      return;
+    }
+
+    const track = album.tracks.at(ti);
+    if (!track) {
+      sel = "XXXX";
+      return;
+    }
+
+    select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
+    enqueue(select);
   };
 
   const onkeydown = (event: KeyboardEvent) => {
@@ -294,6 +338,9 @@
   <!-- component layout -->
   <div class="flex flex-col">
     <div class="flex items-center justify-center border border-red-500">
+      <div class="font-mono">
+        SELECT: {sel}
+      </div>
       <button
         class="btn btn-square btn-primary"
         onclick={() => {
@@ -303,8 +350,21 @@
         <Icon src={ChevronLeft} class="size-5" />
       </button>
       {#each Array(9) as _, i}
-        <button class="btn btn-square btn-primary">{i}</button>
+        <button
+          class="btn btn-square btn-primary"
+          onclick={() => {
+            selAdd(i.toString());
+          }}>{i}</button
+        >
       {/each}
+      <button
+        class="btn btn-square btn-primary"
+        onclick={() => {
+          selAdd("X");
+        }}
+      >
+        <Icon src={XMark} class="size-5" />
+      </button>
       <button
         class="btn btn-square btn-primary"
         onclick={() => {
