@@ -5,7 +5,14 @@
   import { AlbumTracks } from "$lib/types/music";
   import type { UserProfile } from "@spotify/web-api-ts-sdk";
   import { onMount } from "svelte";
-  import { Bars3, CommandLine, Icon, QueueList } from "svelte-hero-icons";
+  import {
+    Bars3,
+    CommandLine,
+    Icon,
+    QueueList,
+    ChevronLeft,
+    ChevronRight,
+  } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import { Log } from "./log.svelte";
@@ -40,6 +47,10 @@
 
   const pad = (n: number) => n.toString().padStart(2, "0");
 
+  const onkeydown = (event: KeyboardEvent) => {
+    console.log("event", event);
+  };
+
   // if queued when nothing is playing, play
   $effect(() => {
     if (audio.currentTime == 0 && audio.paused && playlist.queue.length == 1) {
@@ -72,6 +83,8 @@
     await playlist.get(auth.token);
   });
 </script>
+
+<svelte:window {onkeydown} />
 
 <svelte:head>
   <title>Spotify Jukebox</title>
@@ -264,22 +277,35 @@
   {@const { progress } = playlist}
 
   <!-- component layout -->
-  <div class="navbar relative min-h-20 bg-base-100 p-0">
-    <progress
-      class="progress progress-primary absolute -top-1 h-1"
-      max={progress.max}
-      value={progress.value}
-      class:hidden={progress.value == progress.max}
-    ></progress>
+  <div class="flex flex-col">
+    <div class="flex items-center justify-center border border-red-500">
+      <button class="btn btn-square btn-primary">
+        <Icon src={ChevronLeft} class="size-5" />
+      </button>
+      {#each Array(9) as _, i}
+        <button class="btn btn-square btn-primary">{i}</button>
+      {/each}
+      <button class="btn btn-square btn-primary">
+        <Icon src={ChevronRight} class="size-5" />
+      </button>
+    </div>
+    <div class="navbar relative min-h-20 bg-base-100 p-0">
+      <progress
+        class="progress progress-primary absolute -top-1 h-1"
+        max={progress.max}
+        value={progress.value}
+        class:hidden={progress.value == progress.max}
+      ></progress>
 
-    <div class="navbar-start w-32 p-2">
-      {@render start()}
-    </div>
-    <div class="navbar-center flex grow justify-center">
-      {@render center()}
-    </div>
-    <div class="navbar-end w-32 p-2">
-      {@render end()}
+      <div class="navbar-start w-32 p-2">
+        {@render start()}
+      </div>
+      <div class="navbar-center flex grow justify-center">
+        {@render center()}
+      </div>
+      <div class="navbar-end w-32 p-2">
+        {@render end()}
+      </div>
     </div>
   </div>
 
