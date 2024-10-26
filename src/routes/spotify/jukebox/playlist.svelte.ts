@@ -90,13 +90,10 @@ export const Playlist = () => {
 
     history = JSON.parse(localStorage.getItem("jukelab:history") || "[]");
     queue = JSON.parse(localStorage.getItem("jukelab:queue") || "[]");
-    if (history.length) {
-      queue.push(history[0]);
-    }
 
     _shuffle();
 
-    const at = queue.length ? find(queue[0]) : find(shuffle[0]);
+    const at = history.length ? find(history[0]) : find(shuffle[0]);
     album = at.album;
     track = at.track;
 
