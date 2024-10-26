@@ -29,10 +29,9 @@
 
   let audio = $state(Audio);
   let playlist = Playlist();
+  let playlistIn = $state({ value: "", err: "" });
   let profile = $state<UserProfile>();
   let select = Select(playlist);
-  let src = $state("");
-  let srcErr = $state("");
   let token = $state<string>();
 
   let ui = $state({
@@ -118,8 +117,7 @@
     profile = await auth.profile();
 
     storage.get();
-    const src = storage.getItem("playlist");
-    await playlist.get(src, auth.token);
+    await playlist.get(storage.getItem("playlist"), auth.token);
     storage.setPlaylist(playlist.playlist);
   });
 </script>
@@ -546,12 +544,12 @@
     <input
       type="text"
       placeholder="https://open.spotify.com/playlist/2To3oHfuHL72mGOApNL7bL"
-      bind:value={src}
+      bind:value={playlistIn.value}
       class="input w-full"
-      class:input-error={srcErr}
+      class:input-error={playlistIn.err}
     />
     <div class="label">
-      <span class="label-text-alt text-error" class:hidden={!srcErr}>{srcErr}</span>
+      <span class="label-text-alt text-error" class:hidden={!playlistIn.err}>{playlistIn.err}</span>
     </div>
     <form method="dialog">
       <div class="modal-action">
@@ -560,11 +558,11 @@
           class="btn btn-accent"
           onclick={async (e) => {
             e.preventDefault();
-            srcErr = "";
+            playlistIn.err = "";
             // https://open.spotify.com/playlist/2To3oHfuHL72mGOApNL7bL
-            const ms = src.match(/playlist\/(\w+)/);
+            const ms = playlistIn.value.match(/playlist\/(\w+)/);
             if (!ms) {
-              srcErr = "Invalid Spotify playlist URL";
+              playlistIn.err = "Invalid Spotify playlist URL";
               return;
             }
 
