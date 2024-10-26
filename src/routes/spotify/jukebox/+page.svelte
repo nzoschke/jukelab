@@ -18,12 +18,14 @@
   import AudioC from "../Audio.svelte";
   import { Log } from "./log.svelte";
   import { Playlist, type Src } from "./playlist.svelte";
+  import { Storage } from "./storage.svelte";
   import { Select } from "./select.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
   const auth = Auth();
   const log = Log();
+  const storage = Storage();
 
   let audio = $state(Audio);
   let playlist = Playlist();
@@ -111,17 +113,16 @@
       playlist.parse(await res.text());
       return;
     }
-
-    var hash = window.location.hash.substring(1);
-    var params: Record<string, string> = {};
-    hash.split("&").map((hk) => {
-      let parts = hk.split("=");
-      params[parts[0]] = parts[1];
-    });
-    console.log(params);
-    var src = params["src"] || "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E";
     profile = await auth.profile();
-    await playlist.get(src, auth.token);
+
+    storage.get();
+    const params = storage.hash();
+    if (params["playlist"]) {
+      storage.playlist = params["playlist"];
+      storage.set();
+    }
+
+    await playlist.get(storage.playlist, auth.token);
   });
 </script>
 
@@ -165,22 +166,16 @@
     <li>
       <h2 class="menu-title">Playlists</h2>
       <ul>
-        <li>
-          <button
-            onclick={() => {
-              window.location.hash = "src=spotify:playlist:0JOnan9Ym7vJ485NEfdu5E";
-              window.location.reload();
-            }}>JukeLab 101</button
-          >
-        </li>
-        <li>
-          <button
-            onclick={() => {
-              window.location.hash = "src=spotify:playlist:3ENY9f8zKVYOegYWNJYAYV";
-              window.location.reload();
-            }}>JukeLab 102</button
-          >
-        </li>
+        {#each storage.playlists as playlist}
+          <li>
+            <button
+              onclick={() => {
+                window.location.hash = `playlist=${playlist[1]}`;
+                window.location.reload();
+              }}>{playlist[0]}</button
+            >
+          </li>
+        {/each}
       </ul>
     </li>
     <li>
