@@ -8,8 +8,8 @@ export const Storage = () => {
       ["Jukelab 102", "spotify:playlist:3ENY9f8zKVYOegYWNJYAYV"],
     ],
   };
-  let hash: Record<string, string> = {};
 
+  let hash: Record<string, string> = {};
   let playlist = "";
   let playlists: string[][] = $state([]);
 

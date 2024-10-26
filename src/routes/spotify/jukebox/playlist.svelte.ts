@@ -74,6 +74,8 @@ export const Playlist = () => {
       localStorage.setItem(key, i);
     }
 
+    progress.value = progress.max;
+
     return parse(i);
   };
 
@@ -86,11 +88,15 @@ export const Playlist = () => {
       return v;
     });
 
-    progress.value = progress.max;
+    history = JSON.parse(localStorage.getItem("jl:history") || "[]");
+    queue = JSON.parse(localStorage.getItem("jl:queue") || "[]");
+    if (history.length) {
+      queue.push(history[0]);
+    }
 
     _shuffle();
 
-    const at = find(shuffle[0]);
+    const at = queue.length ? find(queue[0]) : find(shuffle[0]);
     album = at.album;
     track = at.track;
 
@@ -101,6 +107,10 @@ export const Playlist = () => {
     if (!src) return;
 
     history.unshift(src);
+
+    localStorage.setItem("jl:history", JSON.stringify(history));
+    localStorage.setItem("jl:queue", JSON.stringify(queue));
+
     const at = find(src);
     album = at.album;
     track = at.track;
@@ -110,6 +120,7 @@ export const Playlist = () => {
 
   const enqueue = async (at: AlbumTrack) => {
     queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
+    localStorage.setItem("jl:queue", JSON.stringify(queue));
   };
 
   const shift = async (): Promise<Src | undefined> => {
