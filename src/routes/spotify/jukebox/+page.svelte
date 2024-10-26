@@ -20,6 +20,7 @@
   import { Playlist, type Src } from "./playlist.svelte";
   import { Storage } from "./storage.svelte";
   import { Select } from "./select.svelte";
+  import { pushState, replaceState } from "$app/navigation";
 
   type Tabs = "queue" | "shuffle" | "history";
 

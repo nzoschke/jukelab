@@ -1,3 +1,4 @@
+import { replaceState } from "$app/navigation";
 import type { Playlist } from "$lib/types/music";
 
 export const Storage = () => {
@@ -27,7 +28,7 @@ export const Storage = () => {
     });
 
     hash = params;
-    history.replaceState(null, "", " ");
+    replaceState("", {});
   };
 
   const get = () => {
