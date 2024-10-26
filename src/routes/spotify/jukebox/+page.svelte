@@ -26,7 +26,7 @@
   const log = Log();
 
   let audio = $state(Audio);
-  let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
+  let playlist = Playlist();
   let profile = $state<UserProfile>();
   let select = Select(playlist);
   let token = $state<string>();
@@ -112,8 +112,16 @@
       return;
     }
 
+    var hash = window.location.hash.substring(1);
+    var params: Record<string, string> = {};
+    hash.split("&").map((hk) => {
+      let parts = hk.split("=");
+      params[parts[0]] = parts[1];
+    });
+    console.log(params);
+    var src = params["src"] || "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E";
     profile = await auth.profile();
-    await playlist.get(auth.token);
+    await playlist.get(src, auth.token);
   });
 </script>
 
@@ -154,8 +162,34 @@
 <!-- page components -->
 {#snippet menu()}
   <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
-    <li><a href={href("/")}>Home</a></li>
-    <li><a href="https://github.com/nzoschke/jukelab">GitHub</a></li>
+    <li>
+      <h2 class="menu-title">Playlists</h2>
+      <ul>
+        <li>
+          <button
+            onclick={() => {
+              window.location.hash = "src=spotify:playlist:0JOnan9Ym7vJ485NEfdu5E";
+              window.location.reload();
+            }}>JukeLab 101</button
+          >
+        </li>
+        <li>
+          <button
+            onclick={() => {
+              window.location.hash = "src=spotify:playlist:3ENY9f8zKVYOegYWNJYAYV";
+              window.location.reload();
+            }}>JukeLab 102</button
+          >
+        </li>
+      </ul>
+    </li>
+    <li>
+      <h2 class="menu-title">Links</h2>
+      <ul>
+        <li><a href={href("/")}>Home</a></li>
+        <li><a href="https://github.com/nzoschke/jukelab">GitHub</a></li>
+      </ul>
+    </li>
   </ul>
 {/snippet}
 
