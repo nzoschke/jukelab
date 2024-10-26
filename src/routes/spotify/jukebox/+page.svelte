@@ -5,11 +5,20 @@
   import { AlbumTracks } from "$lib/types/music";
   import type { UserProfile } from "@spotify/web-api-ts-sdk";
   import { onMount } from "svelte";
-  import { Bars3, CommandLine, Icon, QueueList } from "svelte-hero-icons";
+  import {
+    Bars3,
+    ChevronLeft,
+    ChevronRight,
+    CommandLine,
+    Icon,
+    QueueList,
+    XMark,
+  } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import { Log } from "./log.svelte";
-  import { AlbumTrack, Playlist, type Src } from "./playlist.svelte";
+  import { Playlist, type Src } from "./playlist.svelte";
+  import { Select } from "./select.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -19,8 +28,8 @@
   let audio = $state(Audio);
   let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
   let profile = $state<UserProfile>();
+  let select = Select(playlist);
   let token = $state<string>();
-  let select = $state(AlbumTrack);
 
   let ui = $state({
     aside: false,
@@ -28,17 +37,52 @@
     tab: "queue" as Tabs,
   });
 
-  const enqueue = async (at: AlbumTrack) => {
-    await playlist.enqueue(at);
+  const pad = (n: number) => n.toString().padStart(2, "0");
 
-    const el = document.getElementById("enqueue") as HTMLDialogElement;
-    el.showModal();
-    setTimeout(() => {
-      el.close();
-    }, 2500);
+  let page = $state(0);
+  const pages = $derived(playlist.albums.length / 4);
+  const pageScroll = (delta: number) => {
+    page += delta;
+    if (page < 0) page = 0;
+    if (page >= pages) page = pages - 1;
+
+    const el = document.getElementById("carousel") as HTMLDivElement;
+    el.scrollLeft = page * (el.scrollWidth / pages);
   };
 
-  const pad = (n: number) => n.toString().padStart(2, "0");
+  const onkeydown = (event: KeyboardEvent) => {
+    if (event.metaKey) return;
+    switch (event.key) {
+      case "0":
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+      case "9":
+        select.char(event.key);
+        break;
+      case "Backspace":
+      case ".":
+      case "x":
+        select.char("x");
+        break;
+      case "ArrowLeft":
+      case "Enter":
+      case "-":
+      case "/":
+        pageScroll(-1);
+        break;
+      case "ArrowRight":
+      case "+":
+      case "*":
+        pageScroll(+1);
+        break;
+    }
+  };
 
   // if queued when nothing is playing, play
   $effect(() => {
@@ -72,6 +116,8 @@
     await playlist.get(auth.token);
   });
 </script>
+
+<svelte:window {onkeydown} />
 
 <svelte:head>
   <title>Spotify Jukebox</title>
@@ -195,7 +241,13 @@
 {/snippet}
 
 {#snippet main()}
-  <div class="carousel size-full">
+  <div
+    id="carousel"
+    class="carousel size-full"
+    onscrollend={({ currentTarget: t }) => {
+      page = Math.round(t.scrollLeft / t.clientWidth);
+    }}
+  >
     <div class="skeleton size-full rounded-none" class:hidden={playlist.albums.length > 0}></div>
 
     {#each playlist.chunk(4) as albums, n}
@@ -264,22 +316,73 @@
   {@const { progress } = playlist}
 
   <!-- component layout -->
-  <div class="navbar relative min-h-20 bg-base-100 p-0">
-    <progress
-      class="progress progress-primary absolute -top-1 h-1"
-      max={progress.max}
-      value={progress.value}
-      class:hidden={progress.value == progress.max}
-    ></progress>
+  <div class="flex flex-col">
+    <div class="flex items-center justify-between">
+      <div class="w-32"></div>
+      <div class="flex space-x-1">
+        <button
+          class="btn btn-square btn-primary"
+          onclick={() => {
+            pageScroll(-1);
+          }}
+        >
+          <Icon src={ChevronLeft} class="size-5" />
+        </button>
+        {#each Array(9) as _, i}
+          <button
+            class="btn btn-square btn-primary"
+            onclick={() => {
+              select.char(i.toString());
+            }}>{i}</button
+          >
+        {/each}
+        <button
+          class="btn btn-square btn-primary"
+          onclick={() => {
+            select.char("x");
+          }}
+        >
+          <Icon src={XMark} class="size-5" />
+        </button>
+        <button
+          class="btn btn-square btn-primary"
+          onclick={() => {
+            pageScroll(+1);
+          }}
+        >
+          <Icon src={ChevronRight} class="size-5" />
+        </button>
+      </div>
+      <div class="flex w-32 justify-end space-x-1 px-2 font-mono text-xs">
+        <div>
+          <p>SELECT</p>
+          <p>PLAYING</p>
+          <p>QUEUED</p>
+        </div>
+        <div>
+          <p>{select.num}</p>
+          <p>{playlist.playing}</p>
+          <p>{pad(playlist.queue.length)}</p>
+        </div>
+      </div>
+    </div>
+    <div class="navbar relative min-h-20 bg-base-100 p-0">
+      <progress
+        class="progress progress-primary absolute -top-1 h-1"
+        max={progress.max}
+        value={progress.value}
+        class:hidden={progress.value == progress.max}
+      ></progress>
 
-    <div class="navbar-start w-32 p-2">
-      {@render start()}
-    </div>
-    <div class="navbar-center flex grow justify-center">
-      {@render center()}
-    </div>
-    <div class="navbar-end w-32 p-2">
-      {@render end()}
+      <div class="navbar-start w-32 p-2">
+        {@render start()}
+      </div>
+      <div class="navbar-center flex grow justify-center">
+        {@render center()}
+      </div>
+      <div class="navbar-end w-32 p-2">
+        {@render end()}
+      </div>
     </div>
   </div>
 
@@ -350,9 +453,7 @@
           <button
             class="block w-full truncate text-left"
             onclick={() => {
-              select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
-              const el = document.getElementById("select") as HTMLDialogElement;
-              el.showModal();
+              select.select(album, track);
             }}
           >
             <span class="font-mono font-bold">{pad(n + 1)}</span>
@@ -367,16 +468,18 @@
 
 <dialog id="select" class="modal">
   <div class="modal-box text-center">
-    <h3 class="pb-4 text-lg font-bold">Queue {pad(select.albumNum)}{pad(select.trackNum + 1)}</h3>
-    <p class="text-lg font-bold">{select.track.title}</p>
-    <p>{select.track.artist}</p>
+    <h3 class="pb-4 text-lg font-bold">
+      Queue {pad(select.track.albumNum)}{pad(select.track.trackNum + 1)}
+    </h3>
+    <p class="text-lg font-bold">{select.track.track.title}</p>
+    <p>{select.track.track.artist}</p>
     <form method="dialog">
       <div class="modal-action justify-between">
         <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
         <button
           class="btn btn-accent"
           onclick={async () => {
-            await enqueue(select);
+            await select.enqueue();
           }}>OK</button
         >
         <button class="btn btn-primary" onclick={() => {}}>NO</button>
@@ -390,9 +493,11 @@
 
 <dialog id="enqueue" class="modal">
   <div class="modal-box text-center">
-    <h3 class="pb-4 text-lg font-bold">Queued {pad(select.albumNum)}{pad(select.trackNum + 1)}</h3>
-    <p class="text-lg font-bold">{select.track.title}</p>
-    <p>{select.track.artist}</p>
+    <h3 class="pb-4 text-lg font-bold">
+      Queued {pad(select.track.albumNum)}{pad(select.track.trackNum + 1)}
+    </h3>
+    <p class="text-lg font-bold">{select.track.track.title}</p>
+    <p>{select.track.track.artist}</p>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>

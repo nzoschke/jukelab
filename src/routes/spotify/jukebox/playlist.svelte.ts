@@ -30,6 +30,14 @@ export const Playlist = (src: string) => {
   let shuffle = $state<Src[]>([]);
   let track = $state(Track);
 
+  let playing = $derived.by(() => {
+    const an = albums.indexOf(album);
+    const tn = album.tracks.indexOf(track);
+    return tn > 0 ? `${pad(an)}${pad(tn + 1)}` : "____";
+  });
+
+  const pad = (n: number) => n.toString().padStart(2, "0");
+
   const chunk = (size: number) =>
     albums.reduce<AlbumTracks[][]>((all, one, i) => {
       const ch = Math.floor(i / size);
@@ -171,6 +179,9 @@ export const Playlist = (src: string) => {
     },
     get playlist() {
       return playlist;
+    },
+    get playing() {
+      return playing;
     },
     get progress() {
       return progress;
