@@ -1,3 +1,4 @@
+import { replaceState } from "$app/navigation";
 import type { Playlist } from "$lib/types/music";
 
 export const Storage = () => {
@@ -8,8 +9,8 @@ export const Storage = () => {
       ["Jukelab 102", "spotify:playlist:3ENY9f8zKVYOegYWNJYAYV"],
     ],
   };
-  let hash: Record<string, string> = {};
 
+  let hash: Record<string, string> = {};
   let playlist = "";
   let playlists: string[][] = $state([]);
 
@@ -27,13 +28,13 @@ export const Storage = () => {
     });
 
     hash = params;
-    history.replaceState(null, "", " ");
+    replaceState("", {});
   };
 
   const get = () => {
     _hash();
-    playlist = _get("playlist");
-    playlists = _get("playlists");
+    playlist = _get("jukelab:playlist");
+    playlists = _get("jukelab:playlists");
   };
 
   const getItem = (key: string) => {
@@ -41,8 +42,8 @@ export const Storage = () => {
   };
 
   const set = () => {
-    localStorage.setItem("playlist", JSON.stringify(playlist));
-    localStorage.setItem("playlists", JSON.stringify(playlists));
+    localStorage.setItem("jukelab:playlist", JSON.stringify(playlist));
+    localStorage.setItem("jukelab:playlists", JSON.stringify(playlists));
   };
 
   const setPlaylist = (pl: Playlist) => {

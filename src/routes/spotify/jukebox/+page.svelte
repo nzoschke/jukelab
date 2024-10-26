@@ -89,7 +89,12 @@
 
   // if queued when nothing is playing, play
   $effect(() => {
-    if (audio.currentTime == 0 && audio.paused && playlist.queue.length == 1) {
+    if (
+      audio.currentTime == 0 &&
+      audio.paused &&
+      playlist.queue.length == 1 &&
+      playlist.history.length == 0
+    ) {
       playlist.skip(1);
       audio.paused = false;
     }
