@@ -20,7 +20,7 @@ export const AlbumTrack: AlbumTrack = {
   track: Track,
 };
 
-export const Playlist = (src: string) => {
+export const Playlist = () => {
   let album = $state(AlbumTracks);
   let albums = $state<AlbumTracks[]>([]);
   let history = $state<Src[]>([]);
@@ -46,7 +46,7 @@ export const Playlist = (src: string) => {
       return all;
     }, []);
 
-  const get = async (token: () => Promise<string>) => {
+  const get = async (src: string, token: () => Promise<string>) => {
     const api = API(token);
     playlist = await api.playlist(src);
     progress.max = playlist.tracks.length;

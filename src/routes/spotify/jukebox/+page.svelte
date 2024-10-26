@@ -18,15 +18,18 @@
   import AudioC from "../Audio.svelte";
   import { Log } from "./log.svelte";
   import { Playlist, type Src } from "./playlist.svelte";
+  import { Storage } from "./storage.svelte";
   import { Select } from "./select.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
   const auth = Auth();
   const log = Log();
+  const storage = Storage();
 
   let audio = $state(Audio);
-  let playlist = Playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
+  let playlist = Playlist();
+  let playlistIn = $state({ value: "", err: "" });
   let profile = $state<UserProfile>();
   let select = Select(playlist);
   let token = $state<string>();
@@ -111,9 +114,11 @@
       playlist.parse(await res.text());
       return;
     }
-
     profile = await auth.profile();
-    await playlist.get(auth.token);
+
+    storage.get();
+    await playlist.get(storage.getItem("playlist"), auth.token);
+    storage.setPlaylist(playlist.playlist);
   });
 </script>
 
@@ -154,8 +159,36 @@
 <!-- page components -->
 {#snippet menu()}
   <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
-    <li><a href={href("/")}>Home</a></li>
-    <li><a href="https://github.com/nzoschke/jukelab">GitHub</a></li>
+    <li>
+      <h2 class="menu-title">Playlists</h2>
+      <ul>
+        {#each storage.playlists as playlist}
+          <li>
+            <button
+              onclick={() => {
+                window.location.hash = `playlist=${playlist[1]}`;
+                window.location.reload();
+              }}>{playlist[0]}</button
+            >
+          </li>
+        {/each}
+        <li>
+          <button
+            onclick={() => {
+              const el = document.getElementById("playlist") as HTMLDialogElement;
+              el.showModal();
+            }}>Custom playlist</button
+          >
+        </li>
+      </ul>
+    </li>
+    <li>
+      <h2 class="menu-title">Links</h2>
+      <ul>
+        <li><a href={href("/")}>Home</a></li>
+        <li><a href="https://github.com/nzoschke/jukelab">GitHub</a></li>
+      </ul>
+    </li>
   </ul>
 {/snippet}
 
@@ -498,6 +531,47 @@
     </h3>
     <p class="text-lg font-bold">{select.track.track.title}</p>
     <p>{select.track.track.artist}</p>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<dialog id="playlist" class="modal">
+  <div class="modal-box w-full text-center">
+    <h3 class="pb-4 text-lg font-bold">Custom playlist</h3>
+    <p>Paste a Spotify Playlist URL.</p>
+    <input
+      type="text"
+      placeholder="https://open.spotify.com/playlist/2To3oHfuHL72mGOApNL7bL"
+      bind:value={playlistIn.value}
+      class="input w-full"
+      class:input-error={playlistIn.err}
+    />
+    <div class="label">
+      <span class="label-text-alt text-error" class:hidden={!playlistIn.err}>{playlistIn.err}</span>
+    </div>
+    <form method="dialog">
+      <div class="modal-action">
+        <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+        <button
+          class="btn btn-accent"
+          onclick={async (e) => {
+            e.preventDefault();
+            playlistIn.err = "";
+            // https://open.spotify.com/playlist/2To3oHfuHL72mGOApNL7bL
+            const ms = playlistIn.value.match(/playlist\/(\w+)/);
+            if (!ms) {
+              playlistIn.err = "Invalid Spotify playlist URL";
+              return;
+            }
+
+            window.location.hash = `playlist=spotify:playlist:${ms[1]}`;
+            window.location.reload();
+          }}>OK</button
+        >
+      </div>
+    </form>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>
