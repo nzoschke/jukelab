@@ -31,6 +31,8 @@
   let playlist = Playlist();
   let profile = $state<UserProfile>();
   let select = Select(playlist);
+  let src = $state("");
+  let srcErr = $state("");
   let token = $state<string>();
 
   let ui = $state({
@@ -176,6 +178,14 @@
             >
           </li>
         {/each}
+        <li>
+          <button
+            onclick={() => {
+              const el = document.getElementById("playlist") as HTMLDialogElement;
+              el.showModal();
+            }}>Custom playlist</button
+          >
+        </li>
       </ul>
     </li>
     <li>
@@ -527,6 +537,47 @@
     </h3>
     <p class="text-lg font-bold">{select.track.track.title}</p>
     <p>{select.track.track.artist}</p>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<dialog id="playlist" class="modal">
+  <div class="modal-box w-full text-center">
+    <h3 class="pb-4 text-lg font-bold">Custom playlist</h3>
+    <p>Paste a Spotify Playlist URL.</p>
+    <input
+      type="text"
+      placeholder="https://open.spotify.com/playlist/2To3oHfuHL72mGOApNL7bL"
+      bind:value={src}
+      class="input w-full"
+      class:input-error={srcErr}
+    />
+    <div class="label">
+      <span class="label-text-alt text-error" class:hidden={!srcErr}>{srcErr}</span>
+    </div>
+    <form method="dialog">
+      <div class="modal-action">
+        <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+        <button
+          class="btn btn-accent"
+          onclick={async (e) => {
+            e.preventDefault();
+            srcErr = "";
+            // https://open.spotify.com/playlist/2To3oHfuHL72mGOApNL7bL
+            const ms = src.match(/playlist\/(\w+)/);
+            if (!ms) {
+              srcErr = "Invalid Spotify playlist URL";
+              return;
+            }
+
+            window.location.hash = `playlist=spotify:playlist:${ms[1]}`;
+            window.location.reload();
+          }}>OK</button
+        >
+      </div>
+    </form>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>
