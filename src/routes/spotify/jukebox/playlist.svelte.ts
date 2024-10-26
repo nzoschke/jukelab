@@ -88,8 +88,8 @@ export const Playlist = () => {
       return v;
     });
 
-    history = JSON.parse(localStorage.getItem("jl:history") || "[]");
-    queue = JSON.parse(localStorage.getItem("jl:queue") || "[]");
+    history = JSON.parse(localStorage.getItem("jukelab:history") || "[]");
+    queue = JSON.parse(localStorage.getItem("jukelab:queue") || "[]");
     if (history.length) {
       queue.push(history[0]);
     }
@@ -108,8 +108,8 @@ export const Playlist = () => {
 
     history.unshift(src);
 
-    localStorage.setItem("jl:history", JSON.stringify(history));
-    localStorage.setItem("jl:queue", JSON.stringify(queue));
+    localStorage.setItem("jukelab:history", JSON.stringify(history));
+    localStorage.setItem("jukelab:queue", JSON.stringify(queue));
 
     const at = find(src);
     album = at.album;
@@ -120,7 +120,7 @@ export const Playlist = () => {
 
   const enqueue = async (at: AlbumTrack) => {
     queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
-    localStorage.setItem("jl:queue", JSON.stringify(queue));
+    localStorage.setItem("jukelab:queue", JSON.stringify(queue));
   };
 
   const shift = async (): Promise<Src | undefined> => {

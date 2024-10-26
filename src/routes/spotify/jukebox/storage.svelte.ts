@@ -14,7 +14,7 @@ export const Storage = () => {
   let playlists: string[][] = $state([]);
 
   const _get = (key: string) => {
-    const i = localStorage.getItem(key);
+    const i = localStorage.getItem(`jukelab:${key}`);
     return i ? JSON.parse(i) : defaults[key];
   };
 
