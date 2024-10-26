@@ -39,7 +39,7 @@
 
   const pad = (n: number) => n.toString().padStart(2, "0");
 
-  let page = 0;
+  let page = $state(0);
   const pages = $derived(playlist.albums.length / 4);
   const pageScroll = (delta: number) => {
     page += delta;
@@ -52,8 +52,36 @@
 
   const onkeydown = (event: KeyboardEvent) => {
     if (event.metaKey) return;
-    if (event.key == "ArrowRight") pageScroll(+1);
-    if (event.key == "ArrowLeft") pageScroll(-1);
+    switch (event.key) {
+      case "0":
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+      case "9":
+        select.char(event.key);
+        break;
+      case "Backspace":
+      case ".":
+      case "x":
+        select.char("x");
+        break;
+      case "ArrowLeft":
+      case "Enter":
+      case "-":
+      case "/":
+        pageScroll(-1);
+        break;
+      case "ArrowRight":
+      case "+":
+      case "*":
+        pageScroll(+1);
+        break;
+    }
   };
 
   // if queued when nothing is playing, play
@@ -213,7 +241,13 @@
 {/snippet}
 
 {#snippet main()}
-  <div id="carousel" class="carousel size-full">
+  <div
+    id="carousel"
+    class="carousel size-full"
+    onscrollend={({ currentTarget: t }) => {
+      page = Math.round(t.scrollLeft / t.clientWidth);
+    }}
+  >
     <div class="skeleton size-full rounded-none" class:hidden={playlist.albums.length > 0}></div>
 
     {#each playlist.chunk(4) as albums, n}
@@ -283,42 +317,54 @@
 
   <!-- component layout -->
   <div class="flex flex-col">
-    <div class="flex items-center justify-center border border-red-500">
-      <div class="font-mono">
-        SELECT: {select.num}
-      </div>
-      <button
-        class="btn btn-square btn-primary"
-        onclick={() => {
-          pageScroll(-1);
-        }}
-      >
-        <Icon src={ChevronLeft} class="size-5" />
-      </button>
-      {#each Array(9) as _, i}
+    <div class="flex items-center justify-between">
+      <div class="w-32"></div>
+      <div class="flex space-x-1">
         <button
           class="btn btn-square btn-primary"
           onclick={() => {
-            select.char(i.toString());
-          }}>{i}</button
+            pageScroll(-1);
+          }}
         >
-      {/each}
-      <button
-        class="btn btn-square btn-primary"
-        onclick={() => {
-          select.char("x");
-        }}
-      >
-        <Icon src={XMark} class="size-5" />
-      </button>
-      <button
-        class="btn btn-square btn-primary"
-        onclick={() => {
-          pageScroll(+1);
-        }}
-      >
-        <Icon src={ChevronRight} class="size-5" />
-      </button>
+          <Icon src={ChevronLeft} class="size-5" />
+        </button>
+        {#each Array(9) as _, i}
+          <button
+            class="btn btn-square btn-primary"
+            onclick={() => {
+              select.char(i.toString());
+            }}>{i}</button
+          >
+        {/each}
+        <button
+          class="btn btn-square btn-primary"
+          onclick={() => {
+            select.char("x");
+          }}
+        >
+          <Icon src={XMark} class="size-5" />
+        </button>
+        <button
+          class="btn btn-square btn-primary"
+          onclick={() => {
+            pageScroll(+1);
+          }}
+        >
+          <Icon src={ChevronRight} class="size-5" />
+        </button>
+      </div>
+      <div class="flex w-32 justify-end space-x-1 px-2 font-mono text-xs">
+        <div>
+          <p>SELECT</p>
+          <p>PLAYING</p>
+          <p>QUEUED</p>
+        </div>
+        <div>
+          <p>{select.num}</p>
+          <p>{playlist.playing}</p>
+          <p>{pad(playlist.queue.length)}</p>
+        </div>
+      </div>
     </div>
     <div class="navbar relative min-h-20 bg-base-100 p-0">
       <progress
