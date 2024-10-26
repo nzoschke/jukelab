@@ -15,7 +15,7 @@ export const Storage = () => {
   let playlists: string[][] = $state([]);
 
   const _get = (key: string) => {
-    const i = localStorage.getItem(`jukelab:${key}`);
+    const i = localStorage.getItem(key);
     return i ? JSON.parse(i) : defaults[key];
   };
 
@@ -33,8 +33,8 @@ export const Storage = () => {
 
   const get = () => {
     _hash();
-    playlist = _get("playlist");
-    playlists = _get("playlists");
+    playlist = _get("jukelab:playlist");
+    playlists = _get("jukelab:playlists");
   };
 
   const getItem = (key: string) => {
@@ -42,8 +42,8 @@ export const Storage = () => {
   };
 
   const set = () => {
-    localStorage.setItem("playlist", JSON.stringify(playlist));
-    localStorage.setItem("playlists", JSON.stringify(playlists));
+    localStorage.setItem("jukelab:playlist", JSON.stringify(playlist));
+    localStorage.setItem("jukelab:playlists", JSON.stringify(playlists));
   };
 
   const setPlaylist = (pl: Playlist) => {
