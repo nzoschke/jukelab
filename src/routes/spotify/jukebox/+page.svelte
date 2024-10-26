@@ -118,13 +118,9 @@
     profile = await auth.profile();
 
     storage.get();
-    const params = storage.hash();
-    if (params["playlist"]) {
-      storage.playlist = params["playlist"];
-      storage.set();
-    }
-
-    await playlist.get(storage.playlist, auth.token);
+    const src = storage.getItem("playlist");
+    await playlist.get(src, auth.token);
+    storage.setPlaylist(playlist.playlist);
   });
 </script>
 

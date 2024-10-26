@@ -1,18 +1,28 @@
+import type { Playlist } from "$lib/types/music";
+
 export const Storage = () => {
+  const defaults: Record<string, any> = {
+    playlist: "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E",
+    playlists: [
+      ["Jukelab 101", "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E"],
+      ["Jukelab 102", "spotify:playlist:3ENY9f8zKVYOegYWNJYAYV"],
+    ],
+  };
   let playlist = "";
   let playlists: string[][] = $state([]);
 
-  const _get = (key: string, def: any) => {
+  const _get = (key: string) => {
     const i = localStorage.getItem(key);
-    return i ? JSON.parse(i) : def;
+    return i ? JSON.parse(i) : defaults[key];
   };
 
   const get = () => {
-    playlist = _get("playlist", "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
-    playlists = _get("playlists", [
-      ["Jukelab 101", "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E"],
-      ["Jukelab 102", "spotify:playlist:3ENY9f8zKVYOegYWNJYAYV"],
-    ]);
+    playlist = _get("playlist");
+    playlists = _get("playlists");
+  };
+
+  const getItem = (key: string) => {
+    return hash()[key] || _get(key);
   };
 
   const hash = () => {
@@ -31,10 +41,23 @@ export const Storage = () => {
     localStorage.setItem("playlists", JSON.stringify(playlists));
   };
 
+  const setPlaylist = (pl: Playlist) => {
+    playlist = pl.src;
+    // playlists.indexOf((p) => p[1] == pl.src)
+    const i = playlists.findIndex((p) => p[1] == pl.src);
+    if (i >= 0) {
+      playlists[i][0] = pl.title;
+    } else {
+      playlists.push([pl.title, pl.src]);
+    }
+
+    set();
+  };
+
   return {
     get,
-    hash,
-    set,
+    getItem,
+    setPlaylist,
 
     get playlist() {
       return playlist;
@@ -44,6 +67,9 @@ export const Storage = () => {
     },
     get playlists() {
       return playlists;
+    },
+    set playlists(v: string[][]) {
+      playlists = v;
     },
   };
 };
