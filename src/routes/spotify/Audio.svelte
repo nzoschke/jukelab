@@ -60,7 +60,6 @@
   };
 
   const playPause = async (paused: boolean, src: string) => {
-    log(`playPause deviceId=${deviceId} paused=${paused} src=${src}`);
     if (!player || deviceId == "") return;
 
     if (paused) {

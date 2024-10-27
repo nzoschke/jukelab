@@ -56,5 +56,8 @@
     "*.js": "eslint --cache --fix",
     "**/*": "prettier --write --ignore-unknown"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "nosleep.js": "^0.12.0"
+  }
 }
