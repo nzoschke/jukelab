@@ -69,6 +69,51 @@ export const API = (token: () => Promise<string>) => {
     return album;
   };
 
+  const compilation = async (uri: string): Promise<AlbumTracks> => {
+    const a = await api();
+    const out = await a.playlists.getPlaylist(uri.split(":")[2]);
+    const parts = out.name.split(" by ");
+
+    const album: AlbumTracks = {
+      art: out.images[0].url,
+      artist: parts[1],
+      barcode: "",
+      compilation: true,
+      discs: 1, // FIXME
+      genre: "",
+      src: uri,
+      title: parts[0],
+      tracks: [],
+      year: new Date(0),
+    };
+
+    album.tracks = out.tracks.items.map((pt) => {
+      const a = album;
+      const t = pt.track;
+
+      return {
+        album: a.title,
+        albumArtist: a.artist,
+        artist: t.artists[0].name,
+        bpm: 0,
+        comment: t.preview_url || "",
+        disc: t.disc_number,
+        genre: a.genre,
+        isrc: t.external_ids?.isrc || "",
+        key: "",
+        length: t.duration_ms,
+        mood: "",
+        src: t.uri,
+        track: t.track_number,
+        title: t.name,
+        type: "spotify",
+        year: new Date(t.album.release_date),
+      };
+    });
+
+    return album;
+  };
+
   const playlist = async (uri: string): Promise<PlaylistTracks> => {
     const a = await api();
     const out = await a.playlists.getPlaylist(uri.split(":")[2]);
@@ -112,6 +157,7 @@ export const API = (token: () => Promise<string>) => {
   return {
     album,
     albumTracks,
+    compilation,
     playlist,
     track,
     trackAlbum,
