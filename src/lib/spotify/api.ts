@@ -101,6 +101,9 @@ export const API = (token: () => Promise<string>) => {
       const a = await trackAlbum(t.src);
       albums.push(a);
       if (cb) cb(a);
+
+      // FIXME: avoid rate limit
+      await new Promise((r) => setTimeout(r, 10));
     }
 
     return albums;

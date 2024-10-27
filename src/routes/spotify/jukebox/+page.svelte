@@ -123,6 +123,7 @@
 
   onMount(async () => {
     nosleep = new NoSleep();
+
     token = await auth.token();
     if (!token) {
       const res = await fetch(href("/playlist.json"));
@@ -132,7 +133,6 @@
     profile = await auth.profile();
 
     await playlist.get(auth.token);
-    // storage.setPlaylist(playlist.playlist);
   });
 </script>
 

@@ -76,9 +76,8 @@ export const Playlist = () => {
 
     // get from cache if snapshot id matches
     const key = `${src}:${playlist.id}`;
-    let i = localStorage.getItem(key);
-
-    if (!i) {
+    let item = s.get(key, [] as AlbumTracks[]);
+    if (item.length == 0) {
       // clear cache for old snapshot id
       Object.keys(localStorage)
         .filter((k) => k.startsWith(`${src}:`))
@@ -93,13 +92,13 @@ export const Playlist = () => {
         }
       });
 
-      i = JSON.stringify(albums);
-      localStorage.setItem(key, i);
+      item = albums;
+      s.set(key, albums);
     }
 
     progress.value = progress.max;
 
-    return parse(i);
+    return parse(JSON.stringify(item));
   };
 
   const parse = (json: string): AlbumTracks[] => {
