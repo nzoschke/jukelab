@@ -1,5 +1,5 @@
 export const hash = (key: string) => {
-  for (let kv in window.location.hash.substring(1).split("&")) {
+  for (let kv of window.location.hash.substring(1).split("&")) {
     let [k, v] = kv.split("=");
     if (k == key) return v;
   }

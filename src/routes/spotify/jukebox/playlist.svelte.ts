@@ -34,6 +34,7 @@ export const Playlist = () => {
   let albums = $state<AlbumTracks[]>([]);
   let history = $state<Src[]>([]);
   let playlist = $state(PlaylistTracks);
+  let playlists: string[][] = $state([]);
   let progress = $state({ max: 0, value: 0 });
   let queue = $state<Src[]>([]);
   let shuffle = $state<Src[]>([]);
@@ -65,7 +66,7 @@ export const Playlist = () => {
     playlist = await api.playlist(src);
 
     // update storage
-    const playlists = s.get("playlists", defaults["playlists"]);
+    playlists = s.get("playlists", defaults["playlists"]);
     const n = playlists.findIndex((p) => p[1] == src);
     n >= 0 ? (playlists[n][0] = playlist.title) : playlists.push([playlist.title, src]);
     s.set("playlist", src);
@@ -209,6 +210,9 @@ export const Playlist = () => {
     },
     get playlist() {
       return playlist;
+    },
+    get playlists() {
+      return playlists;
     },
     get playing() {
       return playing;
