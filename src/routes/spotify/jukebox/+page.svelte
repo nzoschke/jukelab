@@ -133,8 +133,7 @@
     }
     profile = await auth.profile();
 
-    storage.get();
-    await playlist.get(storage.getItem("playlist"), auth.token);
+    await playlist.get(auth.token);
     storage.setPlaylist(playlist.playlist);
   });
 </script>

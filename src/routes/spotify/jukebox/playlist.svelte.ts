@@ -1,5 +1,6 @@
 import { API } from "$lib/spotify/api";
 import { Album, AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
+import * as s from "./storage";
 
 export interface Src {
   albumSrc: string;
@@ -21,6 +22,14 @@ export const AlbumTrack: AlbumTrack = {
 };
 
 export const Playlist = () => {
+  const defaults = {
+    playlist: "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E",
+    playlists: [
+      ["Jukelab 101", "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E"],
+      ["Jukelab 102", "spotify:playlist:3ENY9f8zKVYOegYWNJYAYV"],
+    ],
+  };
+
   let album = $state(AlbumTracks);
   let albums = $state<AlbumTracks[]>([]);
   let history = $state<Src[]>([]);
@@ -46,9 +55,22 @@ export const Playlist = () => {
       return all;
     }, []);
 
-  const get = async (src: string, token: () => Promise<string>) => {
+  // get gets a playlist and updates the cache with:
+  // latest playlist src, list of recent playlists, and playlist contents by Spotify snapshot ID.
+  // It reads the location hash so navigate to /page#playlist=spotify:playlist:id to load a new playlist
+  const get = async (token: () => Promise<string>) => {
     const api = API(token);
+
+    const src = s.get("playlist", defaults["playlist"]);
     playlist = await api.playlist(src);
+
+    // update storage
+    const playlists = s.get("playlists", defaults["playlists"]);
+    const n = playlists.findIndex((p) => p[1] == src);
+    n >= 0 ? (playlists[n][0] = playlist.title) : playlists.push([playlist.title, src]);
+    s.set("playlist", src);
+    s.set("playlists", playlists);
+
     progress.max = playlist.tracks.length;
 
     // get from cache if snapshot id matches
