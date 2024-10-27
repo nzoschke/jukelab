@@ -19,7 +19,6 @@
   import AudioC from "../Audio.svelte";
   import { Log } from "./log.svelte";
   import { Playlist, type Src } from "./playlist.svelte";
-  import { Storage } from "./storage.svelte";
   import { Select } from "./select.svelte";
   import NoSleep from "nosleep.js";
 
@@ -28,7 +27,6 @@
   const auth = Auth();
   const log = Log();
   var nosleep: NoSleep;
-  const storage = Storage();
 
   let audio = $state(Audio);
   let playlist = Playlist();
@@ -125,6 +123,7 @@
 
   onMount(async () => {
     nosleep = new NoSleep();
+
     token = await auth.token();
     if (!token) {
       const res = await fetch(href("/playlist.json"));
@@ -133,9 +132,7 @@
     }
     profile = await auth.profile();
 
-    storage.get();
-    await playlist.get(storage.getItem("playlist"), auth.token);
-    storage.setPlaylist(playlist.playlist);
+    await playlist.get(auth.token);
   });
 </script>
 
@@ -179,13 +176,13 @@
     <li>
       <h2 class="menu-title">Playlists</h2>
       <ul>
-        {#each storage.playlists as playlist}
+        {#each playlist.playlists as pl}
           <li>
             <button
               onclick={() => {
-                window.location.hash = `playlist=${playlist[1]}`;
+                window.location.hash = `playlist=${pl[1]}`;
                 window.location.reload();
-              }}>{playlist[0]}</button
+              }}>{pl[0]}</button
             >
           </li>
         {/each}
