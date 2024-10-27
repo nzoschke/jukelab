@@ -13,6 +13,7 @@
     Icon,
     QueueList,
     XMark,
+    Sun,
   } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
@@ -20,11 +21,13 @@
   import { Playlist, type Src } from "./playlist.svelte";
   import { Storage } from "./storage.svelte";
   import { Select } from "./select.svelte";
+  import NoSleep from "nosleep.js";
 
   type Tabs = "queue" | "shuffle" | "history";
 
   const auth = Auth();
   const log = Log();
+  var nosleep: NoSleep;
   const storage = Storage();
 
   let audio = $state(Audio);
@@ -37,6 +40,7 @@
   let ui = $state({
     aside: false,
     details: false,
+    nosleep: false,
     tab: "queue" as Tabs,
   });
 
@@ -112,7 +116,15 @@
     if (audio.ended) playlist.skip(1);
   });
 
+  $effect(() => {
+    if (!ui.nosleep && !audio.paused) {
+      nosleep.enable();
+      ui.nosleep = true;
+    }
+  });
+
   onMount(async () => {
+    nosleep = new NoSleep();
     token = await auth.token();
     if (!token) {
       const res = await fetch(href("/playlist.json"));
@@ -425,6 +437,16 @@
   </div>
 
   {#snippet start()}
+    <button
+      class="btn btn-circle btn-ghost"
+      onclick={() => {
+        nosleep.isEnabled ? nosleep.disable() : nosleep.enable();
+        ui.nosleep = !ui.nosleep;
+      }}
+    >
+      <Icon src={Sun} class="size-5" solid={ui.nosleep} />
+    </button>
+
     <button
       class="btn btn-circle btn-ghost"
       onclick={() => {
