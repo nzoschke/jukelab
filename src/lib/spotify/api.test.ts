@@ -58,45 +58,6 @@ test("albumTracks", async () => {
   });
 });
 
-test("compilation", async () => {
-  // https://open.spotify.com/playlist/5zyp0d80VUrqV0diZWUM8U?si=789b8455026844de
-  const a = await api.compilation("spotify:playlist:5zyp0d80VUrqV0diZWUM8U");
-  assert.deepEqual(a, {
-    art: "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84694fe565fdae754ddbd4f203",
-    artist: "Soulwax",
-    barcode: "",
-    compilation: true,
-    discs: 1,
-    genre: "",
-    src: "spotify:playlist:5zyp0d80VUrqV0diZWUM8U",
-    title: "2ManyMP3s",
-    tracks: a.tracks,
-    year: new Date(0),
-  });
-
-  assert.lengthOf(a.tracks, 49);
-
-  assert.deepEqual(a.tracks[0], {
-    album: "2ManyMP3s",
-    albumArtist: "Soulwax",
-    artist: "Peggy Gou",
-    bpm: 0,
-    comment:
-      "https://p.scdn.co/mp3-preview/058c7b9217aab439d95a06525c7a549f6af205cb?cid=adaaf209fb064dfab873a71817029e0d",
-    disc: 1,
-    genre: "",
-    isrc: "GBJX32275010",
-    key: "",
-    length: 410880,
-    mood: "",
-    src: "spotify:track:577TxxoJTaW1BxH6EUDlTS",
-    title: "I Go - Soulwax Remix",
-    track: 1,
-    type: "spotify",
-    year: new Date("2022-03-30T00:00:00.000Z"),
-  });
-});
-
 test("compilations", async () => {
   const uri = "spotify:user:bxsl6x8wzzcbtbkwquzpcqz74";
   const ps = await api.playlists(uri);
@@ -139,6 +100,48 @@ test("playlist", async () => {
     track: 6,
     type: "spotify",
     year: new Date("1971-09-24T00:00:00.000Z"),
+  });
+});
+
+test("playlistAlbums compilations", { timeout: 60000 }, async () => {
+  const as = await api.playlistAlbums("spotify:playlist:1N8kQZjPWbMvkgxHOpSs8q");
+  assert.lengthOf(as, 100);
+
+  // https://open.spotify.com/playlist/5zyp0d80VUrqV0diZWUM8U
+  const a = as[5];
+  assert.deepEqual(a, {
+    art: "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84694fe565fdae754ddbd4f203",
+    artist: "Soulwax",
+    barcode: "",
+    compilation: true,
+    discs: 1,
+    genre: "",
+    src: "spotify:playlist:5zyp0d80VUrqV0diZWUM8U",
+    title: "2ManyMP3s",
+    tracks: a.tracks,
+    year: new Date(0),
+  });
+
+  assert.lengthOf(a.tracks, 49);
+
+  assert.deepEqual(a.tracks[0], {
+    album: "2ManyMP3s",
+    albumArtist: "Soulwax",
+    artist: "Peggy Gou",
+    bpm: 0,
+    comment:
+      "https://p.scdn.co/mp3-preview/058c7b9217aab439d95a06525c7a549f6af205cb?cid=adaaf209fb064dfab873a71817029e0d",
+    disc: 1,
+    genre: "",
+    isrc: "GBJX32275010",
+    key: "",
+    length: 410880,
+    mood: "",
+    src: "spotify:track:577TxxoJTaW1BxH6EUDlTS",
+    title: "I Go - Soulwax Remix",
+    track: 1,
+    type: "spotify",
+    year: new Date("2022-03-30T00:00:00.000Z"),
   });
 });
 
