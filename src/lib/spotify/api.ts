@@ -1,8 +1,6 @@
-import type { Album, AlbumTracks, Playlist, PlaylistTracks, Track } from "$lib/types/music";
+import type { AlbumTracks, PlaylistTracks } from "$lib/types/music";
 import * as s from "@spotify/web-api-ts-sdk";
-
-type SAlbum = s.Album | s.SimplifiedAlbum;
-type STrack = s.Track | s.SimplifiedTrack;
+import * as to from "./to";
 
 export const API = (token: () => Promise<string>) => {
   const api = async () =>
@@ -13,102 +11,19 @@ export const API = (token: () => Promise<string>) => {
       refresh_token: "",
     });
 
-  const _album = (a: SAlbum): Album => ({
-    art: a.images.at(0)?.url || "",
-    artist: a.artists[0].name,
-    barcode: a.external_ids.upc,
-    compilation: a.album_type == "compilation",
-    discs: 1, // FIXME
-    genre: a.genres[0] || "",
-    src: a.uri,
-    title: a.name,
-    year: new Date(a.release_date),
-  });
-
-  const _compAlbum = (p: s.Playlist): SAlbum => {
-    const parts = p.name.split(" by ");
-
-    return {
-      album_group: "",
-      artists: [
-        {
-          external_urls: {
-            spotify: "",
-          },
-          href: "",
-          id: "",
-          name: parts[1],
-          type: "",
-          uri: "",
-        },
-      ],
-      album_type: "compilation",
-      available_markets: [],
-      copyrights: [],
-      external_ids: {
-        upc: "",
-        isrc: "",
-        ean: "",
-      },
-      external_urls: {
-        spotify: "",
-      },
-      genres: [],
-      href: "",
-      id: "",
-      images: p.images,
-      label: "",
-      name: parts[0],
-      popularity: 0,
-      release_date: p.tracks.items[0].added_at,
-      release_date_precision: "",
-      total_tracks: 0,
-      type: "",
-      uri: p.uri,
-    };
-  };
-
-  const _playlist = (p: s.Playlist): Playlist => ({
-    art: p.images[0].url,
-    id: p.snapshot_id,
-    comment: p.description,
-    owner: p.owner.display_name,
-    src: p.uri,
-    title: p.name,
-  });
-
-  const _track = (a: SAlbum, t: STrack): Track => ({
-    album: a.name,
-    albumArtist: a.artists[0].name,
-    artist: t.artists[0].name,
-    bpm: 0,
-    comment: t.preview_url || "",
-    disc: t.disc_number,
-    genre: a.genres?.length > 0 ? a.genres[0] : "",
-    isrc: (t as s.Track).external_ids?.isrc || "",
-    key: "",
-    length: t.duration_ms,
-    mood: "",
-    src: t.uri,
-    track: t.track_number,
-    title: t.name,
-    type: "spotify",
-    year: new Date(a.release_date),
-  });
-
   const album = async (uri: string) => {
     const a = await api();
     const out = await a.albums.get(uri.split(":")[2]);
 
-    return _album(out);
+    return to.album(out);
   };
 
   const albumTracks = async (uri: string) => {
     const a = await api();
     const out = await a.albums.get(uri.split(":")[2]);
 
-    const album = _album(out) as AlbumTracks;
-    album.tracks = out.tracks.items.map((t) => _track(out, t));
+    const album = to.album(out) as AlbumTracks;
+    album.tracks = out.tracks.items.map((t) => to.track(out, t));
     return album;
   };
 
@@ -116,10 +31,10 @@ export const API = (token: () => Promise<string>) => {
     const a = await api();
     const out = await a.playlists.getPlaylist(playlistUri.split(":")[2]);
 
-    const sa = _compAlbum(out);
-    const album = _album(sa) as AlbumTracks;
+    const sa = to.compAlbum(out);
+    const album = to.album(sa) as AlbumTracks;
     album.tracks = out.tracks.items.map((pt) => {
-      return _track(sa, pt.track);
+      return to.track(sa, pt.track);
     });
 
     return album;
@@ -134,8 +49,8 @@ export const API = (token: () => Promise<string>) => {
     const a = await api();
     const out = await a.playlists.getPlaylist(uri.split(":")[2]);
 
-    const playlist = _playlist(out) as PlaylistTracks;
-    playlist.tracks = out.tracks.items.map((i) => _track(i.track.album, i.track));
+    const playlist = to.playlist(out) as PlaylistTracks;
+    playlist.tracks = out.tracks.items.map((i) => to.track(i.track.album, i.track));
     return playlist;
   };
 
@@ -184,7 +99,7 @@ export const API = (token: () => Promise<string>) => {
     const a = await api();
     const out = await a.tracks.get(uri.split(":")[2]);
 
-    return _track(out.album, out);
+    return to.track(out.album, out);
   };
 
   const trackAlbum = async (uri: string) => {
