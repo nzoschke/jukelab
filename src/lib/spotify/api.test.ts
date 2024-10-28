@@ -115,7 +115,7 @@ test("playlistAlbums compilations", { timeout: 60000 }, async () => {
     src: "spotify:playlist:5zyp0d80VUrqV0diZWUM8U",
     title: "2ManyMP3s",
     tracks: a.tracks,
-    year: new Date(0),
+    year: new Date("2022-08-19T15:56:57.000Z"),
   });
 
   assert.lengthOf(a.tracks, 49);
@@ -137,7 +137,7 @@ test("playlistAlbums compilations", { timeout: 60000 }, async () => {
     title: "I Go - Soulwax Remix",
     track: 1,
     type: "spotify",
-    year: new Date("2022-03-30T00:00:00.000Z"),
+    year: new Date("2022-08-19T15:56:57.000Z"),
   });
 });
 

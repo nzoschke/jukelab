@@ -25,6 +25,49 @@ export const API = (token: () => Promise<string>) => {
     year: new Date(a.release_date),
   });
 
+  const _compAlbum = (p: s.Playlist): SAlbum => {
+    const parts = p.name.split(" by ");
+
+    return {
+      album_group: "",
+      artists: [
+        {
+          external_urls: {
+            spotify: "",
+          },
+          href: "",
+          id: "",
+          name: parts[1],
+          type: "",
+          uri: "",
+        },
+      ],
+      album_type: "compilation",
+      available_markets: [],
+      copyrights: [],
+      external_ids: {
+        upc: "",
+        isrc: "",
+        ean: "",
+      },
+      external_urls: {
+        spotify: "",
+      },
+      genres: [],
+      href: "",
+      id: "",
+      images: p.images,
+      label: "",
+      name: parts[0],
+      popularity: 0,
+      release_date: p.tracks.items[0].added_at,
+      release_date_precision: "",
+      total_tracks: 0,
+      type: "",
+      uri: p.uri,
+    };
+  };
+
   const _playlist = (p: s.Playlist): Playlist => ({
     art: p.images[0].url,
     id: p.snapshot_id,
@@ -32,25 +75,6 @@ export const API = (token: () => Promise<string>) => {
     owner: p.owner.display_name,
     src: p.uri,
     title: p.name,
-  });
-
-  const _tracka = (a: Album, t: STrack): Track => ({
-    album: a.title,
-    albumArtist: a.artist,
-    artist: t.artists[0].name,
-    bpm: 0,
-    comment: t.preview_url || "",
-    disc: t.disc_number,
-    genre: a.genre,
-    isrc: (t as s.Track).external_ids?.isrc || "",
-    key: "",
-    length: t.duration_ms,
-    mood: "",
-    src: t.uri,
-    track: t.track_number,
-    title: t.name,
-    type: "spotify",
-    year: new Date((t as s.Track).album.release_date),
   });
 
   const _track = (a: SAlbum, t: STrack): Track => ({
@@ -91,23 +115,11 @@ export const API = (token: () => Promise<string>) => {
   const compilation = async (playlistUri: string): Promise<AlbumTracks> => {
     const a = await api();
     const out = await a.playlists.getPlaylist(playlistUri.split(":")[2]);
-    const parts = out.name.split(" by ");
 
-    const album: AlbumTracks = {
-      art: out.images[0].url,
-      artist: parts[1],
-      barcode: "",
-      compilation: true,
-      discs: 1, // FIXME
-      genre: "",
-      src: playlistUri,
-      title: parts[0],
-      tracks: [],
-      year: new Date(0),
-    };
-
+    const sa = _compAlbum(out);
+    const album = _album(sa) as AlbumTracks;
     album.tracks = out.tracks.items.map((pt) => {
-      return _tracka(album, pt.track);
+      return _track(sa, pt.track);
     });
 
     return album;
