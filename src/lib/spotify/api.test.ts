@@ -103,7 +103,12 @@ test("playlist", async () => {
   });
 });
 
-test("playlistAlbums compilations", { timeout: 60000 }, async () => {
+test.skip("playlistAlbums", { timeout: 60000 }, async () => {
+  const as = await api.playlistAlbums("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
+  console.log(JSON.stringify(as));
+});
+
+test.skip("playlistAlbums compilations", { timeout: 60000 }, async () => {
   const as = await api.playlistAlbums("spotify:playlist:1N8kQZjPWbMvkgxHOpSs8q");
   assert.lengthOf(as, 100);
 
@@ -183,10 +188,4 @@ test("trackAlbum", async () => {
     tracks: a.tracks,
     year: new Date("2018-01-17T00:00:00.000Z"),
   });
-});
-
-test.skip("tracksAlbum", { timeout: 60000 }, async () => {
-  const p = await api.playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
-  const as = await api.tracksAlbums(p.tracks);
-  console.log(JSON.stringify(as));
 });

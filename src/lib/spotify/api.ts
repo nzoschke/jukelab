@@ -145,6 +145,30 @@ export const API = (token: () => Promise<string>) => {
     return ps;
   };
 
+  const playlistAlbums = async (
+    playlistUri: string,
+    cb?: (album: AlbumTracks) => void,
+  ): Promise<AlbumTracks[]> => {
+    const a = await api();
+
+    const out = await a.playlists.getPlaylist(playlistUri.split(":")[2]);
+    const comps = await compilations(out.owner.uri);
+
+    const p = await playlist(playlistUri);
+    const albums: AlbumTracks[] = [];
+    for (const t of p.tracks) {
+      const comp = comps.find((c) => c.description.includes(t.src.split(":")[2]));
+      const a = comp ? await compilation(comp.uri) : await trackAlbum(t.src);
+      albums.push(a);
+      if (cb) cb(a);
+
+      // FIXME: avoid rate limit
+      await new Promise((r) => setTimeout(r, 10));
+    }
+
+    return albums;
+  };
+
   const track = async (uri: string) => {
     const a = await api();
     const out = await a.tracks.get(uri.split(":")[2]);
@@ -159,48 +183,6 @@ export const API = (token: () => Promise<string>) => {
     return albumTracks(out.album.uri);
   };
 
-  const playlistAlbums = async (
-    playlistUri: string,
-    cb?: (album: AlbumTracks) => void,
-  ): Promise<AlbumTracks[]> => {
-    const a = await api();
-
-    const out = await a.playlists.getPlaylist(playlistUri.split(":")[2]);
-    const comps = await compilations(out.owner.uri);
-
-    const p = await playlist(playlistUri);
-    const albums: AlbumTracks[] = [];
-    for (const t of p.tracks) {
-      const comp = comps.find((c) => c.description.includes(t.src.split(":")[2]));
-
-      const a = comp ? await compilation(comp.uri) : await trackAlbum(t.src);
-      albums.push(a);
-      if (cb) cb(a);
-
-      // FIXME: avoid rate limit
-      await new Promise((r) => setTimeout(r, 10));
-    }
-
-    return albums;
-  };
-
-  const tracksAlbums = async (
-    tracks: Track[],
-    cb?: (album: AlbumTracks) => void,
-  ): Promise<AlbumTracks[]> => {
-    const albums: AlbumTracks[] = [];
-    for (const t of tracks) {
-      const a = await trackAlbum(t.src);
-      albums.push(a);
-      if (cb) cb(a);
-
-      // FIXME: avoid rate limit
-      await new Promise((r) => setTimeout(r, 10));
-    }
-
-    return albums;
-  };
-
   return {
     album,
     albumTracks,
@@ -210,6 +192,5 @@ export const API = (token: () => Promise<string>) => {
     playlistAlbums,
     track,
     trackAlbum,
-    tracksAlbums,
   };
 };
