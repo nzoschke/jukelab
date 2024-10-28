@@ -22,7 +22,7 @@ export const API = (token: () => Promise<string>) => {
     const a = await api();
     const out = await a.albums.get(uri.split(":")[2]);
 
-    const album = to.album(out) as AlbumTracks;
+    const album = to.albumTracks(out);
     album.tracks = out.tracks.items.map((t) => to.track(out, t));
     return album;
   };
@@ -32,7 +32,7 @@ export const API = (token: () => Promise<string>) => {
     const out = await a.playlists.getPlaylist(playlistUri.split(":")[2]);
 
     const sa = to.compAlbum(out);
-    const album = to.album(sa) as AlbumTracks;
+    const album = to.albumTracks(sa);
     album.tracks = out.tracks.items.map((pt) => {
       return to.track(sa, pt.track);
     });
@@ -49,7 +49,7 @@ export const API = (token: () => Promise<string>) => {
     const a = await api();
     const out = await a.playlists.getPlaylist(uri.split(":")[2]);
 
-    const playlist = to.playlist(out) as PlaylistTracks;
+    const playlist = to.playlist(out);
     playlist.tracks = out.tracks.items.map((i) => to.track(i.track.album, i.track));
     return playlist;
   };

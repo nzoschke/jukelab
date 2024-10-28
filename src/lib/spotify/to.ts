@@ -1,4 +1,4 @@
-import type { Album, Playlist, Track } from "$lib/types/music";
+import type { Album, AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
 import * as s from "@spotify/web-api-ts-sdk";
 
 type SAlbum = s.Album | s.SimplifiedAlbum;
@@ -15,6 +15,12 @@ export const album = (a: SAlbum): Album => ({
   title: a.name,
   year: new Date(a.release_date),
 });
+
+export const albumTracks = (a: SAlbum): AlbumTracks => {
+  const al = album(a) as AlbumTracks;
+  al.tracks = [];
+  return al;
+};
 
 export const compAlbum = (p: s.Playlist): SAlbum => {
   const parts = p.name.split(" by ");
@@ -59,13 +65,14 @@ export const compAlbum = (p: s.Playlist): SAlbum => {
   };
 };
 
-export const playlist = (p: s.Playlist): Playlist => ({
+export const playlist = (p: s.Playlist): PlaylistTracks => ({
   art: p.images[0].url,
   id: p.snapshot_id,
   comment: p.description,
   owner: p.owner.display_name,
   src: p.uri,
   title: p.name,
+  tracks: [],
 });
 
 export const track = (a: SAlbum, t: STrack): Track => ({
