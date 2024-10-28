@@ -114,6 +114,11 @@ export const API = (token: () => Promise<string>) => {
     return album;
   };
 
+  const compilations = async (userUri: string): Promise<s.SimplifiedPlaylist[]> => {
+    const ps = await playlists(userUri);
+    return ps.filter((p) => p.description.includes("JukeLab compilation"));
+  };
+
   const playlist = async (uri: string): Promise<PlaylistTracks> => {
     const a = await api();
     const out = await a.playlists.getPlaylist(uri.split(":")[2]);
@@ -121,6 +126,23 @@ export const API = (token: () => Promise<string>) => {
     const playlist = _playlist(out) as PlaylistTracks;
     playlist.tracks = out.tracks.items.map((i) => _track(i.track.album, i.track));
     return playlist;
+  };
+
+  const playlists = async (userUri: string): Promise<s.SimplifiedPlaylist[]> => {
+    const a = await api();
+
+    a.playlists.getUsersPlaylists(userUri.split(":")[2]);
+    let ps: s.SimplifiedPlaylist[] = [];
+    let offset = 0;
+    let total = 1;
+    while (offset < total) {
+      const out = await a.playlists.getUsersPlaylists(userUri.split(":")[2]);
+      total = out.total;
+      offset += out.limit;
+      ps.push(...out.items);
+    }
+
+    return ps;
   };
 
   const track = async (uri: string) => {
@@ -158,7 +180,9 @@ export const API = (token: () => Promise<string>) => {
     album,
     albumTracks,
     compilation,
+    compilations,
     playlist,
+    playlists,
     track,
     trackAlbum,
     tracksAlbums,
