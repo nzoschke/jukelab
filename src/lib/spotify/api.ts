@@ -34,6 +34,25 @@ export const API = (token: () => Promise<string>) => {
     title: p.name,
   });
 
+  const _tracka = (a: Album, t: STrack): Track => ({
+    album: a.title,
+    albumArtist: a.artist,
+    artist: t.artists[0].name,
+    bpm: 0,
+    comment: t.preview_url || "",
+    disc: t.disc_number,
+    genre: a.genre,
+    isrc: (t as s.Track).external_ids?.isrc || "",
+    key: "",
+    length: t.duration_ms,
+    mood: "",
+    src: t.uri,
+    track: t.track_number,
+    title: t.name,
+    type: "spotify",
+    year: new Date((t as s.Track).album.release_date),
+  });
+
   const _track = (a: SAlbum, t: STrack): Track => ({
     album: a.name,
     albumArtist: a.artists[0].name,
@@ -69,9 +88,9 @@ export const API = (token: () => Promise<string>) => {
     return album;
   };
 
-  const compilation = async (uri: string): Promise<AlbumTracks> => {
+  const compilation = async (playlistUri: string): Promise<AlbumTracks> => {
     const a = await api();
-    const out = await a.playlists.getPlaylist(uri.split(":")[2]);
+    const out = await a.playlists.getPlaylist(playlistUri.split(":")[2]);
     const parts = out.name.split(" by ");
 
     const album: AlbumTracks = {
@@ -81,34 +100,14 @@ export const API = (token: () => Promise<string>) => {
       compilation: true,
       discs: 1, // FIXME
       genre: "",
-      src: uri,
+      src: playlistUri,
       title: parts[0],
       tracks: [],
       year: new Date(0),
     };
 
     album.tracks = out.tracks.items.map((pt) => {
-      const a = album;
-      const t = pt.track;
-
-      return {
-        album: a.title,
-        albumArtist: a.artist,
-        artist: t.artists[0].name,
-        bpm: 0,
-        comment: t.preview_url || "",
-        disc: t.disc_number,
-        genre: a.genre,
-        isrc: t.external_ids?.isrc || "",
-        key: "",
-        length: t.duration_ms,
-        mood: "",
-        src: t.uri,
-        track: t.track_number,
-        title: t.name,
-        type: "spotify",
-        year: new Date(t.album.release_date),
-      };
+      return _tracka(album, pt.track);
     });
 
     return album;
@@ -186,7 +185,6 @@ export const API = (token: () => Promise<string>) => {
   return {
     album,
     albumTracks,
-    compilations,
     playlist,
     playlists,
     playlistAlbums,

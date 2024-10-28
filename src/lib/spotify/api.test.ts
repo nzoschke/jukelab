@@ -58,15 +58,6 @@ test("albumTracks", async () => {
   });
 });
 
-test("compilations", async () => {
-  const uri = "spotify:user:bxsl6x8wzzcbtbkwquzpcqz74";
-  const ps = await api.playlists(uri);
-  assert.lengthOf(ps, 72);
-
-  const cs = await api.compilations(uri);
-  assert.lengthOf(cs, 21);
-});
-
 test("playlist", async () => {
   const p = await api.playlist("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
 
@@ -108,7 +99,7 @@ test.skip("playlistAlbums", { timeout: 60000 }, async () => {
   console.log(JSON.stringify(as));
 });
 
-test.skip("playlistAlbums compilations", { timeout: 60000 }, async () => {
+test("playlistAlbums compilations", { timeout: 60000 }, async () => {
   const as = await api.playlistAlbums("spotify:playlist:1N8kQZjPWbMvkgxHOpSs8q");
   assert.lengthOf(as, 100);
 
