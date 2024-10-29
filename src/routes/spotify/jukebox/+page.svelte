@@ -375,7 +375,7 @@
         >
           <Icon src={ChevronLeft} class="size-5" />
         </button>
-        {#each Array(9) as _, i}
+        {#each Array(10) as _, i}
           <button
             class="btn btn-square btn-primary"
             onclick={() => {

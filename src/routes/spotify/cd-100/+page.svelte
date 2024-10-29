@@ -4,7 +4,16 @@
   import { Audio } from "$lib/types/audio";
   import NoSleep from "nosleep.js";
   import { onMount } from "svelte";
-  import { Bars3, Icon } from "svelte-hero-icons";
+  import {
+    Bars3,
+    ChevronLeft,
+    ChevronRight,
+    CommandLine,
+    Icon,
+    QueueList,
+    XMark,
+    Sun,
+  } from "svelte-hero-icons";
   import { Playlist } from "../jukebox/playlist.svelte";
   import { Select } from "../jukebox/select.svelte";
   import { pad } from "$lib/string";
@@ -15,8 +24,18 @@
   const playlist = Playlist();
   let nosleep: NoSleep;
   let page = $state(0);
+  const pages = $derived(playlist.albums.length / 4);
   let select = Select(playlist);
   let token = $state<string>();
+
+  const pageScroll = (delta: number) => {
+    page += delta;
+    if (page < 0) page = 0;
+    if (page >= pages) page = pages - 1;
+
+    const el = document.getElementById("carousel") as HTMLDivElement;
+    el.scrollLeft = page * (el.scrollWidth / pages);
+  };
 
   const onkeydown = (e: KeyboardEvent) => {
     if (e.metaKey) return;
@@ -206,7 +225,40 @@
 {/snippet}
 
 {#snippet footer()}
-  <div class=""></div>
+  <div class="join absolute bottom-1 flex w-full items-center justify-center">
+    <button
+      class="btn btn-square join-item"
+      onclick={() => {
+        pageScroll(-1);
+      }}
+    >
+      <Icon src={ChevronLeft} class="size-5" />
+    </button>
+    {#each Array(10) as _, i}
+      <button
+        class="btn btn-square join-item font-mono text-xl"
+        onclick={() => {
+          select.char(i.toString());
+        }}>{i}</button
+      >
+    {/each}
+    <button
+      class="btn btn-square join-item"
+      onclick={() => {
+        select.char("x");
+      }}
+    >
+      <Icon src={XMark} class="size-5" />
+    </button>
+    <button
+      class="btn btn-square join-item"
+      onclick={() => {
+        pageScroll(+1);
+      }}
+    >
+      <Icon src={ChevronRight} class="size-5" />
+    </button>
+  </div>
 {/snippet}
 
 {#snippet details()}
