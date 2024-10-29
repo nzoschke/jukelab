@@ -88,7 +88,7 @@
 <svelte:window {onkeydown} />
 
 <svelte:head>
-  <title>CD-100</title>
+  <title>CD-100 Jukebox</title>
   <meta name="description" content="CD-100 Jukebox" />
 </svelte:head>
 
