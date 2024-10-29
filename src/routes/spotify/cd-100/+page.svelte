@@ -1,16 +1,69 @@
 <script lang="ts">
-  import {
-    Bars3,
-    ChevronLeft,
-    ChevronRight,
-    CommandLine,
-    Icon,
-    QueueList,
-    XMark,
-    Sun,
-  } from "svelte-hero-icons";
+  import { href } from "$lib/href";
+  import { Auth } from "$lib/spotify/auth";
+  import { Audio } from "$lib/types/audio";
+  import NoSleep from "nosleep.js";
+  import { onMount } from "svelte";
+  import { Bars3, Icon } from "svelte-hero-icons";
+  import { Playlist } from "../jukebox/playlist.svelte";
+  import { Select } from "../jukebox/select.svelte";
+  import { pad } from "$lib/string";
+  import { AlbumTracks } from "$lib/types/music";
 
-  const onkeydown = (e: KeyboardEvent) => {};
+  const auth = Auth();
+  let audio = $state(Audio);
+  const playlist = Playlist();
+  let nosleep: NoSleep;
+  let page = $state(0);
+  let select = Select(playlist);
+  let token = $state<string>();
+
+  const onkeydown = (e: KeyboardEvent) => {
+    if (e.metaKey) return;
+    switch (e.key) {
+      case "0":
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+      case "9":
+        select.char(e.key);
+        break;
+      case "Backspace":
+      case ".":
+      case "x":
+        select.char("x");
+        break;
+      case "ArrowLeft":
+      case "Enter":
+      case "-":
+      case "/":
+        // pageScroll(-1);
+        break;
+      case "ArrowRight":
+      case "+":
+      case "*":
+        // pageScroll(+1);
+        break;
+    }
+  };
+
+  onMount(async () => {
+    nosleep = new NoSleep();
+
+    token = await auth.token();
+    if (!token) {
+      const res = await fetch(href("/playlist.json"));
+      playlist.parse(await res.text());
+      return;
+    }
+
+    await playlist.get(auth.token);
+  });
 </script>
 
 <svelte:window {onkeydown} />
@@ -50,7 +103,7 @@
 {/snippet}
 
 {#snippet nav()}
-  <div class="navbar min-h-20 bg-base-100 p-0">
+  <div class="navbar min-h-20 bg-base-200 p-0">
     <div class="navbar-start w-32 p-2">
       {@render start()}
     </div>
@@ -69,26 +122,100 @@
   {/snippet}
 
   {#snippet center()}
-    center
+    <div class="flex w-full justify-between font-mono text-4xl">
+      <p>SELECT {select.num}</p>
+      <p>PLAYING {playlist.playing}</p>
+      <p>QUEUED {pad(playlist.queue.length)}</p>
+    </div>
   {/snippet}
 
-  {#snippet end()}
-    end
-  {/snippet}
+  {#snippet end()}{/snippet}
 {/snippet}
 
 {#snippet main()}
-  main
+  <div
+    id="carousel"
+    class="carousel size-full"
+    onscrollend={({ currentTarget: t }) => {
+      page = Math.round(t.scrollLeft / t.clientWidth);
+    }}
+  >
+    {#each playlist.chunk(4) as albums, n}
+      <div class="carousel-item size-full">
+        <div class="carousel-item size-full">
+          <div class="flex size-full flex-wrap">
+            <div class="flex size-1/2 border-2">
+              {@render album(n * 4 + 0, albums[0])}
+            </div>
+            <div class="flex size-1/2 flex-row-reverse border-2">
+              {@render album(n * 4 + 2, albums[2])}
+            </div>
+            <div class="flex size-1/2 border-2">
+              {@render album(n * 4 + 1, albums[1])}
+            </div>
+            <div class="flex size-1/2 flex-row-reverse border-2">
+              {@render album(n * 4 + 3, albums[3])}
+            </div>
+          </div>
+        </div>
+      </div>
+    {/each}
+  </div>
+
+  {#snippet album(n: number, album: AlbumTracks)}
+    {#if !album}
+      <!-- TODO: JukeLab placeholder -->
+    {:else}
+      <div class="flex flex-1 flex-col overflow-hidden">
+        <div class="flex">
+          <div
+            class="flex aspect-square size-12 items-center justify-center bg-black text-2xl font-bold text-white"
+          >
+            {pad(n)}
+          </div>
+          <div class="ml-1 flex flex-col overflow-hidden">
+            <p class="truncate font-bold">{album.title}</p>
+            <p class="truncate">{album.artist}</p>
+          </div>
+        </div>
+        <div class="ml-1 overflow-scroll">
+          {#each album.tracks as track, n}
+            <button
+              class="block w-full truncate text-left"
+              onclick={() => {
+                select.select(album, track);
+              }}
+            >
+              <span class="font-mono font-bold">{pad(n + 1)}</span>
+              {track.title}
+            </button>
+          {/each}
+        </div>
+      </div>
+      <img
+        class="aspect-square max-w-[70%] object-cover object-center"
+        src={album?.art}
+        alt="art"
+      />
+    {/if}
+  {/snippet}
 {/snippet}
 
 {#snippet aside()}
-  aside
+  <div class=""></div>
 {/snippet}
 
 {#snippet footer()}
-  <div class="h-12">footer</div>
+  <div class=""></div>
 {/snippet}
 
 {#snippet details()}
-  <div class="h-12">details</div>
+  <div class=""></div>
 {/snippet}
+
+<!-- page style -->
+<style>
+  :global(html) {
+    overflow: hidden;
+  }
+</style>
