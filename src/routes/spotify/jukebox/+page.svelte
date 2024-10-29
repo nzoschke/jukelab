@@ -363,73 +363,22 @@
   {@const { progress } = playlist}
 
   <!-- component layout -->
-  <div class="flex flex-col">
-    <div class="flex items-center justify-between">
-      <div class="w-32"></div>
-      <div class="flex space-x-1">
-        <button
-          class="btn btn-square btn-primary"
-          onclick={() => {
-            pageScroll(-1);
-          }}
-        >
-          <Icon src={ChevronLeft} class="size-5" />
-        </button>
-        {#each Array(10) as _, i}
-          <button
-            class="btn btn-square btn-primary"
-            onclick={() => {
-              select.char(i.toString());
-            }}>{i}</button
-          >
-        {/each}
-        <button
-          class="btn btn-square btn-primary"
-          onclick={() => {
-            select.char("x");
-          }}
-        >
-          <Icon src={XMark} class="size-5" />
-        </button>
-        <button
-          class="btn btn-square btn-primary"
-          onclick={() => {
-            pageScroll(+1);
-          }}
-        >
-          <Icon src={ChevronRight} class="size-5" />
-        </button>
-      </div>
-      <div class="flex w-32 justify-end space-x-1 px-2 font-mono text-xs">
-        <div>
-          <p>SELECT</p>
-          <p>PLAYING</p>
-          <p>QUEUED</p>
-        </div>
-        <div>
-          <p>{select.num}</p>
-          <p>{playlist.playing}</p>
-          <p>{pad(playlist.queue.length)}</p>
-        </div>
-      </div>
-    </div>
-    <div class="navbar relative min-h-20 bg-base-100 p-0">
-      <progress
-        class="progress progress-primary absolute -top-1 h-1"
-        max={progress.max}
-        value={progress.value}
-        class:hidden={progress.value == progress.max}
-      ></progress>
+  <div class="navbar relative min-h-20 bg-base-100 p-0">
+    <progress
+      class="progress progress-primary absolute -top-1 h-1"
+      max={progress.max}
+      value={progress.value}
+      class:hidden={progress.value == progress.max}
+    ></progress>
 
-      <div class="navbar-start w-32 p-2">
-        {@render start()}
-      </div>
-      <div class="navbar-center flex grow justify-center">
-        {@render center()}
-      </div>
-      <div class="navbar-end w-32 p-2">
-        {@render end()}
-      </div>
+    <div class="navbar-start w-32 p-2">
+      {@render start()}
+    </div>
+    <div class="navbar-center flex grow justify-center">
+      {@render center()}
+    </div>
+    <div class="navbar-end w-32 p-2">
+      {@render end()}
     </div>
   </div>
 
