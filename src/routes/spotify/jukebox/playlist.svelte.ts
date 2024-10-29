@@ -83,7 +83,7 @@ export const Playlist = () => {
         .filter((k) => k.startsWith(`${src}:`))
         .forEach((k) => localStorage.removeItem(k));
 
-      await api.tracksAlbums(playlist.tracks, (a) => {
+      await api.playlistAlbums(src, (a) => {
         const n = albums.push(a);
         progress.value = n;
         if (n == 1) {
