@@ -9,6 +9,7 @@
   import { Bars3, ChevronLeft, ChevronRight, Icon, XMark } from "svelte-hero-icons";
   import { AlbumTrack, Playlist } from "../jukebox/playlist.svelte";
   import Queue from "../Queue.svelte";
+  import { updated } from "$app/stores";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -26,6 +27,8 @@
     aside: false,
     details: false,
     nosleep: false,
+    party: false,
+    physical: false,
     tab: "queue" as Tabs,
   });
 
@@ -53,6 +56,12 @@
     setTimeout(() => {
       num = "____";
     }, 1000);
+
+    // magic codes
+    if (num == "9900") {
+      ui.party = !ui.party;
+      return;
+    }
 
     // albums start at 00, tracks at 01
     const ai = parseInt(num.slice(0, 2));
@@ -87,6 +96,7 @@
 
   const onkeydown = (e: KeyboardEvent) => {
     if (e.metaKey) return;
+    ui.physical = true;
     switch (e.key) {
       case "0":
       case "1":
@@ -215,7 +225,7 @@
   </div>
 
   {#snippet start()}
-    <label for="drawer" class="btn btn-circle btn-ghost">
+    <label for="drawer" class="btn btn-circle btn-ghost" class:hidden={ui.party}>
       <Icon src={Bars3} class="size-5" />
     </label>
   {/snippet}
@@ -225,6 +235,7 @@
       <p>SELECT {num}</p>
       <p>PLAYING {playlist.playing}</p>
       <button
+        disabled={ui.party}
         onclick={() => {
           ui.aside = !ui.aside;
         }}>QUEUED {pad(playlist.queue.length)}</button
@@ -304,7 +315,10 @@
 {/snippet}
 
 {#snippet footer()}
-  <div class="join absolute bottom-1 flex w-full items-center justify-center">
+  <div
+    class="join absolute bottom-1 flex w-full items-center justify-center"
+    class:hidden={ui.physical}
+  >
     <button
       class="btn btn-square join-item"
       onclick={() => {
