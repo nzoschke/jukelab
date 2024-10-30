@@ -11,6 +11,7 @@
   import Queue from "../Queue.svelte";
   import AudioC from "../Audio.svelte";
   import Avatar from "../Avatar.svelte";
+  import Menu from "../Menu.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -222,7 +223,7 @@
 
 <!-- page components -->
 {#snippet menu()}
-  <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">menu</ul>
+  <Menu {playlist} />
 {/snippet}
 
 {#snippet nav()}

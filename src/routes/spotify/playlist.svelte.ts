@@ -101,6 +101,8 @@ export const Playlist = () => {
   };
 
   const parse = (json: string): AlbumTracks[] => {
+    playlists = s.get("playlists", defaults["playlists"]);
+
     var re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
     albums = JSON.parse(json, (k, v) => {
       if (typeof v == "string" && re.test(v)) {
