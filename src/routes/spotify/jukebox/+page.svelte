@@ -11,8 +11,8 @@
   import AudioC from "../Audio.svelte";
   import Queue from "../Queue.svelte";
   import { Log } from "./log.svelte";
-  import { Playlist } from "./playlist.svelte";
-  import { Select } from "./select.svelte";
+  import { AlbumTrack, Playlist } from "./playlist.svelte";
+  import { pad } from "$lib/string";
 
   const auth = Auth();
   const log = Log();
@@ -22,16 +22,13 @@
   let playlist = Playlist();
   let playlistIn = $state({ value: "", err: "" });
   let profile = $state<UserProfile>();
-  let select = Select(playlist);
+  let select = $state(AlbumTrack);
   let token = $state<string>();
-
   let ui = $state({
     aside: false,
     details: false,
     nosleep: false,
   });
-
-  const pad = (n: number) => n.toString().padStart(2, "0");
 
   let page = $state(0);
   const pages = $derived(playlist.albums.length / 4);
@@ -47,23 +44,6 @@
   const onkeydown = (event: KeyboardEvent) => {
     if (event.metaKey) return;
     switch (event.key) {
-      case "0":
-      case "1":
-      case "2":
-      case "3":
-      case "4":
-      case "5":
-      case "6":
-      case "7":
-      case "8":
-      case "9":
-        select.char(event.key);
-        break;
-      case "Backspace":
-      case ".":
-      case "x":
-        select.char("x");
-        break;
       case "ArrowLeft":
       case "Enter":
       case "-":
@@ -411,7 +391,9 @@
           <button
             class="block w-full truncate text-left"
             onclick={() => {
-              select.select(album, track);
+              select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
+              const el = document.getElementById("select") as HTMLDialogElement;
+              el.showModal();
             }}
           >
             <span class="font-mono font-bold">{pad(n + 1)}</span>
@@ -427,17 +409,23 @@
 <dialog id="select" class="modal">
   <div class="modal-box text-center">
     <h3 class="pb-4 text-lg font-bold">
-      Queue {pad(select.track.albumNum)}{pad(select.track.trackNum + 1)}
+      Queue {pad(select.albumNum)}{pad(select.trackNum + 1)}
     </h3>
-    <p class="text-lg font-bold">{select.track.track.title}</p>
-    <p>{select.track.track.artist}</p>
+    <p class="text-lg font-bold">{select.track.title}</p>
+    <p>{select.track.artist}</p>
     <form method="dialog">
       <div class="modal-action justify-between">
         <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
         <button
           class="btn btn-accent"
           onclick={async () => {
-            await select.enqueue();
+            playlist.enqueue(select);
+
+            const el = document.getElementById("enqueue") as HTMLDialogElement;
+            el.showModal();
+            setTimeout(() => {
+              el.close();
+            }, 2500);
           }}>OK</button
         >
         <button class="btn btn-primary" onclick={() => {}}>NO</button>
@@ -452,10 +440,10 @@
 <dialog id="enqueue" class="modal">
   <div class="modal-box text-center">
     <h3 class="pb-4 text-lg font-bold">
-      Queued {pad(select.track.albumNum)}{pad(select.track.trackNum + 1)}
+      Queued {pad(select.albumNum)}{pad(select.trackNum + 1)}
     </h3>
-    <p class="text-lg font-bold">{select.track.track.title}</p>
-    <p>{select.track.track.artist}</p>
+    <p class="text-lg font-bold">{select.track.title}</p>
+    <p>{select.track.artist}</p>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>
