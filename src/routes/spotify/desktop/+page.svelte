@@ -13,6 +13,7 @@
   import { Log } from "./log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
   import { pad } from "$lib/string";
+  import Avatar from "../Avatar.svelte";
 
   const auth = Auth();
   const log = Log();
@@ -21,9 +22,7 @@
   let audio = $state(Audio);
   let playlist = Playlist();
   let playlistIn = $state({ value: "", err: "" });
-  let profile = $state<UserProfile>();
   let select = $state(AlbumTrack);
-  let token = $state<string>();
   let ui = $state({
     aside: false,
     details: false,
@@ -93,13 +92,11 @@
   onMount(async () => {
     nosleep = new NoSleep();
 
-    token = await auth.token();
-    if (!token) {
+    if (!(await auth.token())) {
       const res = await fetch(href("/playlist.json"));
       playlist.parse(await res.text());
       return;
     }
-    profile = await auth.profile();
 
     await playlist.get(auth.token);
   });
@@ -221,38 +218,7 @@
   {/snippet}
 
   {#snippet end()}
-    {#if profile}
-      <div class="group relative flex">
-        <button
-          class="avatar size-12 group-hover:opacity-0"
-          onclick={async () => {
-            auth.logout();
-          }}
-        >
-          <div class="rounded-full">
-            <img alt="" src={profile.images[0].url} />
-          </div>
-        </button>
-        <button
-          class="btn btn-circle btn-ghost absolute opacity-0 group-hover:opacity-100"
-          onclick={async () => {
-            auth.logout();
-          }}
-        >
-          Logout
-        </button>
-      </div>
-    {:else}
-      <button
-        class="btn btn-circle btn-ghost"
-        class:hidden={token != ""}
-        onclick={async () => {
-          await auth.login("/spotify/desktop");
-        }}
-      >
-        Login
-      </button>
-    {/if}
+    <Avatar />
   {/snippet}
 {/snippet}
 

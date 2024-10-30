@@ -10,6 +10,7 @@
   import { AlbumTrack, Playlist } from "../playlist.svelte";
   import Queue from "../Queue.svelte";
   import AudioC from "../Audio.svelte";
+  import Avatar from "../Avatar.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -125,6 +126,16 @@
       case "+":
       case "*":
         pageScroll(+1);
+        break;
+      case "a":
+        playlist.skip(-1);
+        break;
+      case " ":
+      case "s":
+        audio.paused = !audio.paused;
+        break;
+      case "d":
+        playlist.skip(+1);
         break;
     }
   };
@@ -246,7 +257,11 @@
     </div>
   {/snippet}
 
-  {#snippet end()}{/snippet}
+  {#snippet end()}
+    <div class:hidden={ui.party}>
+      <Avatar />
+    </div>
+  {/snippet}
 {/snippet}
 
 {#snippet main()}
