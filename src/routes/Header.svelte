@@ -20,7 +20,8 @@
       {@render tab("Home", "/")}
       {@render tab("HTML Audio", "/audio")}
       {@render tab("Spotify", "/spotify")}
-      {@render tab("Jukebox", "/spotify/jukebox")}
+      {@render tab("Desktop", "/spotify/desktop")}
+      {@render tab("Keypad", "/spotify/keypad")}
       {@render tab("About", "/about")}
     </div>
   </div>

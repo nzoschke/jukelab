@@ -1,4 +1,5 @@
 import { API } from "$lib/spotify/api";
+import { pad } from "$lib/string";
 import { Album, AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
 import * as s from "./storage";
 
@@ -43,10 +44,8 @@ export const Playlist = () => {
   let playing = $derived.by(() => {
     const an = albums.indexOf(album);
     const tn = album.tracks.indexOf(track);
-    return tn > 0 ? `${pad(an)}${pad(tn + 1)}` : "____";
+    return tn >= 0 ? `${pad(an)}${pad(tn + 1)}` : "____";
   });
-
-  const pad = (n: number) => n.toString().padStart(2, "0");
 
   const chunk = (size: number) =>
     albums.reduce<AlbumTracks[][]>((all, one, i) => {

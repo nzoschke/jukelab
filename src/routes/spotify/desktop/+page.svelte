@@ -1,28 +1,18 @@
 <script lang="ts">
   import { href } from "$lib/href";
   import { Auth } from "$lib/spotify/auth";
+  import { pad } from "$lib/string";
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
-  import type { UserProfile } from "@spotify/web-api-ts-sdk";
+  import NoSleep from "nosleep.js";
   import { onMount } from "svelte";
-  import {
-    Bars3,
-    ChevronLeft,
-    ChevronRight,
-    CommandLine,
-    Icon,
-    QueueList,
-    XMark,
-    Sun,
-  } from "svelte-hero-icons";
+  import { Bars3, CommandLine, Icon, QueueList, Sun } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
-  import { Log } from "./log.svelte";
-  import { Playlist, type Src } from "./playlist.svelte";
-  import { Select } from "./select.svelte";
-  import NoSleep from "nosleep.js";
-
-  type Tabs = "queue" | "shuffle" | "history";
+  import Avatar from "../Avatar.svelte";
+  import Queue from "../Queue.svelte";
+  import { Log } from "../log.svelte";
+  import { AlbumTrack, Playlist } from "../playlist.svelte";
 
   const auth = Auth();
   const log = Log();
@@ -31,18 +21,12 @@
   let audio = $state(Audio);
   let playlist = Playlist();
   let playlistIn = $state({ value: "", err: "" });
-  let profile = $state<UserProfile>();
-  let select = Select(playlist);
-  let token = $state<string>();
-
+  let select = $state(AlbumTrack);
   let ui = $state({
     aside: false,
     details: false,
     nosleep: false,
-    tab: "queue" as Tabs,
   });
-
-  const pad = (n: number) => n.toString().padStart(2, "0");
 
   let page = $state(0);
   const pages = $derived(playlist.albums.length / 4);
@@ -58,23 +42,6 @@
   const onkeydown = (event: KeyboardEvent) => {
     if (event.metaKey) return;
     switch (event.key) {
-      case "0":
-      case "1":
-      case "2":
-      case "3":
-      case "4":
-      case "5":
-      case "6":
-      case "7":
-      case "8":
-      case "9":
-        select.char(event.key);
-        break;
-      case "Backspace":
-      case ".":
-      case "x":
-        select.char("x");
-        break;
       case "ArrowLeft":
       case "Enter":
       case "-":
@@ -124,13 +91,11 @@
   onMount(async () => {
     nosleep = new NoSleep();
 
-    token = await auth.token();
-    if (!token) {
+    if (!(await auth.token())) {
       const res = await fetch(href("/playlist.json"));
       playlist.parse(await res.text());
       return;
     }
-    profile = await auth.profile();
 
     await playlist.get(auth.token);
   });
@@ -142,6 +107,9 @@
   <title>Spotify Jukebox</title>
   <meta name="description" content="Spotify Jukebox" />
 </svelte:head>
+
+<!-- audio element -->
+<AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
 
 <!-- page layout -->
 <div class="drawer">
@@ -166,9 +134,6 @@
     {@render menu()}
   </div>
 </div>
-
-<!-- audio element -->
-<AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
 
 <!-- page components -->
 {#snippet menu()}
@@ -252,38 +217,7 @@
   {/snippet}
 
   {#snippet end()}
-    {#if profile}
-      <div class="group relative flex">
-        <button
-          class="avatar size-12 group-hover:opacity-0"
-          onclick={async () => {
-            auth.logout();
-          }}
-        >
-          <div class="rounded-full">
-            <img alt="" src={profile.images[0].url} />
-          </div>
-        </button>
-        <button
-          class="btn btn-circle btn-ghost absolute opacity-0 group-hover:opacity-100"
-          onclick={async () => {
-            auth.logout();
-          }}
-        >
-          Logout
-        </button>
-      </div>
-    {:else}
-      <button
-        class="btn btn-circle btn-ghost"
-        class:hidden={token != ""}
-        onclick={async () => {
-          await auth.login("/spotify/jukebox");
-        }}
-      >
-        Login
-      </button>
-    {/if}
+    <Avatar />
   {/snippet}
 {/snippet}
 
@@ -319,117 +253,29 @@
 {/snippet}
 
 {#snippet aside()}
-  {@const { queue, shuffle, history } = playlist}
-
-  <div class="flex w-80 flex-col overflow-hidden bg-base-300 p-1" class:hidden={!ui.aside}>
-    <div role="tablist" class="tabs-boxed tabs">
-      {@render tab("queue")}
-      {@render tab("shuffle")}
-      {@render tab("history")}
-    </div>
-    <div class="overflow-scroll">
-      {@render list("queue", queue)}
-      {@render list("shuffle", shuffle.slice(0, 20))}
-      {@render list("history", history)}
-    </div>
-  </div>
-
-  {#snippet tab(tab: Tabs)}
-    <button
-      role="tab"
-      class="tab w-20"
-      class:tab-active={ui.tab == tab}
-      onclick={() => {
-        ui.tab = tab;
-      }}>{tab.toUpperCase()}</button
-    >
-  {/snippet}
-
-  {#snippet list(tab: Tabs, srcs: Src[])}
-    {#each srcs as src}
-      {@const { album, track } = playlist.find(src)}
-      <div class="flex items-center space-x-1 pt-1" class:hidden={ui.tab != tab}>
-        <img class="h-12 w-12" src={album.art} alt="art" />
-        <div class="flex flex-col overflow-hidden">
-          <div class="truncate font-bold">{track.title}</div>
-          <div class="truncate">{track.artist}</div>
-        </div>
-      </div>
-    {/each}
-  {/snippet}
+  <Queue {playlist} hidden={!ui.aside} />
 {/snippet}
 
 {#snippet footer()}
   {@const { progress } = playlist}
 
   <!-- component layout -->
-  <div class="flex flex-col">
-    <div class="flex items-center justify-between">
-      <div class="w-32"></div>
-      <div class="flex space-x-1">
-        <button
-          class="btn btn-square btn-primary"
-          onclick={() => {
-            pageScroll(-1);
-          }}
-        >
-          <Icon src={ChevronLeft} class="size-5" />
-        </button>
-        {#each Array(9) as _, i}
-          <button
-            class="btn btn-square btn-primary"
-            onclick={() => {
-              select.char(i.toString());
-            }}>{i}</button
-          >
-        {/each}
-        <button
-          class="btn btn-square btn-primary"
-          onclick={() => {
-            select.char("x");
-          }}
-        >
-          <Icon src={XMark} class="size-5" />
-        </button>
-        <button
-          class="btn btn-square btn-primary"
-          onclick={() => {
-            pageScroll(+1);
-          }}
-        >
-          <Icon src={ChevronRight} class="size-5" />
-        </button>
-      </div>
-      <div class="flex w-32 justify-end space-x-1 px-2 font-mono text-xs">
-        <div>
-          <p>SELECT</p>
-          <p>PLAYING</p>
-          <p>QUEUED</p>
-        </div>
-        <div>
-          <p>{select.num}</p>
-          <p>{playlist.playing}</p>
-          <p>{pad(playlist.queue.length)}</p>
-        </div>
-      </div>
-    </div>
-    <div class="navbar relative min-h-20 bg-base-100 p-0">
-      <progress
-        class="progress progress-primary absolute -top-1 h-1"
-        max={progress.max}
-        value={progress.value}
-        class:hidden={progress.value == progress.max}
-      ></progress>
+  <div class="navbar relative min-h-20 bg-base-100 p-0">
+    <progress
+      class="progress progress-primary absolute -top-1 h-1"
+      max={progress.max}
+      value={progress.value}
+      class:hidden={progress.value == progress.max}
+    ></progress>
 
-      <div class="navbar-start w-32 p-2">
-        {@render start()}
-      </div>
-      <div class="navbar-center flex grow justify-center">
-        {@render center()}
-      </div>
-      <div class="navbar-end w-32 p-2">
-        {@render end()}
-      </div>
+    <div class="navbar-start w-32 p-2">
+      {@render start()}
+    </div>
+    <div class="navbar-center flex grow justify-center">
+      {@render center()}
+    </div>
+    <div class="navbar-end w-32 p-2">
+      {@render end()}
     </div>
   </div>
 
@@ -510,7 +356,9 @@
           <button
             class="block w-full truncate text-left"
             onclick={() => {
-              select.select(album, track);
+              select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
+              const el = document.getElementById("select") as HTMLDialogElement;
+              el.showModal();
             }}
           >
             <span class="font-mono font-bold">{pad(n + 1)}</span>
@@ -526,17 +374,23 @@
 <dialog id="select" class="modal">
   <div class="modal-box text-center">
     <h3 class="pb-4 text-lg font-bold">
-      Queue {pad(select.track.albumNum)}{pad(select.track.trackNum + 1)}
+      Queue {pad(select.albumNum)}{pad(select.trackNum + 1)}
     </h3>
-    <p class="text-lg font-bold">{select.track.track.title}</p>
-    <p>{select.track.track.artist}</p>
+    <p class="text-lg font-bold">{select.track.title}</p>
+    <p>{select.track.artist}</p>
     <form method="dialog">
       <div class="modal-action justify-between">
         <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
         <button
           class="btn btn-accent"
           onclick={async () => {
-            await select.enqueue();
+            playlist.enqueue(select);
+
+            const el = document.getElementById("enqueue") as HTMLDialogElement;
+            el.showModal();
+            setTimeout(() => {
+              el.close();
+            }, 2500);
           }}>OK</button
         >
         <button class="btn btn-primary" onclick={() => {}}>NO</button>
@@ -551,10 +405,10 @@
 <dialog id="enqueue" class="modal">
   <div class="modal-box text-center">
     <h3 class="pb-4 text-lg font-bold">
-      Queued {pad(select.track.albumNum)}{pad(select.track.trackNum + 1)}
+      Queued {pad(select.albumNum)}{pad(select.trackNum + 1)}
     </h3>
-    <p class="text-lg font-bold">{select.track.track.title}</p>
-    <p>{select.track.track.artist}</p>
+    <p class="text-lg font-bold">{select.track.title}</p>
+    <p>{select.track.artist}</p>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>
