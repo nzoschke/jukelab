@@ -14,10 +14,13 @@
     XMark,
     Sun,
   } from "svelte-hero-icons";
-  import { Playlist } from "../jukebox/playlist.svelte";
+  import { Playlist, type Src } from "../jukebox/playlist.svelte";
   import { Select } from "../jukebox/select.svelte";
   import { pad } from "$lib/string";
   import { AlbumTracks } from "$lib/types/music";
+  import Queue from "../Queue.svelte";
+
+  type Tabs = "queue" | "shuffle" | "history";
 
   const auth = Auth();
   let audio = $state(Audio);
@@ -27,6 +30,12 @@
   const pages = $derived(playlist.albums.length / 4);
   let select = Select(playlist);
   let token = $state<string>();
+  let ui = $state({
+    aside: false,
+    details: false,
+    nosleep: false,
+    tab: "queue" as Tabs,
+  });
 
   const pageScroll = (delta: number) => {
     page += delta;
@@ -82,6 +91,38 @@
     }
 
     await playlist.get(auth.token);
+  });
+
+  // if queued when nothing is playing, play
+  $effect(() => {
+    if (
+      audio.currentTime == 0 &&
+      audio.paused &&
+      playlist.queue.length == 1 &&
+      playlist.history.length == 0
+    ) {
+      playlist.skip(1);
+      audio.paused = false;
+    }
+  });
+
+  // if playing with nothing queued, dequeue
+  $effect(() => {
+    if (!audio.paused && playlist.queue.length == 0 && playlist.history.length == 0) {
+      playlist.skip(1);
+    }
+  });
+
+  // if ended, play next
+  $effect(() => {
+    if (audio.ended) playlist.skip(1);
+  });
+
+  $effect(() => {
+    if (!ui.nosleep && !audio.paused) {
+      nosleep.enable();
+      ui.nosleep = true;
+    }
   });
 </script>
 
@@ -144,7 +185,11 @@
     <div class="flex w-full justify-between font-mono text-4xl">
       <p>SELECT {select.num}</p>
       <p>PLAYING {playlist.playing}</p>
-      <p>QUEUED {pad(playlist.queue.length)}</p>
+      <button
+        onclick={() => {
+          ui.aside = !ui.aside;
+        }}>QUEUED {pad(playlist.queue.length)}</button
+      >
     </div>
   {/snippet}
 
@@ -221,7 +266,7 @@
 {/snippet}
 
 {#snippet aside()}
-  <div class=""></div>
+  <Queue {playlist} hidden={!ui.aside} />
 {/snippet}
 
 {#snippet footer()}
@@ -264,6 +309,44 @@
 {#snippet details()}
   <div class=""></div>
 {/snippet}
+
+<dialog id="select" class="modal">
+  <div class="modal-box text-center">
+    <h3 class="pb-4 text-lg font-bold">
+      Queue {pad(select.track.albumNum)}{pad(select.track.trackNum + 1)}
+    </h3>
+    <p class="text-lg font-bold">{select.track.track.title}</p>
+    <p>{select.track.track.artist}</p>
+    <form method="dialog">
+      <div class="modal-action justify-between">
+        <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+        <button
+          class="btn btn-accent"
+          onclick={async () => {
+            await select.enqueue();
+          }}>OK</button
+        >
+        <button class="btn btn-primary" onclick={() => {}}>NO</button>
+      </div>
+    </form>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<dialog id="enqueue" class="modal">
+  <div class="modal-box text-center">
+    <h3 class="pb-4 text-lg font-bold">
+      Queued {pad(select.track.albumNum)}{pad(select.track.trackNum + 1)}
+    </h3>
+    <p class="text-lg font-bold">{select.track.track.title}</p>
+    <p>{select.track.track.artist}</p>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
 
 <!-- page style -->
 <style>

@@ -4,25 +4,15 @@
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
   import type { UserProfile } from "@spotify/web-api-ts-sdk";
+  import NoSleep from "nosleep.js";
   import { onMount } from "svelte";
-  import {
-    Bars3,
-    ChevronLeft,
-    ChevronRight,
-    CommandLine,
-    Icon,
-    QueueList,
-    XMark,
-    Sun,
-  } from "svelte-hero-icons";
+  import { Bars3, CommandLine, Icon, QueueList, Sun } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
+  import Queue from "../Queue.svelte";
   import { Log } from "./log.svelte";
-  import { Playlist, type Src } from "./playlist.svelte";
+  import { Playlist } from "./playlist.svelte";
   import { Select } from "./select.svelte";
-  import NoSleep from "nosleep.js";
-
-  type Tabs = "queue" | "shuffle" | "history";
 
   const auth = Auth();
   const log = Log();
@@ -39,7 +29,6 @@
     aside: false,
     details: false,
     nosleep: false,
-    tab: "queue" as Tabs,
   });
 
   const pad = (n: number) => n.toString().padStart(2, "0");
@@ -319,44 +308,7 @@
 {/snippet}
 
 {#snippet aside()}
-  {@const { queue, shuffle, history } = playlist}
-
-  <div class="flex w-80 flex-col overflow-hidden bg-base-300 p-1" class:hidden={!ui.aside}>
-    <div role="tablist" class="tabs-boxed tabs">
-      {@render tab("queue")}
-      {@render tab("shuffle")}
-      {@render tab("history")}
-    </div>
-    <div class="overflow-scroll">
-      {@render list("queue", queue)}
-      {@render list("shuffle", shuffle.slice(0, 20))}
-      {@render list("history", history)}
-    </div>
-  </div>
-
-  {#snippet tab(tab: Tabs)}
-    <button
-      role="tab"
-      class="tab w-20"
-      class:tab-active={ui.tab == tab}
-      onclick={() => {
-        ui.tab = tab;
-      }}>{tab.toUpperCase()}</button
-    >
-  {/snippet}
-
-  {#snippet list(tab: Tabs, srcs: Src[])}
-    {#each srcs as src}
-      {@const { album, track } = playlist.find(src)}
-      <div class="flex items-center space-x-1 pt-1" class:hidden={ui.tab != tab}>
-        <img class="h-12 w-12" src={album.art} alt="art" />
-        <div class="flex flex-col overflow-hidden">
-          <div class="truncate font-bold">{track.title}</div>
-          <div class="truncate">{track.artist}</div>
-        </div>
-      </div>
-    {/each}
-  {/snippet}
+  <Queue {playlist} hidden={!ui.aside} />
 {/snippet}
 
 {#snippet footer()}
