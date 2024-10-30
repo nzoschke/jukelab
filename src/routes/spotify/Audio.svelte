@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Audio, ReadyState } from "$lib/types/audio";
   import { onMount } from "svelte";
-  import type { Level } from "./jukebox/log.svelte";
+  import type { Level } from "./log.svelte";
 
   let {
     audio = $bindable(Audio),
