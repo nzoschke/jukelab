@@ -44,7 +44,7 @@ export const Playlist = () => {
   let playing = $derived.by(() => {
     const an = albums.indexOf(album);
     const tn = album.tracks.indexOf(track);
-    return tn > 0 ? `${pad(an)}${pad(tn + 1)}` : "____";
+    return tn >= 0 ? `${pad(an)}${pad(tn + 1)}` : "____";
   });
 
   const chunk = (size: number) =>
