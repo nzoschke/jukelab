@@ -1,19 +1,18 @@
 <script lang="ts">
   import { href } from "$lib/href";
   import { Auth } from "$lib/spotify/auth";
+  import { pad } from "$lib/string";
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
-  import type { UserProfile } from "@spotify/web-api-ts-sdk";
   import NoSleep from "nosleep.js";
   import { onMount } from "svelte";
   import { Bars3, CommandLine, Icon, QueueList, Sun } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
-  import Queue from "../Queue.svelte";
-  import { Log } from "./log.svelte";
-  import { AlbumTrack, Playlist } from "../playlist.svelte";
-  import { pad } from "$lib/string";
   import Avatar from "../Avatar.svelte";
+  import Queue from "../Queue.svelte";
+  import { Log } from "../log.svelte";
+  import { AlbumTrack, Playlist } from "../playlist.svelte";
 
   const auth = Auth();
   const log = Log();
