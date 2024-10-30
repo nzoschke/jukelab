@@ -11,7 +11,7 @@
   import AudioC from "../Audio.svelte";
   import Queue from "../Queue.svelte";
   import { Log } from "./log.svelte";
-  import { AlbumTrack, Playlist } from "./playlist.svelte";
+  import { AlbumTrack, Playlist } from "../playlist.svelte";
   import { pad } from "$lib/string";
 
   const auth = Auth();
@@ -112,6 +112,9 @@
   <meta name="description" content="Spotify Jukebox" />
 </svelte:head>
 
+<!-- audio element -->
+<AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
+
 <!-- page layout -->
 <div class="drawer">
   <input id="drawer" type="checkbox" class="drawer-toggle" />
@@ -135,9 +138,6 @@
     {@render menu()}
   </div>
 </div>
-
-<!-- audio element -->
-<AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
 
 <!-- page components -->
 {#snippet menu()}
@@ -247,7 +247,7 @@
         class="btn btn-circle btn-ghost"
         class:hidden={token != ""}
         onclick={async () => {
-          await auth.login("/spotify/jukebox");
+          await auth.login("/spotify/desktop");
         }}
       >
         Login

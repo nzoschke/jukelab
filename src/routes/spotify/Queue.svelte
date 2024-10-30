@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Playlist, type Src } from "./jukebox/playlist.svelte";
+  import { Playlist, type Src } from "./playlist.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 

@@ -7,9 +7,9 @@
   import NoSleep from "nosleep.js";
   import { onMount } from "svelte";
   import { Bars3, ChevronLeft, ChevronRight, Icon, XMark } from "svelte-hero-icons";
-  import { AlbumTrack, Playlist } from "../jukebox/playlist.svelte";
+  import { AlbumTrack, Playlist } from "../playlist.svelte";
   import Queue from "../Queue.svelte";
-  import { updated } from "$app/stores";
+  import AudioC from "../Audio.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -181,6 +181,9 @@
   <title>CD-100 Jukebox</title>
   <meta name="description" content="CD-100 Jukebox" />
 </svelte:head>
+
+<!-- audio element -->
+<AudioC bind:audio token={auth.token} src={playlist.track.src} />
 
 <!-- page layout -->
 <div class="drawer">
