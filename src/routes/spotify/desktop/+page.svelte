@@ -90,13 +90,6 @@
 
   onMount(async () => {
     nosleep = new NoSleep();
-
-    if (!(await auth.token())) {
-      const res = await fetch(href("/playlist.json"));
-      playlist.parse(await res.text());
-      return;
-    }
-
     await playlist.get(auth.token);
   });
 </script>

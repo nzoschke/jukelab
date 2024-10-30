@@ -1,3 +1,4 @@
+import { href } from "$lib/href";
 import { API } from "$lib/spotify/api";
 import { pad } from "$lib/string";
 import { Album, AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
@@ -26,7 +27,7 @@ export const Playlist = () => {
   const defaults = {
     playlist: "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E",
     playlists: [
-      ["Jukelab 101", "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E"],
+      ["JukeLab 101", "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E"],
       ["Jukelab 102", "spotify:playlist:3ENY9f8zKVYOegYWNJYAYV"],
     ],
   };
@@ -59,10 +60,48 @@ export const Playlist = () => {
   // latest playlist src, list of recent playlists, and playlist contents by Spotify snapshot ID.
   // It reads the location hash so navigate to /page#playlist=spotify:playlist:id to load a new playlist
   const get = async (token: () => Promise<string>) => {
-    const api = API(token);
+    let src = s.get("playlist", defaults["playlist"]);
+    let text = "";
 
-    const src = s.get("playlist", defaults["playlist"]);
-    playlist = await api.playlist(src);
+    const t = await token();
+    if (!t) {
+      src = "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E";
+      playlist.title = "JukeLab 101";
+      playlist.src = src;
+      const res = await fetch(href("/playlist.json"));
+      text = await res.text();
+    } else {
+      const api = API(token);
+      playlist = await api.playlist(src);
+
+      const key = `${src}:${playlist.id}`;
+      albums = s.get(key, [] as AlbumTracks[]);
+      if (albums.length == 0) {
+        // clear cache for old snapshot id
+        Object.keys(localStorage)
+          .filter((k) => k.startsWith(`${src}:`))
+          .forEach((k) => localStorage.removeItem(k));
+
+        progress.max = playlist.tracks.length;
+        await api.playlistAlbums(src, (a) => {
+          const n = albums.push(a);
+          progress.value = n;
+        });
+
+        s.set(key, albums);
+      }
+
+      text = JSON.stringify(albums);
+    }
+
+    // parse text into dates
+    var re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
+    albums = JSON.parse(text, (k, v) => {
+      if (typeof v == "string" && re.test(v)) {
+        return new Date(v);
+      }
+      return v;
+    });
 
     // update storage
     playlists = s.get("playlists", defaults["playlists"]);
@@ -71,46 +110,7 @@ export const Playlist = () => {
     s.set("playlist", src);
     s.set("playlists", playlists);
 
-    progress.max = playlist.tracks.length;
-
-    // get from cache if snapshot id matches
-    const key = `${src}:${playlist.id}`;
-    let item = s.get(key, [] as AlbumTracks[]);
-    if (item.length == 0) {
-      // clear cache for old snapshot id
-      Object.keys(localStorage)
-        .filter((k) => k.startsWith(`${src}:`))
-        .forEach((k) => localStorage.removeItem(k));
-
-      await api.playlistAlbums(src, (a) => {
-        const n = albums.push(a);
-        progress.value = n;
-        if (n == 1) {
-          album = albums[0];
-          track = album.tracks[0];
-        }
-      });
-
-      item = albums;
-      s.set(key, albums);
-    }
-
-    progress.value = progress.max;
-
-    return parse(JSON.stringify(item));
-  };
-
-  const parse = (json: string): AlbumTracks[] => {
-    playlists = s.get("playlists", defaults["playlists"]);
-
-    var re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
-    albums = JSON.parse(json, (k, v) => {
-      if (typeof v == "string" && re.test(v)) {
-        return new Date(v);
-      }
-      return v;
-    });
-
+    // update queue
     history = JSON.parse(localStorage.getItem("jukelab:history") || "[]");
     queue = JSON.parse(localStorage.getItem("jukelab:queue") || "[]");
 
@@ -119,8 +119,6 @@ export const Playlist = () => {
     const at = history.length ? find(history[0]) : find(shuffle[0]);
     album = at.album;
     track = at.track;
-
-    return albums;
   };
 
   const play = async (src: Src | undefined) => {
@@ -192,7 +190,6 @@ export const Playlist = () => {
     chunk,
     enqueue,
     find,
-    parse,
     skip,
 
     get album() {
