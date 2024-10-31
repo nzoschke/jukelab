@@ -1,23 +1,22 @@
 <script lang="ts">
-  import { href } from "$lib/href";
   import { Auth } from "$lib/spotify/auth";
   import { pad } from "$lib/string";
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
-  import NoSleep from "nosleep.js";
   import { onMount } from "svelte";
   import { Bars3, CommandLine, Icon, QueueList, Sun } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Avatar from "../Avatar.svelte";
+  import Menu from "../Menu.svelte";
   import Queue from "../Queue.svelte";
+  import { Sleep } from "../Sleep.svelte";
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
-  import Menu from "../Menu.svelte";
 
   const auth = Auth();
   const log = Log();
-  var nosleep: NoSleep;
+  const sleep = Sleep();
 
   let audio = $state(Audio);
   let playlist = Playlist();
@@ -25,7 +24,6 @@
   let ui = $state({
     aside: false,
     details: false,
-    nosleep: false,
   });
 
   let page = $state(0);
@@ -81,15 +79,14 @@
     if (audio.ended) playlist.skip(1);
   });
 
+  // if playing and sleep is unintialized, disable
   $effect(() => {
-    if (!ui.nosleep && !audio.paused) {
-      nosleep.enable();
-      ui.nosleep = true;
+    if (!audio.paused && sleep.disabled === undefined) {
+      sleep.disabled = true;
     }
   });
 
   onMount(async () => {
-    nosleep = new NoSleep();
     await playlist.get(auth.token);
   });
 </script>
@@ -245,11 +242,10 @@
     <button
       class="btn btn-circle btn-ghost"
       onclick={() => {
-        nosleep.isEnabled ? nosleep.disable() : nosleep.enable();
-        ui.nosleep = !ui.nosleep;
+        sleep.disabled = !sleep.disabled;
       }}
     >
-      <Icon src={Sun} class="size-5" solid={ui.nosleep} />
+      <Icon src={Sun} class="size-5" solid={sleep.disabled} />
     </button>
 
     <button
