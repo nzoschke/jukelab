@@ -86,6 +86,11 @@ export const Playlist = () => {
         await api.playlistAlbums(src, (a) => {
           const n = albums.push(a);
           progress.value = n;
+
+          if (n == 1) {
+            album = a;
+            track = a.tracks[0];
+          }
         });
 
         s.set(key, albums);
