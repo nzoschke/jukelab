@@ -4,6 +4,8 @@ import { pad } from "$lib/string";
 import { Album, AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
 import * as s from "./storage";
 
+export type Lists = "queue" | "shuffle" | "history";
+
 export interface Src {
   albumSrc: string;
   trackSrc: string;
@@ -59,6 +61,20 @@ export const Playlist = () => {
   const enqueue = async (at: AlbumTrack) => {
     queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
     s.set("queue", queue);
+  };
+
+  const find = (src: Src): AlbumTrack => {
+    const albumNum = albums.findIndex((a) => a.src == src.albumSrc);
+    const album = albums[albumNum];
+    const trackNum = album.tracks.findIndex((t) => t.src == src.trackSrc);
+    const track = album.tracks[trackNum];
+
+    return {
+      albumNum,
+      album,
+      track,
+      trackNum,
+    };
   };
 
   // get gets a playlist and updates the cache with:
@@ -145,7 +161,25 @@ export const Playlist = () => {
     return src;
   };
 
-  const mutate = (key: string, src: Src, delta: number) => {
+  const list = (key: Lists) => {
+    switch (key) {
+      case "queue":
+        return queue;
+      case "history":
+        return history;
+      case "shuffle":
+        return shuffle;
+    }
+  };
+
+  const listClear = (key: Lists) => {
+    s.rem(key);
+    if (key == "history") history = [];
+    else if (key == "queue") queue = [];
+    else if (key == "shuffle") reshuffle();
+  };
+
+  const listMove = (key: string, src: Src, delta: number) => {
     let l: Src[];
     if (key == "queue") l = queue;
     else if (key == "shuffle") l = shuffle;
@@ -192,20 +226,6 @@ export const Playlist = () => {
     if (delta == -1) return await unshift();
   };
 
-  const find = (src: Src): AlbumTrack => {
-    const albumNum = albums.findIndex((a) => a.src == src.albumSrc);
-    const album = albums[albumNum];
-    const trackNum = album.tracks.findIndex((t) => t.src == src.trackSrc);
-    const track = album.tracks[trackNum];
-
-    return {
-      albumNum,
-      album,
-      track,
-      trackNum,
-    };
-  };
-
   const reshuffle = () => {
     const srcs = albums.map((a) => a.tracks.map((t) => _src(a, t))).flat();
     let i = srcs.length;
@@ -226,10 +246,8 @@ export const Playlist = () => {
     enqueue,
     find,
     get,
-    mutate,
-    remQueue,
-    remHistory,
-    reshuffle,
+    listClear,
+    listMove,
     skip,
 
     get album() {

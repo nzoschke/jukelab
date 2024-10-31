@@ -4,7 +4,7 @@
   import { Audio } from "$lib/types/audio";
   import { Album, AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
-  import { Bars3, CommandLine, Icon, QueueList, Sun, Play, Clock } from "svelte-hero-icons";
+  import { Bars3, CommandLine, Icon, QueueList, Sun, Play, Clock, Plus } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Avatar from "../Avatar.svelte";
@@ -28,6 +28,7 @@
   let ui = $state({
     aside: false,
     details: false,
+    toast: false,
   });
 
   let page = $state(0);
@@ -345,6 +346,16 @@
   </div>
 {/snippet}
 
+<div class="toast z-10" class:hidden={!ui.toast}>
+  <div role="alert" class="alert shadow-lg">
+    <Icon src={Plus} class="size-5" />
+    <div>
+      <h3 class="font-bold">{select.track.track.title}</h3>
+      <div class="text-xs">{select.track.track.artist}</div>
+    </div>
+  </div>
+</div>
+
 <dialog id="select" class="modal">
   <div class="modal-box text-center">
     <h3 class="pb-4 text-lg font-bold">Queue</h3>
@@ -358,27 +369,15 @@
           onclick={async () => {
             playlist.enqueue(select.track);
 
-            const el = document.getElementById("enqueue") as HTMLDialogElement;
-            el.showModal();
+            ui.toast = true;
             setTimeout(() => {
-              el.close();
-            }, 2500);
+              ui.toast = false;
+            }, 2000);
           }}>OK</button
         >
         <button class="btn btn-primary" onclick={() => {}}>NO</button>
       </div>
     </form>
-  </div>
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
-
-<dialog id="enqueue" class="modal">
-  <div class="modal-box text-center">
-    <h3 class="pb-4 text-lg font-bold">Queued</h3>
-    <p class="text-lg font-bold">{select.track.track.title}</p>
-    <p>{select.track.track.artist}</p>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>
