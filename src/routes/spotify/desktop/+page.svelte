@@ -4,7 +4,7 @@
   import { Audio } from "$lib/types/audio";
   import { Album, AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
-  import { Bars3, CommandLine, Icon, QueueList, Sun, Play } from "svelte-hero-icons";
+  import { Bars3, CommandLine, Icon, QueueList, Sun, Play, Clock } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Avatar from "../Avatar.svelte";
@@ -13,6 +13,7 @@
   import { Sleep } from "../Sleep.svelte";
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
+  import { mmss } from "$lib/time";
 
   const auth = Auth();
   const log = Log();
@@ -221,33 +222,43 @@
       {/each}
     </div>
     <div class="flex-1 overflow-scroll">
-      {#each select.album.tracks as track, n}
-        <button
-          class="group block w-full truncate text-left"
-          onclick={() => {
-            select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
-            const el = document.getElementById("select") as HTMLDialogElement;
-            el.showModal();
-          }}
-        >
-          <div class="flex group-hover:bg-base-300">
-            <div class="relative flex size-12 items-center justify-center">
-              <span class="absolute font-mono font-bold group-hover:hidden">{pad(n + 1)}</span>
-              <div class="btn btn-square btn-ghost absolute hidden group-hover:flex">
-                <Icon src={Play} class="size-6" solid />
-              </div>
-            </div>
-            <div class="flex flex-col">
-              <div>{track.title}</div>
-              <div class="text-sm font-bold">{track.artist}</div>
-            </div>
-          </div>
-          <!-- <div class="truncate group-hover:bg-base-300">
-            <span class="font-mono font-bold">{pad(n + 1)}</span>
-            {track.title}
-          </div> -->
-        </button>
-      {/each}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Album</th>
+            <th><Icon src={Clock} class="size-4" /></th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each select.album.tracks as track, n}
+            <tr
+              class="group hover cursor-pointer"
+              onclick={() => {
+                select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
+                const el = document.getElementById("select") as HTMLDialogElement;
+                el.showModal();
+              }}
+            >
+              <th class="w-12">
+                <div class="group-hover:hidden">{pad(n + 1)}</div>
+                <div class="hidden group-hover:block">
+                  <Icon src={Play} class="size-4" solid />
+                </div>
+              </th>
+              <td class="min-w-24 max-w-24">
+                <div class="truncate">{track.title}</div>
+                <div class="truncate text-sm font-bold">{track.artist}</div>
+              </td>
+              <td class="min-w-24 max-w-24">
+                <div class="truncate">{select.album.title}</div>
+              </td>
+              <td class="w-12">{mmss(track.length / 1000)}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
     </div>
   </div>
 {/snippet}
