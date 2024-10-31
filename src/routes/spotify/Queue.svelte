@@ -24,7 +24,7 @@
   <div class="overflow-scroll">
     <div class:hidden={active != "queue"}>
       <div class="flex justify-between">
-        <button class="btn btn-ghost btn-sm pointer-events-none">Selected</button>
+        <button class="btn btn-ghost btn-sm pointer-events-none">Hand picked</button>
         <button
           class="btn btn-ghost btn-sm w-16"
           disabled={playlist.queue.length == 0}
@@ -33,7 +33,7 @@
           }}>Clear</button
         >
       </div>
-      {@render list(playlist.queue)}
+      {@render list("queue", playlist.queue)}
       <div class="flex justify-between">
         <button class="btn btn-ghost btn-sm pointer-events-none">From shuffle</button>
         <button
@@ -43,11 +43,11 @@
           }}>Reroll</button
         >
       </div>
-      {@render list(playlist.shuffle.slice(0, 10))}
+      {@render list("shuffle", playlist.shuffle.slice(0, 10))}
     </div>
     <div class:hidden={active != "history"}>
       <div class="flex justify-between">
-        <button class="btn btn-ghost btn-sm pointer-events-none">Recently played</button>
+        <button class="btn btn-ghost btn-sm pointer-events-none">Recently enjoyed</button>
         <button
           class="btn btn-ghost btn-sm w-16"
           disabled={playlist.history.length == 0}
@@ -56,7 +56,7 @@
           }}>Clear</button
         >
       </div>
-      {@render list(playlist.history)}
+      {@render list("history", playlist.history)}
     </div>
   </div>
 </div>
@@ -72,16 +72,16 @@
   >
 {/snippet}
 
-{#snippet list(srcs: Src[])}
+{#snippet list(tab: string, srcs: Src[])}
   {#each srcs as src}
     {@const { album, track } = playlist.find(src)}
     <div class="group relative flex items-center space-x-1 pt-1">
       <img class="h-12 w-12" src={album.art} alt="art" />
-      <div class="absolute -left-1 flex h-12 w-12 flex-col opacity-0 group-hover:opacity-60">
+      <div class="absolute -left-1 flex h-12 w-12 flex-col opacity-0 group-hover:opacity-90">
         <button
           class="btn btn-xs h-4 min-h-4 rounded-none"
           onclick={() => {
-            playlist.queueMove(src, -1);
+            playlist.mutate(tab, src, -1);
           }}
         >
           <Icon src={ChevronUp} class="size-4" />
@@ -89,7 +89,7 @@
         <button
           class="btn btn-xs h-4 min-h-4 rounded-none"
           onclick={() => {
-            playlist.queueSplice(src);
+            playlist.mutate(tab, src, -Infinity);
           }}
         >
           <Icon src={XMark} class="size-4" />
@@ -97,7 +97,7 @@
         <button
           class="btn btn-xs h-4 min-h-4 rounded-none"
           onclick={() => {
-            playlist.queueMove(src, +1);
+            playlist.mutate(tab, src, +1);
           }}
         >
           <Icon src={ChevronDown} class="size-4" />

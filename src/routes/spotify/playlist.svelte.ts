@@ -121,8 +121,9 @@ export const Playlist = () => {
     // update queue
     history = s.get("history", []);
     queue = s.get("queue", []);
+    shuffle = s.get("shuffle", []);
 
-    reshuffle();
+    if (shuffle.length == 0) reshuffle();
 
     const at = history.length ? find(history[0]) : find(shuffle[0]);
     album = at.album;
@@ -144,22 +145,27 @@ export const Playlist = () => {
     return src;
   };
 
-  const queueSplice = (src: Src) => {
-    var i = queue.indexOf(src);
-    if (i == -1) return;
-    queue.splice(i, 1);
-    s.set("queue", queue);
-  };
+  const mutate = (key: string, src: Src, delta: number) => {
+    let l: Src[];
+    if (key == "queue") l = queue;
+    else if (key == "shuffle") l = shuffle;
+    else return;
 
-  const queueMove = (src: Src, delta: number) => {
-    var i = queue.indexOf(src);
+    var i = l.indexOf(src);
     if (i == -1) return;
+
+    if (delta === -Infinity) {
+      l.splice(i, 1);
+      s.set(key, l);
+      return;
+    }
+
     const n = i + delta;
-    if (n < 0 || n >= queue.length) return;
+    if (n < 0 || n >= l.length) return;
 
-    queue.splice(i, 1);
-    queue.splice(n, 0, src);
-    s.set("queue", queue);
+    l.splice(i, 1);
+    l.splice(n, 0, src);
+    s.set(key, l);
   };
 
   const remQueue = () => {
@@ -210,6 +216,7 @@ export const Playlist = () => {
     }
 
     shuffle = srcs;
+    s.set("shuffle", shuffle);
   };
 
   const _src = (a: Album, t: Track): Src => ({ albumSrc: a.src, trackSrc: t.src });
@@ -219,8 +226,7 @@ export const Playlist = () => {
     enqueue,
     find,
     get,
-    queueMove,
-    queueSplice,
+    mutate,
     remQueue,
     remHistory,
     reshuffle,
