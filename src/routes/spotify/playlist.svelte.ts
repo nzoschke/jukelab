@@ -56,6 +56,11 @@ export const Playlist = () => {
       return all;
     }, []);
 
+  const enqueue = async (at: AlbumTrack) => {
+    queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
+    s.set("queue", queue);
+  };
+
   // get gets a playlist and updates the cache with:
   // latest playlist src, list of recent playlists, and playlist contents by Spotify snapshot ID.
   // It reads the location hash so navigate to /page#playlist=spotify:playlist:id to load a new playlist
@@ -139,8 +144,21 @@ export const Playlist = () => {
     return src;
   };
 
-  const enqueue = async (at: AlbumTrack) => {
-    queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
+  const queueSplice = (src: Src) => {
+    var i = queue.indexOf(src);
+    if (i == -1) return;
+    queue.splice(i, 1);
+    s.set("queue", queue);
+  };
+
+  const queueMove = (src: Src, delta: number) => {
+    var i = queue.indexOf(src);
+    if (i == -1) return;
+    const n = i + delta;
+    if (n < 0 || n >= queue.length) return;
+
+    queue.splice(i, 1);
+    queue.splice(n, 0, src);
     s.set("queue", queue);
   };
 
@@ -201,6 +219,8 @@ export const Playlist = () => {
     enqueue,
     find,
     get,
+    queueMove,
+    queueSplice,
     remQueue,
     remHistory,
     reshuffle,

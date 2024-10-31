@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Playlist, type Src } from "./playlist.svelte";
   import * as s from "./storage";
+  import { ChevronDown, ChevronUp, XMark, Icon } from "svelte-hero-icons";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -32,7 +33,7 @@
           }}>Clear</button
         >
       </div>
-      {@render list("queue", playlist.queue)}
+      {@render list(playlist.queue)}
       <div class="flex justify-between">
         <button class="btn btn-ghost btn-sm pointer-events-none">From shuffle</button>
         <button
@@ -42,7 +43,7 @@
           }}>Reroll</button
         >
       </div>
-      {@render list("shuffle", playlist.shuffle.slice(0, 10))}
+      {@render list(playlist.shuffle.slice(0, 10))}
     </div>
     <div class:hidden={active != "history"}>
       <div class="flex justify-between">
@@ -55,7 +56,7 @@
           }}>Clear</button
         >
       </div>
-      {@render list("history", playlist.history)}
+      {@render list(playlist.history)}
     </div>
   </div>
 </div>
@@ -71,11 +72,37 @@
   >
 {/snippet}
 
-{#snippet list(tab: Tabs, srcs: Src[])}
+{#snippet list(srcs: Src[])}
   {#each srcs as src}
     {@const { album, track } = playlist.find(src)}
-    <div class="flex items-center space-x-1 pt-1">
+    <div class="group relative flex items-center space-x-1 pt-1">
       <img class="h-12 w-12" src={album.art} alt="art" />
+      <div class="absolute -left-1 flex h-12 w-12 flex-col opacity-0 group-hover:opacity-60">
+        <button
+          class="btn btn-xs h-4 min-h-4 rounded-none"
+          onclick={() => {
+            playlist.queueMove(src, -1);
+          }}
+        >
+          <Icon src={ChevronUp} class="size-4" />
+        </button>
+        <button
+          class="btn btn-xs h-4 min-h-4 rounded-none"
+          onclick={() => {
+            playlist.queueSplice(src);
+          }}
+        >
+          <Icon src={XMark} class="size-4" />
+        </button>
+        <button
+          class="btn btn-xs h-4 min-h-4 rounded-none"
+          onclick={() => {
+            playlist.queueMove(src, +1);
+          }}
+        >
+          <Icon src={ChevronDown} class="size-4" />
+        </button>
+      </div>
       <div class="flex flex-col overflow-hidden">
         <div class="truncate font-bold">{track.title}</div>
         <div class="truncate">{track.artist}</div>
