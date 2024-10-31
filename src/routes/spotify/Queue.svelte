@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Playlist, type Src } from "./playlist.svelte";
+  import * as s from "./storage";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -15,15 +16,47 @@
 </script>
 
 <div class="flex w-80 flex-col overflow-hidden bg-base-300 p-1" class:hidden>
-  <div role="tablist" class="tabs-boxed tabs">
+  <div role="tablist" class="tabs-boxed tabs justify-center">
     {@render tab("queue")}
-    {@render tab("shuffle")}
     {@render tab("history")}
   </div>
   <div class="overflow-scroll">
-    {@render list("queue", playlist.queue)}
-    {@render list("shuffle", playlist.shuffle.slice(0, 20))}
-    {@render list("history", playlist.history)}
+    <div class:hidden={active != "queue"}>
+      <div class="flex justify-between">
+        <button class="btn btn-ghost btn-sm pointer-events-none">Selected</button>
+        <button
+          class="btn btn-ghost btn-sm w-16"
+          disabled={playlist.queue.length == 0}
+          onclick={() => {
+            playlist.remQueue();
+          }}>Clear</button
+        >
+      </div>
+      {@render list("queue", playlist.queue)}
+      <div class="flex justify-between">
+        <button class="btn btn-ghost btn-sm pointer-events-none">From shuffle</button>
+        <button
+          class="btn btn-ghost btn-sm w-16"
+          onclick={() => {
+            playlist.reshuffle();
+          }}>Reroll</button
+        >
+      </div>
+      {@render list("shuffle", playlist.shuffle.slice(0, 10))}
+    </div>
+    <div class:hidden={active != "history"}>
+      <div class="flex justify-between">
+        <button class="btn btn-ghost btn-sm pointer-events-none">Recently played</button>
+        <button
+          class="btn btn-ghost btn-sm w-16"
+          disabled={playlist.history.length == 0}
+          onclick={() => {
+            playlist.remHistory();
+          }}>Clear</button
+        >
+      </div>
+      {@render list("history", playlist.history)}
+    </div>
   </div>
 </div>
 
@@ -41,7 +74,7 @@
 {#snippet list(tab: Tabs, srcs: Src[])}
   {#each srcs as src}
     {@const { album, track } = playlist.find(src)}
-    <div class="flex items-center space-x-1 pt-1" class:hidden={active != tab}>
+    <div class="flex items-center space-x-1 pt-1">
       <img class="h-12 w-12" src={album.art} alt="art" />
       <div class="flex flex-col overflow-hidden">
         <div class="truncate font-bold">{track.title}</div>

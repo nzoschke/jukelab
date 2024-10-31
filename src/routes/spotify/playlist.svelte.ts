@@ -78,9 +78,7 @@ export const Playlist = () => {
       albums = s.get(key, [] as AlbumTracks[]);
       if (albums.length == 0) {
         // clear cache for old snapshot id
-        Object.keys(localStorage)
-          .filter((k) => k.startsWith(`${src}:`))
-          .forEach((k) => localStorage.removeItem(k));
+        s.remPrefix(src);
 
         progress.max = playlist.tracks.length;
         await api.playlistAlbums(src, (a) => {
@@ -116,10 +114,10 @@ export const Playlist = () => {
     s.set("playlists", playlists);
 
     // update queue
-    history = JSON.parse(localStorage.getItem("jukelab:history") || "[]");
-    queue = JSON.parse(localStorage.getItem("jukelab:queue") || "[]");
+    history = s.get("history", []);
+    queue = s.get("queue", []);
 
-    _shuffle();
+    reshuffle();
 
     const at = history.length ? find(history[0]) : find(shuffle[0]);
     album = at.album;
@@ -131,8 +129,8 @@ export const Playlist = () => {
 
     history.unshift(src);
 
-    localStorage.setItem("jukelab:history", JSON.stringify(history));
-    localStorage.setItem("jukelab:queue", JSON.stringify(queue));
+    s.set("history", history);
+    s.set("queue", queue);
 
     const at = find(src);
     album = at.album;
@@ -143,7 +141,17 @@ export const Playlist = () => {
 
   const enqueue = async (at: AlbumTrack) => {
     queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
-    localStorage.setItem("jukelab:queue", JSON.stringify(queue));
+    s.set("queue", queue);
+  };
+
+  const remQueue = () => {
+    queue = [];
+    s.rem("queue");
+  };
+
+  const remHistory = () => {
+    history = [];
+    s.rem("history");
   };
 
   const shift = async (): Promise<Src | undefined> => {
@@ -174,11 +182,7 @@ export const Playlist = () => {
     };
   };
 
-  const _src = (a: Album, t: Track): Src => ({ albumSrc: a.src, trackSrc: t.src });
-
-  const _shuffle = () => {
-    if (shuffle.length > 0) return;
-
+  const reshuffle = () => {
     const srcs = albums.map((a) => a.tracks.map((t) => _src(a, t))).flat();
     let i = srcs.length;
     while (i != 0) {
@@ -190,11 +194,16 @@ export const Playlist = () => {
     shuffle = srcs;
   };
 
+  const _src = (a: Album, t: Track): Src => ({ albumSrc: a.src, trackSrc: t.src });
+
   return {
-    get,
     chunk,
     enqueue,
     find,
+    get,
+    remQueue,
+    remHistory,
+    reshuffle,
     skip,
 
     get album() {

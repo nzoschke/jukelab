@@ -13,6 +13,16 @@ export const get = <T>(key: string, def: T): T => {
   return i ? JSON.parse(i) : def;
 };
 
+export const rem = (key: string) => {
+  localStorage.removeItem(`jukelab:${key}`);
+};
+
+export const remPrefix = (prefix: string) => {
+  Object.keys(localStorage)
+    .filter((k) => k.startsWith(`jukelab:${prefix}`))
+    .forEach((k) => localStorage.removeItem(k));
+};
+
 export const set = (key: string, value: any) => {
   localStorage.setItem(`jukelab:${key}`, JSON.stringify(value));
 };
