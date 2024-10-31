@@ -181,33 +181,43 @@
 {/snippet}
 
 {#snippet main()}
-  <div
-    id="carousel"
-    class="carousel size-full"
-    onscrollend={({ currentTarget: t }) => {
-      page = Math.round(t.scrollLeft / t.clientWidth);
-    }}
-  >
-    <div class="skeleton size-full rounded-none" class:hidden={playlist.albums.length > 0}></div>
-
-    {#each playlist.chunk(4) as albums, n}
-      <div class="carousel-item size-full">
-        <div class="flex size-full flex-wrap">
-          <div class="flex size-1/2 border-2">
-            {@render _album(n * 4 + 0, albums[0])}
-          </div>
-          <div class="flex size-1/2 flex-row-reverse border-2">
-            {@render _album(n * 4 + 2, albums[2])}
-          </div>
-          <div class="flex size-1/2 border-2">
-            {@render _album(n * 4 + 1, albums[1])}
-          </div>
-          <div class="flex size-1/2 flex-row-reverse border-2">
-            {@render _album(n * 4 + 3, albums[3])}
+  <div class="flex h-full flex-col">
+    <div
+      id="carousel"
+      class="carousel carousel-center w-full pb-1"
+      onscrollend={({ currentTarget: t }) => {
+        page = Math.round(t.scrollLeft / t.clientWidth);
+      }}
+    >
+      {#each playlist.albums as album, n}
+        <div class="carousel-item w-64">
+          <div class="card w-full rounded-sm bg-base-100 shadow">
+            <figure class="size-full">
+              <img class="aspect-square object-cover object-center" src={album?.art} alt="art" />
+            </figure>
+            <div class="card-body w-full gap-0 p-2">
+              <p class="truncate">{album.title}</p>
+              <p class="truncate text-sm font-bold">{album.artist}</p>
+            </div>
           </div>
         </div>
-      </div>
-    {/each}
+      {/each}
+    </div>
+    <div class="flex-1 overflow-scroll">
+      {#each playlist.album.tracks as track, n}
+        <button
+          class="block w-full truncate text-left"
+          onclick={() => {
+            select = playlist.find({ albumSrc: playlist.album.src, trackSrc: track.src });
+            const el = document.getElementById("select") as HTMLDialogElement;
+            el.showModal();
+          }}
+        >
+          <span class="font-mono font-bold">{pad(n + 1)}</span>
+          {track.title}
+        </button>
+      {/each}
+    </div>
   </div>
 {/snippet}
 
@@ -291,42 +301,6 @@
       {/each}
     </div>
   </div>
-{/snippet}
-
-{#snippet _album(n: number, album: AlbumTracks)}
-  {#if !album}
-    <!-- TODO: JukeLab placeholder -->
-  {:else}
-    <div class="flex flex-1 flex-col overflow-hidden">
-      <div class="flex">
-        <div
-          class="flex aspect-square size-12 items-center justify-center bg-black text-2xl font-bold text-white"
-        >
-          {pad(n)}
-        </div>
-        <div class="ml-1 flex flex-col overflow-hidden">
-          <p class="truncate font-bold">{album.title}</p>
-          <p class="truncate">{album.artist}</p>
-        </div>
-      </div>
-      <div class="ml-1 overflow-scroll">
-        {#each album.tracks as track, n}
-          <button
-            class="block w-full truncate text-left"
-            onclick={() => {
-              select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
-              const el = document.getElementById("select") as HTMLDialogElement;
-              el.showModal();
-            }}
-          >
-            <span class="font-mono font-bold">{pad(n + 1)}</span>
-            {track.title}
-          </button>
-        {/each}
-      </div>
-    </div>
-    <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
-  {/if}
 {/snippet}
 
 <dialog id="select" class="modal">
