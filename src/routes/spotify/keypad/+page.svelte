@@ -1,33 +1,32 @@
 <script lang="ts">
-  import { href } from "$lib/href";
   import { Auth } from "$lib/spotify/auth";
   import { pad } from "$lib/string";
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
-  import NoSleep from "nosleep.js";
   import { onMount } from "svelte";
   import { Bars3, ChevronLeft, ChevronRight, Icon, XMark } from "svelte-hero-icons";
-  import { AlbumTrack, Playlist } from "../playlist.svelte";
-  import Queue from "../Queue.svelte";
   import AudioC from "../Audio.svelte";
   import Avatar from "../Avatar.svelte";
+  import Menu from "../Menu.svelte";
+  import { AlbumTrack, Playlist } from "../playlist.svelte";
+  import Queue from "../Queue.svelte";
+  import { Sleep } from "../Sleep.svelte";
 
   type Tabs = "queue" | "shuffle" | "history";
 
   const auth = Auth();
-  let audio = $state(Audio);
   const playlist = Playlist();
-  let nosleep: NoSleep;
+  const sleep = Sleep();
+
+  let audio = $state(Audio);
   let num = $state("____");
   let numTimeout = setTimeout(() => {}, 0);
   let page = $state(0);
   const pages = $derived(playlist.albums.length / 4);
   let select = $state(AlbumTrack);
-  let token = $state<string>();
   let ui = $state({
     aside: false,
     details: false,
-    nosleep: false,
     party: false,
     physical: false,
     tab: "queue" as Tabs,
@@ -141,15 +140,6 @@
   };
 
   onMount(async () => {
-    nosleep = new NoSleep();
-
-    token = await auth.token();
-    if (!token) {
-      const res = await fetch(href("/playlist.json"));
-      playlist.parse(await res.text());
-      return;
-    }
-
     await playlist.get(auth.token);
   });
 
@@ -178,10 +168,10 @@
     if (audio.ended) playlist.skip(1);
   });
 
+  // if playing and sleep is unintialized, disable
   $effect(() => {
-    if (!ui.nosleep && !audio.paused) {
-      nosleep.enable();
-      ui.nosleep = true;
+    if (!audio.paused && sleep.disabled === undefined) {
+      sleep.disabled = true;
     }
   });
 </script>
@@ -222,7 +212,7 @@
 
 <!-- page components -->
 {#snippet menu()}
-  <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">menu</ul>
+  <Menu {playlist} />
 {/snippet}
 
 {#snippet nav()}

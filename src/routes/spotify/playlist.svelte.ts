@@ -1,7 +1,10 @@
+import { href } from "$lib/href";
 import { API } from "$lib/spotify/api";
 import { pad } from "$lib/string";
 import { Album, AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
 import * as s from "./storage";
+
+export type Lists = "queue" | "shuffle" | "history";
 
 export interface Src {
   albumSrc: string;
@@ -26,7 +29,7 @@ export const Playlist = () => {
   const defaults = {
     playlist: "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E",
     playlists: [
-      ["Jukelab 101", "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E"],
+      ["JukeLab 101", "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E"],
       ["Jukelab 102", "spotify:playlist:3ENY9f8zKVYOegYWNJYAYV"],
     ],
   };
@@ -55,104 +58,9 @@ export const Playlist = () => {
       return all;
     }, []);
 
-  // get gets a playlist and updates the cache with:
-  // latest playlist src, list of recent playlists, and playlist contents by Spotify snapshot ID.
-  // It reads the location hash so navigate to /page#playlist=spotify:playlist:id to load a new playlist
-  const get = async (token: () => Promise<string>) => {
-    const api = API(token);
-
-    const src = s.get("playlist", defaults["playlist"]);
-    playlist = await api.playlist(src);
-
-    // update storage
-    playlists = s.get("playlists", defaults["playlists"]);
-    const n = playlists.findIndex((p) => p[1] == src);
-    n >= 0 ? (playlists[n][0] = playlist.title) : playlists.push([playlist.title, src]);
-    s.set("playlist", src);
-    s.set("playlists", playlists);
-
-    progress.max = playlist.tracks.length;
-
-    // get from cache if snapshot id matches
-    const key = `${src}:${playlist.id}`;
-    let item = s.get(key, [] as AlbumTracks[]);
-    if (item.length == 0) {
-      // clear cache for old snapshot id
-      Object.keys(localStorage)
-        .filter((k) => k.startsWith(`${src}:`))
-        .forEach((k) => localStorage.removeItem(k));
-
-      await api.playlistAlbums(src, (a) => {
-        const n = albums.push(a);
-        progress.value = n;
-        if (n == 1) {
-          album = albums[0];
-          track = album.tracks[0];
-        }
-      });
-
-      item = albums;
-      s.set(key, albums);
-    }
-
-    progress.value = progress.max;
-
-    return parse(JSON.stringify(item));
-  };
-
-  const parse = (json: string): AlbumTracks[] => {
-    var re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
-    albums = JSON.parse(json, (k, v) => {
-      if (typeof v == "string" && re.test(v)) {
-        return new Date(v);
-      }
-      return v;
-    });
-
-    history = JSON.parse(localStorage.getItem("jukelab:history") || "[]");
-    queue = JSON.parse(localStorage.getItem("jukelab:queue") || "[]");
-
-    _shuffle();
-
-    const at = history.length ? find(history[0]) : find(shuffle[0]);
-    album = at.album;
-    track = at.track;
-
-    return albums;
-  };
-
-  const play = async (src: Src | undefined) => {
-    if (!src) return;
-
-    history.unshift(src);
-
-    localStorage.setItem("jukelab:history", JSON.stringify(history));
-    localStorage.setItem("jukelab:queue", JSON.stringify(queue));
-
-    const at = find(src);
-    album = at.album;
-    track = at.track;
-
-    return src;
-  };
-
   const enqueue = async (at: AlbumTrack) => {
     queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
-    localStorage.setItem("jukelab:queue", JSON.stringify(queue));
-  };
-
-  const shift = async (): Promise<Src | undefined> => {
-    const src = queue.length > 0 ? queue.shift() : shuffle.shift();
-    return play(src);
-  };
-
-  const unshift = async (): Promise<Src | undefined> => {
-    return play(history[1]);
-  };
-
-  const skip = async (delta: number) => {
-    if (delta == +1) return await shift();
-    if (delta == -1) return await unshift();
+    s.set("queue", queue);
   };
 
   const find = (src: Src): AlbumTrack => {
@@ -169,11 +77,135 @@ export const Playlist = () => {
     };
   };
 
-  const _src = (a: Album, t: Track): Src => ({ albumSrc: a.src, trackSrc: t.src });
+  // get gets a playlist and updates the cache with:
+  // latest playlist src, list of recent playlists, and playlist contents by Spotify snapshot ID.
+  // It reads the location hash so navigate to /page#playlist=spotify:playlist:id to load a new playlist
+  const get = async (token: () => Promise<string>) => {
+    let src = s.get("playlist", defaults["playlist"]);
+    let text = "";
 
-  const _shuffle = () => {
-    if (shuffle.length > 0) return;
+    const t = await token();
+    if (!t) {
+      src = "spotify:playlist:0JOnan9Ym7vJ485NEfdu5E";
+      playlist.title = "JukeLab 101";
+      playlist.src = src;
+      const res = await fetch(href("/playlist.json"));
+      text = await res.text();
+    } else {
+      const api = API(token);
+      playlist = await api.playlist(src);
 
+      const key = `${src}:${playlist.id}`;
+      albums = s.get(key, [] as AlbumTracks[]);
+      if (albums.length == 0) {
+        // clear cache for old snapshot id
+        s.remPrefix(src);
+
+        progress.max = playlist.tracks.length;
+        await api.playlistAlbums(src, (a) => {
+          const n = albums.push(a);
+          progress.value = n;
+
+          if (n == 1) {
+            album = a;
+            track = a.tracks[0];
+          }
+        });
+
+        s.set(key, albums);
+      }
+
+      text = JSON.stringify(albums);
+    }
+
+    // parse text into dates
+    var re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
+    albums = JSON.parse(text, (k, v) => {
+      if (typeof v == "string" && re.test(v)) {
+        return new Date(v);
+      }
+      return v;
+    });
+
+    // update storage
+    playlists = s.get("playlists", defaults["playlists"]);
+    const n = playlists.findIndex((p) => p[1] == src);
+    n >= 0 ? (playlists[n][0] = playlist.title) : playlists.push([playlist.title, src]);
+    s.set("playlist", src);
+    s.set("playlists", playlists);
+
+    // update queue
+    history = s.get("history", []);
+    queue = s.get("queue", []);
+    shuffle = s.get("shuffle", []);
+
+    if (shuffle.length == 0) reshuffle();
+
+    const at = history.length ? find(history[0]) : find(shuffle[0]);
+    album = at.album;
+    track = at.track;
+  };
+
+  const play = async (src: Src | undefined) => {
+    if (!src) return;
+
+    history.unshift(src);
+
+    s.set("history", history);
+    s.set("queue", queue);
+
+    const at = find(src);
+    album = at.album;
+    track = at.track;
+
+    return src;
+  };
+
+  const listClear = (key: Lists) => {
+    s.rem(key);
+    if (key == "history") history = [];
+    else if (key == "queue") queue = [];
+    else if (key == "shuffle") reshuffle();
+  };
+
+  const listMove = (key: string, src: Src, delta: number) => {
+    let l: Src[];
+    if (key == "queue") l = queue;
+    else if (key == "shuffle") l = shuffle;
+    else return;
+
+    var i = l.indexOf(src);
+    if (i == -1) return;
+
+    if (delta === -Infinity) {
+      l.splice(i, 1);
+      s.set(key, l);
+      return;
+    }
+
+    const n = i + delta;
+    if (n < 0 || n >= l.length) return;
+
+    l.splice(i, 1);
+    l.splice(n, 0, src);
+    s.set(key, l);
+  };
+
+  const shift = async (): Promise<Src | undefined> => {
+    const src = queue.length > 0 ? queue.shift() : shuffle.shift();
+    return play(src);
+  };
+
+  const unshift = async (): Promise<Src | undefined> => {
+    return play(history[1]);
+  };
+
+  const skip = async (delta: number) => {
+    if (delta == +1) return await shift();
+    if (delta == -1) return await unshift();
+  };
+
+  const reshuffle = () => {
     const srcs = albums.map((a) => a.tracks.map((t) => _src(a, t))).flat();
     let i = srcs.length;
     while (i != 0) {
@@ -183,14 +215,18 @@ export const Playlist = () => {
     }
 
     shuffle = srcs;
+    s.set("shuffle", shuffle);
   };
 
+  const _src = (a: Album, t: Track): Src => ({ albumSrc: a.src, trackSrc: t.src });
+
   return {
-    get,
     chunk,
     enqueue,
     find,
-    parse,
+    get,
+    listClear,
+    listMove,
     skip,
 
     get album() {

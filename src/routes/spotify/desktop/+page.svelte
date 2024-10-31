@@ -1,31 +1,34 @@
 <script lang="ts">
-  import { href } from "$lib/href";
   import { Auth } from "$lib/spotify/auth";
   import { pad } from "$lib/string";
   import { Audio } from "$lib/types/audio";
-  import { AlbumTracks } from "$lib/types/music";
-  import NoSleep from "nosleep.js";
+  import { Album, AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
-  import { Bars3, CommandLine, Icon, QueueList, Sun } from "svelte-hero-icons";
+  import { Bars3, CommandLine, Icon, QueueList, Sun, Play, Clock, Plus } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Avatar from "../Avatar.svelte";
+  import Menu from "../Menu.svelte";
   import Queue from "../Queue.svelte";
+  import { Sleep } from "../Sleep.svelte";
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
+  import { mmss } from "$lib/time";
 
   const auth = Auth();
   const log = Log();
-  var nosleep: NoSleep;
+  const sleep = Sleep();
 
   let audio = $state(Audio);
   let playlist = Playlist();
-  let playlistIn = $state({ value: "", err: "" });
-  let select = $state(AlbumTrack);
+  let select = $state({
+    album: AlbumTracks,
+    track: AlbumTrack,
+  });
   let ui = $state({
     aside: false,
     details: false,
-    nosleep: false,
+    toast: false,
   });
 
   let page = $state(0);
@@ -81,23 +84,16 @@
     if (audio.ended) playlist.skip(1);
   });
 
+  // if playing and sleep is unintialized, disable
   $effect(() => {
-    if (!ui.nosleep && !audio.paused) {
-      nosleep.enable();
-      ui.nosleep = true;
+    if (!audio.paused && sleep.disabled === undefined) {
+      sleep.disabled = true;
     }
   });
 
   onMount(async () => {
-    nosleep = new NoSleep();
-
-    if (!(await auth.token())) {
-      const res = await fetch(href("/playlist.json"));
-      playlist.parse(await res.text());
-      return;
-    }
-
     await playlist.get(auth.token);
+    select.album = playlist.albums[0];
   });
 </script>
 
@@ -137,38 +133,7 @@
 
 <!-- page components -->
 {#snippet menu()}
-  <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
-    <li>
-      <h2 class="menu-title">Playlists</h2>
-      <ul>
-        {#each playlist.playlists as pl}
-          <li>
-            <button
-              onclick={() => {
-                window.location.hash = `playlist=${pl[1]}`;
-                window.location.reload();
-              }}>{pl[0]}</button
-            >
-          </li>
-        {/each}
-        <li>
-          <button
-            onclick={() => {
-              const el = document.getElementById("playlist") as HTMLDialogElement;
-              el.showModal();
-            }}>Custom playlist</button
-          >
-        </li>
-      </ul>
-    </li>
-    <li>
-      <h2 class="menu-title">Links</h2>
-      <ul>
-        <li><a href={href("/")}>Home</a></li>
-        <li><a href="https://github.com/nzoschke/jukelab">GitHub</a></li>
-      </ul>
-    </li>
-  </ul>
+  <Menu {playlist} />
 {/snippet}
 
 {#snippet nav()}
@@ -222,33 +187,80 @@
 {/snippet}
 
 {#snippet main()}
-  <div
-    id="carousel"
-    class="carousel size-full"
-    onscrollend={({ currentTarget: t }) => {
-      page = Math.round(t.scrollLeft / t.clientWidth);
-    }}
-  >
-    <div class="skeleton size-full rounded-none" class:hidden={playlist.albums.length > 0}></div>
-
-    {#each playlist.chunk(4) as albums, n}
-      <div class="carousel-item size-full">
-        <div class="flex size-full flex-wrap">
-          <div class="flex size-1/2 border-2">
-            {@render _album(n * 4 + 0, albums[0])}
-          </div>
-          <div class="flex size-1/2 flex-row-reverse border-2">
-            {@render _album(n * 4 + 2, albums[2])}
-          </div>
-          <div class="flex size-1/2 border-2">
-            {@render _album(n * 4 + 1, albums[1])}
-          </div>
-          <div class="flex size-1/2 flex-row-reverse border-2">
-            {@render _album(n * 4 + 3, albums[3])}
-          </div>
+  <div class="flex h-full flex-col">
+    <div
+      id="carousel"
+      class="carousel carousel-center w-full pb-1"
+      onscrollend={({ currentTarget: t }) => {
+        page = Math.round(t.scrollLeft / t.clientWidth);
+      }}
+    >
+      {#each playlist.albums as album, n}
+        <div class="carousel-item w-64">
+          <button
+            class="group w-full"
+            onclick={() => {
+              select.album = album;
+            }}
+            class:border-4={album == select.album}
+          >
+            <div class="card w-full rounded-sm bg-base-100 shadow">
+              <figure class="relative size-full">
+                <img class="aspect-square object-cover object-center" src={album?.art} alt="art" />
+                <div
+                  class="btn btn-circle btn-accent absolute bottom-0 right-0 m-2 hidden items-center group-hover:flex"
+                >
+                  <Icon src={Play} class="size-6" solid />
+                </div>
+              </figure>
+              <div class="card-body w-full gap-0 p-2 text-left">
+                <p class="truncate">{album.title}</p>
+                <p class="truncate text-sm font-bold">{album.artist}</p>
+              </div>
+            </div>
+          </button>
         </div>
-      </div>
-    {/each}
+      {/each}
+    </div>
+    <div class="flex-1 overflow-scroll">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Album</th>
+            <th><Icon src={Clock} class="size-4" /></th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each select.album.tracks as track, n}
+            <tr
+              class="group hover cursor-pointer"
+              onclick={() => {
+                select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
+                const el = document.getElementById("select") as HTMLDialogElement;
+                el.showModal();
+              }}
+            >
+              <th class="w-12">
+                <div class="group-hover:hidden">{pad(n + 1)}</div>
+                <div class="hidden group-hover:block">
+                  <Icon src={Play} class="size-4" solid />
+                </div>
+              </th>
+              <td class="min-w-24 max-w-24">
+                <div class="truncate">{track.title}</div>
+                <div class="truncate text-sm font-bold">{track.artist}</div>
+              </td>
+              <td class="min-w-24 max-w-24">
+                <div class="truncate">{select.album.title}</div>
+              </td>
+              <td class="w-12">{mmss(track.length / 1000)}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
   </div>
 {/snippet}
 
@@ -283,11 +295,10 @@
     <button
       class="btn btn-circle btn-ghost"
       onclick={() => {
-        nosleep.isEnabled ? nosleep.disable() : nosleep.enable();
-        ui.nosleep = !ui.nosleep;
+        sleep.disabled = !sleep.disabled;
       }}
     >
-      <Icon src={Sun} class="size-5" solid={ui.nosleep} />
+      <Icon src={Sun} class="size-5" solid={sleep.disabled} />
     </button>
 
     <button
@@ -335,119 +346,36 @@
   </div>
 {/snippet}
 
-{#snippet _album(n: number, album: AlbumTracks)}
-  {#if !album}
-    <!-- TODO: JukeLab placeholder -->
-  {:else}
-    <div class="flex flex-1 flex-col overflow-hidden">
-      <div class="flex">
-        <div
-          class="flex aspect-square size-12 items-center justify-center bg-black text-2xl font-bold text-white"
-        >
-          {pad(n)}
-        </div>
-        <div class="ml-1 flex flex-col overflow-hidden">
-          <p class="truncate font-bold">{album.title}</p>
-          <p class="truncate">{album.artist}</p>
-        </div>
-      </div>
-      <div class="ml-1 overflow-scroll">
-        {#each album.tracks as track, n}
-          <button
-            class="block w-full truncate text-left"
-            onclick={() => {
-              select = playlist.find({ albumSrc: album.src, trackSrc: track.src });
-              const el = document.getElementById("select") as HTMLDialogElement;
-              el.showModal();
-            }}
-          >
-            <span class="font-mono font-bold">{pad(n + 1)}</span>
-            {track.title}
-          </button>
-        {/each}
-      </div>
+<div class="toast z-10" class:hidden={!ui.toast}>
+  <div role="alert" class="alert shadow-lg">
+    <Icon src={Plus} class="size-5" />
+    <div>
+      <h3 class="font-bold">{select.track.track.title}</h3>
+      <div class="text-xs">{select.track.track.artist}</div>
     </div>
-    <img class="aspect-square max-w-[70%] object-cover object-center" src={album?.art} alt="art" />
-  {/if}
-{/snippet}
+  </div>
+</div>
 
 <dialog id="select" class="modal">
   <div class="modal-box text-center">
-    <h3 class="pb-4 text-lg font-bold">
-      Queue {pad(select.albumNum)}{pad(select.trackNum + 1)}
-    </h3>
-    <p class="text-lg font-bold">{select.track.title}</p>
-    <p>{select.track.artist}</p>
+    <h3 class="pb-4 text-lg font-bold">Queue</h3>
+    <p class="text-lg font-bold">{select.track.track.title}</p>
+    <p>{select.track.track.artist}</p>
     <form method="dialog">
       <div class="modal-action justify-between">
         <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
         <button
           class="btn btn-accent"
           onclick={async () => {
-            playlist.enqueue(select);
+            playlist.enqueue(select.track);
 
-            const el = document.getElementById("enqueue") as HTMLDialogElement;
-            el.showModal();
+            ui.toast = true;
             setTimeout(() => {
-              el.close();
-            }, 2500);
+              ui.toast = false;
+            }, 2000);
           }}>OK</button
         >
         <button class="btn btn-primary" onclick={() => {}}>NO</button>
-      </div>
-    </form>
-  </div>
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
-
-<dialog id="enqueue" class="modal">
-  <div class="modal-box text-center">
-    <h3 class="pb-4 text-lg font-bold">
-      Queued {pad(select.albumNum)}{pad(select.trackNum + 1)}
-    </h3>
-    <p class="text-lg font-bold">{select.track.title}</p>
-    <p>{select.track.artist}</p>
-  </div>
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
-
-<dialog id="playlist" class="modal">
-  <div class="modal-box w-full text-center">
-    <h3 class="pb-4 text-lg font-bold">Custom playlist</h3>
-    <p>Paste a Spotify Playlist URL.</p>
-    <input
-      type="text"
-      placeholder="https://open.spotify.com/playlist/2To3oHfuHL72mGOApNL7bL"
-      bind:value={playlistIn.value}
-      class="input w-full"
-      class:input-error={playlistIn.err}
-    />
-    <div class="label">
-      <span class="label-text-alt text-error" class:hidden={!playlistIn.err}>{playlistIn.err}</span>
-    </div>
-    <form method="dialog">
-      <div class="modal-action">
-        <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
-        <button
-          class="btn btn-accent"
-          onclick={async (e) => {
-            e.preventDefault();
-            playlistIn.err = "";
-            // https://open.spotify.com/playlist/2To3oHfuHL72mGOApNL7bL
-            const ms = playlistIn.value.match(/playlist\/(\w+)/);
-            if (!ms) {
-              playlistIn.err = "Invalid Spotify playlist URL";
-              return;
-            }
-
-            window.location.hash = `playlist=spotify:playlist:${ms[1]}`;
-            window.location.reload();
-          }}>OK</button
-        >
       </div>
     </form>
   </div>
