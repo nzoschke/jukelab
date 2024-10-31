@@ -161,17 +161,6 @@ export const Playlist = () => {
     return src;
   };
 
-  const list = (key: Lists) => {
-    switch (key) {
-      case "queue":
-        return queue;
-      case "history":
-        return history;
-      case "shuffle":
-        return shuffle;
-    }
-  };
-
   const listClear = (key: Lists) => {
     s.rem(key);
     if (key == "history") history = [];
@@ -200,16 +189,6 @@ export const Playlist = () => {
     l.splice(i, 1);
     l.splice(n, 0, src);
     s.set(key, l);
-  };
-
-  const remQueue = () => {
-    queue = [];
-    s.rem("queue");
-  };
-
-  const remHistory = () => {
-    history = [];
-    s.rem("history");
   };
 
   const shift = async (): Promise<Src | undefined> => {
