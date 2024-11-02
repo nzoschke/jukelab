@@ -58,6 +58,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@supabase/supabase-js": "^2.46.1",
     "nosleep.js": "^0.12.0"
   }
 }
