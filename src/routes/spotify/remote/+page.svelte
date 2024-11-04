@@ -14,7 +14,7 @@
     token = await auth.token();
     if (!token) return;
 
-    profile = await auth.profile()
+    profile = await auth.profile();
     bc.sub();
   });
 </script>

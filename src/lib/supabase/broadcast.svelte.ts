@@ -1,6 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
-import { SvelteMap as Map } from "svelte/reactivity";
 import * as env from "$env/static/public";
+import { createClient } from "@supabase/supabase-js";
+import { SvelteMap as Map } from "svelte/reactivity";
 
 export interface Presence {
   at: Date;
@@ -13,33 +13,27 @@ export interface Message {
 }
 
 export const Broadcast = (channel: string) => {
-  const messages = $state<Message[]>([])
+  const messages = $state<Message[]>([]);
   const presence = $state<Map<string, Presence>>(new Map());
 
-  const client = createClient(
-    env.PUBLIC_SUPABASE_URL,
-    env.PUBLIC_SUPABASE_ANON_KEY,
-  )
+  const client = createClient(env.PUBLIC_SUPABASE_URL, env.PUBLIC_SUPABASE_ANON_KEY);
 
   const pub = (msg: Message) => {
-    client
-      .channel(channel)
-      .send({
-        type: 'broadcast',
-        event: 'message',
-        payload: msg,
-      })
-  }
+    client.channel(channel).send({
+      type: "broadcast",
+      event: "message",
+      payload: msg,
+    });
+  };
 
   const sub = () => {
-    var ch = client.channel(channel)
+    var ch = client.channel(channel);
 
-    ch
-      .on("broadcast", { event: "message" }, (payload) => {
-        const msg = payload.payload as Message;
-        messages.push(msg)
-      })
-      .on('presence', { event: 'sync' }, () => {
+    ch.on("broadcast", { event: "message" }, (payload) => {
+      const msg = payload.payload as Message;
+      messages.push(msg);
+    })
+      .on("presence", { event: "sync" }, () => {
         const presences = ch.presenceState<Presence>();
         Object.entries(presences).forEach(([id, ps]) => {
           const p = ps[0];
@@ -58,11 +52,11 @@ export const Broadcast = (channel: string) => {
       })
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
-          await ch.track({ name: "src" })
-          pub({ type: "hi", payload: { src: "src" } })
+          await ch.track({ name: "src" });
+          pub({ type: "hi", payload: { src: "src" } });
         }
       });
-  }
+  };
 
   return {
     pub,
@@ -73,5 +67,5 @@ export const Broadcast = (channel: string) => {
     get presence() {
       return presence;
     },
-  }
-}
+  };
+};

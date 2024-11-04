@@ -1,17 +1,13 @@
-import { createClient } from "@supabase/supabase-js"
 import * as env from "$env/static/public";
 import { href } from "$lib/href";
+import { createClient } from "@supabase/supabase-js";
 
 export const Auth = () => {
-  const client = createClient(
-    env.PUBLIC_SUPABASE_URL,
-    env.PUBLIC_SUPABASE_ANON_KEY,
-  )
+  const client = createClient(env.PUBLIC_SUPABASE_URL, env.PUBLIC_SUPABASE_ANON_KEY);
 
   const exchange = async () => {
     await client.auth.getUser();
-    // FIXME: access provider tokens https://github.com/orgs/supabase/discussions/22578
-  }
+  };
 
   const login = async (path: string) => {
     localStorage.setItem("supabase:href", href(path));
@@ -19,19 +15,19 @@ export const Auth = () => {
       options: {
         redirectTo: `${env.PUBLIC_ORIGIN}/supabase/callback`,
       },
-      provider: 'spotify'
-    })
+      provider: "spotify",
+    });
   };
 
   const logout = () => {
-    client.auth.signOut()
+    client.auth.signOut();
     window.location.reload();
   };
 
   // profile is the current user. undefined implies not authenticated
   const profile = async () => {
     var { data, error } = await client.auth.getUser();
-    return data.user || undefined
+    return data.user || undefined;
   };
 
   const redirect = () => {
@@ -40,11 +36,14 @@ export const Auth = () => {
     localStorage.removeItem(k);
     window.location.href = h;
   };
-  
+
   // token is the current access token. "" implies not authenticated
   const token = async () => {
-    const {data: {session}, error} = await client.auth.getSession()
-    return session?.access_token || ""
+    const {
+      data: { session },
+      error,
+    } = await client.auth.getSession();
+    return session?.access_token || "";
   };
 
   return {
@@ -54,5 +53,5 @@ export const Auth = () => {
     profile,
     redirect,
     token,
-  }
-}
+  };
+};
