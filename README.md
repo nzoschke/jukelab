@@ -52,6 +52,28 @@ To make a "prod" Spotify app that works indefinitely, go to [Getting started wit
 PUBLIC_SPOTIFY_CLIENT_ID=<CLIENT_ID>
 ```
 
+### Supabase
+
+```bash
+supabase init
+supabase start
+supabase status
+
+# create new migration
+supabase migration new create_channels_table
+
+# then browse to http://127.0.0.1:54323, use table editor, then generate diff
+supabase db diff --schema public > supabase/migrations/20241104092543_create_channels_table.sql
+
+# generate types
+supabase gen types --local > src/lib/types/database.ts
+# copy / paste to POTO db.ts
+quicktype --framework kotlinx --lang kotlin --package vizlab src/lib/types/db.ts > app/src/main/kotlin/vizlab/Db.kt
+
+# reset data
+supabase db reset
+```
+
 ## Building
 
 To create a production version of your app:
