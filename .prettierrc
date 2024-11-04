@@ -1,4 +1,6 @@
 {
+  "language": "postgresql",
+  "keywordCase": "upper",
   "printWidth": 100,
   "plugins": [
     "prettier-plugin-organize-imports",
