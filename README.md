@@ -29,6 +29,8 @@ cd jukelab
 # fill in PUBLIC_SPOTIFY_TOKEN
 cp .env.example .env
 
+supabase start
+
 npm install
 npm run dev -- --open
 ```
