@@ -39,7 +39,7 @@
     onclick={() => {
       auth.logout();
     }}
-    >Sign out {profile?.email}
+    >Sign out {profile?.email} {profile?.user_metadata["channel"]}
   </button>
 {:else}
   <button
