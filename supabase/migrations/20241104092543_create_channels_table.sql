@@ -85,3 +85,7 @@ WITH
       ) = user_id
     )
   );
+
+CREATE POLICY "Enable read access for all users" ON "public"."channels" AS permissive FOR
+SELECT
+  TO public USING (TRUE);
