@@ -1,6 +1,5 @@
-import * as env from "$env/static/public";
-import { createClient } from "@supabase/supabase-js";
 import { SvelteMap as Map } from "svelte/reactivity";
+import { client } from "./auth";
 
 export interface Presence {
   at: Date;
@@ -15,8 +14,6 @@ export interface Message {
 export const Broadcast = (channel: string) => {
   const messages = $state<Message[]>([]);
   const presence = $state<Map<string, Presence>>(new Map());
-
-  const client = createClient(env.PUBLIC_SUPABASE_URL, env.PUBLIC_SUPABASE_ANON_KEY);
 
   const pub = (msg: Message) => {
     client.channel(channel).send({

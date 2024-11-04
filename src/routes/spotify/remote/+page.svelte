@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { IUser } from "$lib/auth";
   import { Auth } from "$lib/supabase/auth";
   import { Broadcast } from "$lib/supabase/broadcast.svelte";
   import type { User } from "@supabase/supabase-js";
@@ -8,13 +9,13 @@
   const auth = Auth();
   const bc = Broadcast("room1");
   let token = $state<string>();
-  let profile = $state<User>();
+  let user = $state(IUser);
 
   onMount(async () => {
     token = await auth.token();
     if (!token) return;
-
-    profile = await auth.profile();
+    user;
+    user = await auth.user();
     bc.sub();
   });
 </script>
@@ -39,8 +40,9 @@
     onclick={() => {
       auth.logout();
     }}
-    >Sign out {profile?.email} {profile?.user_metadata["channel"]}
+    >Sign out {user.email} {user.channel}
   </button>
+  <img src={user.image} alt="user" />
 {:else}
   <button
     class="btn"

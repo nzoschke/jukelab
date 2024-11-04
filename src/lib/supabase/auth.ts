@@ -1,27 +1,41 @@
 import * as env from "$env/static/public";
+import { type IAuth, IUser } from "$lib/auth";
 import { href } from "$lib/href";
 import { pad } from "$lib/string";
 import type { Database } from "$lib/types/database";
 import { createClient } from "@supabase/supabase-js";
 
-export const Auth = () => {
-  const client = createClient<Database>(env.PUBLIC_SUPABASE_URL, env.PUBLIC_SUPABASE_ANON_KEY);
+export const client = createClient<Database>(env.PUBLIC_SUPABASE_URL, env.PUBLIC_SUPABASE_ANON_KEY);
 
+export const Auth = (): IAuth => {
+  // exchange gets a user token and refresh token. If successful it redirects, otherwise it returns an error string
   const exchange = async () => {
     const {
       data: { user },
     } = await client.auth.getUser();
-    if (!user) return;
-    if (
-      (
-        await client
-          .from("channels")
-          .select("*", { count: "exact", head: true })
-          .eq("user_id", user.id)
-      ).count == 1
-    )
-      return;
-    await client.from("channels").insert({ channel: channel(), user_id: user.id });
+    if (!user) return "auth user not found";
+
+    const err = await getChannel(user.id);
+    if (err) return err;
+
+    const k = "supabase:href";
+    const h = localStorage.getItem(k) || href("/supabase");
+    localStorage.removeItem(k);
+    window.location.href = h;
+  };
+
+  const getChannel = async (userId: string) => {
+    const { count, error } = await client
+      .from("channels")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId);
+    if (error) return error.message;
+    if (count == 0) {
+      const { error } = await client
+        .from("channels")
+        .insert({ channel: channel(), user_id: userId });
+      if (error) return error.message;
+    }
   };
 
   const login = async (path: string) => {
@@ -34,36 +48,38 @@ export const Auth = () => {
     });
   };
 
-  const logout = () => {
-    client.auth.signOut();
+  const logout = async () => {
+    await client.auth.signOut();
     window.location.reload();
   };
 
-  // profile is the current user. undefined implies not authenticated
-  const profile = async () => {
+  // profile is the current user. Empty ID means unauthenticated
+  const user = async (): Promise<IUser> => {
     const {
       data: { user },
     } = await client.auth.getUser();
-    if (!user) return undefined;
+    if (!user) return IUser;
 
-    const row = await client.from("channels").select("*").eq("user_id", user.id).limit(1).single();
-    user.user_metadata["channel"] = row.data?.channel;
+    const { data } = await client
+      .from("channels")
+      .select("*")
+      .eq("user_id", user.id)
+      .limit(1)
+      .single();
 
-    return user;
-  };
-
-  const redirect = () => {
-    const k = "supabase:href";
-    const h = localStorage.getItem(k) || href("/supabase");
-    localStorage.removeItem(k);
-    window.location.href = h;
+    return {
+      channel: data?.channel || "",
+      email: user.email || "",
+      id: user.id,
+      image: user.user_metadata["picture"],
+      name: user.user_metadata["name"],
+    };
   };
 
   // token is the current access token. "" implies not authenticated
   const token = async () => {
     const {
       data: { session },
-      error,
     } = await client.auth.getSession();
     return session?.access_token || "";
   };
@@ -72,9 +88,8 @@ export const Auth = () => {
     exchange,
     login,
     logout,
-    profile,
-    redirect,
     token,
+    user,
   };
 };
 
@@ -86,51 +101,40 @@ const channel = () => {
 };
 
 const adjs = [
-  "acid",
+  "acoustic",
+  "alternative",
   "ambient",
-  "balearic",
-  "berlin",
-  "booty",
-  "breakbeat",
-  "breakcore",
-  "chicago",
-  "chiptune",
-  "darkwave",
-  "detroit",
-  "downtempo",
+  "blues",
+  "classical",
+  "country",
   "disco",
-  "dnb",
+  "downtempo",
   "dub",
   "dubstep",
-  "ebm",
-  "electro",
-  "freestyle",
-  "gabber",
+  "electronic",
+  "folk",
+  "funk",
   "garage",
-  "ghetto",
-  "goa",
-  "glitch",
-  "hardstyle",
+  "grunge",
+  "hiphop",
   "house",
-  "hyperpop",
-  "ibiza",
-  "idm",
   "indie",
-  "industrial",
-  "italo",
-  "jungle",
-  "juke",
-  "leftfield",
-  "lounge",
-  "minimal",
-  "progressive",
-  "psytrance",
-  "synthwave",
+  "jazz",
+  "kpop",
+  "lofi",
+  "metal",
+  "opera",
+  "pop",
+  "punk",
+  "rap",
+  "reggae",
+  "rock",
+  "soul",
+  "swing",
   "techno",
   "trance",
   "trap",
-  "uk",
-  "vaporwave",
+  "triphop",
 ];
 
 const nouns = [

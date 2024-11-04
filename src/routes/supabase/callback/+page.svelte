@@ -2,9 +2,12 @@
   import { onMount } from "svelte";
   import { Auth } from "$lib/supabase/auth";
 
+  const auth = Auth();
+  let err = $state();
+
   onMount(async () => {
-    const auth = Auth();
-    await auth.exchange();
-    auth.redirect();
+    err = await auth.exchange();
   });
 </script>
+
+{err}
