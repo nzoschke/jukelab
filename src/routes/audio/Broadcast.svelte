@@ -3,6 +3,7 @@
   import { Audio } from "$lib/types/audio";
   import { onMount } from "svelte";
   import { Icon, Signal } from "svelte-hero-icons";
+  import { Playlist } from "../spotify/playlist.svelte";
 
   const bc = Broadcast();
 
@@ -10,18 +11,18 @@
     audio = $bindable(Audio),
     channel,
     name,
-    skip,
+    playlist,
   }: {
     audio: Audio;
     channel: string;
     name: string;
-    skip: (delta: number) => void;
+    playlist: ReturnType<typeof Playlist>;
   } = $props();
 
   onMount(() => {
     bc.sub(channel, name, (msg) => {
       if (msg.type == "skip") {
-        skip(msg.payload.delta || 1);
+        playlist.skip(msg.payload.delta || 1);
       }
       if (msg.type == "pause") {
         audio.paused = msg.payload.paused;
@@ -31,6 +32,11 @@
 
   $effect(() => {
     bc.pub(channel, { type: "pause", payload: { paused: audio.paused } });
+  });
+
+  $effect(() => {
+    bc.pub(channel, { type: "art", payload: { art: playlist.album.art } });
+    bc.pub(channel, { type: "track", payload: playlist.track });
   });
 </script>
 

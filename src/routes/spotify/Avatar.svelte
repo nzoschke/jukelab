@@ -2,6 +2,12 @@
   import { Auth, IUser } from "$lib/auth";
   import { onMount } from "svelte";
 
+  let {
+    path = "/spotify/desktop",
+  }: {
+    path?: string;
+  } = $props();
+
   const auth = Auth();
   let user = $state(IUser);
   let token = $state<string>();
@@ -39,7 +45,7 @@
     class="btn btn-circle btn-ghost"
     class:hidden={token != ""}
     onclick={async () => {
-      await auth.login("/spotify/desktop");
+      await auth.login(path);
     }}
   >
     Login

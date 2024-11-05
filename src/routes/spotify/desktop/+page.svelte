@@ -95,10 +95,6 @@
 
   onMount(async () => {
     user = await auth.user();
-    if (user.channel) {
-      // playlist.onplay = () => {}
-    }
-
     await playlist.get(auth.token);
     select.album = playlist.albums[0];
   });
@@ -318,7 +314,7 @@
     </button>
 
     {#if user.channel}
-      <Broadcast bind:audio channel={user.channel} name="player" skip={playlist.skip} />
+      <Broadcast bind:audio channel={user.channel} name="player" {playlist} />
     {/if}
   {/snippet}
 
