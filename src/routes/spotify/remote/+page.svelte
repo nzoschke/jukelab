@@ -129,7 +129,9 @@
     <button
       class="btn btn-circle btn-primary btn-lg"
       class:btn-disabled={!player}
-      onclick={() => {}}
+      onclick={() => {
+        bc.pub(user.channel, { type: "pause", payload: { paused: !paused } });
+      }}
       aria-label="playPause"
     >
       {#if paused}
