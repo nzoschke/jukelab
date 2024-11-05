@@ -1,10 +1,20 @@
 <script lang="ts">
-  import { Auth } from "$lib/spotify/auth";
+  import { Auth } from "$lib/auth";
   import { pad } from "$lib/string";
   import { Audio } from "$lib/types/audio";
   import { Album, AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
-  import { Bars3, CommandLine, Icon, QueueList, Sun, Play, Clock, Plus } from "svelte-hero-icons";
+  import {
+    Bars3,
+    CommandLine,
+    Icon,
+    QueueList,
+    Sun,
+    Play,
+    Clock,
+    Plus,
+    Signal,
+  } from "svelte-hero-icons";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Avatar from "../Avatar.svelte";
@@ -14,6 +24,7 @@
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
   import { mmss } from "$lib/time";
+  import { IUser } from "$lib/auth";
 
   const auth = Auth();
   const log = Log();
@@ -30,6 +41,7 @@
     details: false,
     toast: false,
   });
+  let user = $state(IUser);
 
   let page = $state(0);
   const pages = $derived(playlist.albums.length / 4);
@@ -92,6 +104,8 @@
   });
 
   onMount(async () => {
+    user = await auth.user();
+
     await playlist.get(auth.token);
     select.album = playlist.albums[0];
   });
@@ -309,6 +323,14 @@
     >
       <Icon src={CommandLine} class="size-5" solid={ui.details} />
     </button>
+
+    {#if user.id}
+      <div class="tooltip" data-tip={user.channel}>
+        <button class="btn btn-circle btn-ghost" onclick={() => {}}>
+          <Icon src={Signal} class="size-5" solid />
+        </button>
+      </div>
+    {/if}
   {/snippet}
 
   {#snippet center()}

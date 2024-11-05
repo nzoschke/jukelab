@@ -44,6 +44,21 @@ export const Auth = (): IAuth => {
     await client.auth.signInWithOAuth({
       options: {
         redirectTo: `${env.PUBLIC_ORIGIN}/auth/callback`,
+        scopes: [
+          "playlist-read-private",
+          "playlist-read-collaborative",
+          "playlist-modify-private",
+          "playlist-modify-public",
+          "streaming",
+          "ugc-image-upload",
+          "user-library-read",
+          "user-modify-playback-state",
+          "user-read-currently-playing",
+          "user-read-email",
+          "user-read-playback-state",
+          "user-read-private",
+          "user-top-read",
+        ].join(" "),
       },
       provider: "spotify",
     });
@@ -59,7 +74,7 @@ export const Auth = (): IAuth => {
     const {
       data: { session },
     } = await client.auth.getSession();
-    return session?.access_token || "";
+    return session?.provider_token || "";
   };
 
   // user is the current user. Empty ID means unauthenticated
