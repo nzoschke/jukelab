@@ -8,7 +8,7 @@ import { createClient } from "@supabase/supabase-js";
 export const client = createClient<Database>(env.PUBLIC_SUPABASE_URL, env.PUBLIC_SUPABASE_ANON_KEY);
 
 export const Auth = (): IAuth => {
-  // exchange gets a user token and refresh token. If successful it redirects, otherwise it returns an error string
+  // exchange stores an access and refresh token. If successful it redirects, otherwise it returns an error string
   const exchange = async () => {
     const {
       data: { user },
@@ -30,6 +30,7 @@ export const Auth = (): IAuth => {
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId);
     if (error) return error.message;
+
     if (count == 0) {
       const { error } = await client
         .from("channels")
@@ -42,7 +43,7 @@ export const Auth = (): IAuth => {
     localStorage.setItem("supabase:href", href(path));
     await client.auth.signInWithOAuth({
       options: {
-        redirectTo: `${env.PUBLIC_ORIGIN}/supabase/callback`,
+        redirectTo: `${env.PUBLIC_ORIGIN}/auth/callback`,
       },
       provider: "spotify",
     });
@@ -53,7 +54,15 @@ export const Auth = (): IAuth => {
     window.location.reload();
   };
 
-  // profile is the current user. Empty ID means unauthenticated
+  // token is the current access token. "" implies not authenticated
+  const token = async () => {
+    const {
+      data: { session },
+    } = await client.auth.getSession();
+    return session?.access_token || "";
+  };
+
+  // user is the current user. Empty ID means unauthenticated
   const user = async (): Promise<IUser> => {
     const {
       data: { user },
@@ -74,14 +83,6 @@ export const Auth = (): IAuth => {
       image: user.user_metadata["picture"],
       name: user.user_metadata["name"],
     };
-  };
-
-  // token is the current access token. "" implies not authenticated
-  const token = async () => {
-    const {
-      data: { session },
-    } = await client.auth.getSession();
-    return session?.access_token || "";
   };
 
   return {

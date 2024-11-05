@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Auth } from "$lib/supabase/auth";
+  import { Auth } from "$lib/auth";
 
   const auth = Auth();
   let err = $state();
