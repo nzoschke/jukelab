@@ -2,38 +2,74 @@
   import { IUser } from "$lib/auth";
   import { Auth } from "$lib/supabase/auth";
   import { Broadcast } from "$lib/supabase/broadcast.svelte";
-  import type { User } from "@supabase/supabase-js";
   import { onMount } from "svelte";
+  import { Backward, Forward, Icon, Pause, Play } from "svelte-hero-icons";
 
-  // FIXME: share supabase client between Auth and Broadcast
   const auth = Auth();
-  const bc = Broadcast("room1");
-  let token = $state<string>();
+  const bc = Broadcast();
   let user = $state(IUser);
+  let paused = $state(false);
+  let player = $derived(bc.presence.values().find((v) => v.name == "player"));
 
   onMount(async () => {
-    token = await auth.token();
-    if (!token) return;
-    user;
+    if (!(await auth.token())) return;
     user = await auth.user();
-    bc.sub();
+    bc.sub(user.channel, "remote", (msg) => {
+      if (msg.type == "pause") {
+        paused = msg.payload.paused;
+      }
+    });
   });
 </script>
 
-{#each bc.messages as msg}
-  <p>{JSON.stringify(msg)}</p>
-{/each}
+<div class="flex items-center">
+  <button
+    class="btn btn-circle btn-md"
+    class:btn-disabled={!player}
+    onclick={() => {
+      bc.pub(user.channel, { type: "skip", payload: { delta: -1 } });
+    }}
+  >
+    <Icon
+      src={Backward}
+      solid
+      class="size-6"
+      aria-hidden="false"
+      aria-label="previous"
+      role="img"
+    />
+  </button>
 
-{#each bc.presence as [k, v]}
-  <p>{k}: {v.name}</p>
-{/each}
+  <button
+    class="btn btn-circle btn-primary"
+    class:btn-disabled={!player}
+    onclick={() => {}}
+    aria-label="playPause"
+  >
+    {#if paused}
+      <Icon src={Play} solid class="size-6" aria-hidden="false" aria-label="play" role="img" />
+    {:else}
+      <Icon src={Pause} solid class="size-6" aria-hidden="false" aria-label="pause" role="img" />
+    {/if}
+  </button>
 
-{#if token}
+  <button
+    class="btn btn-circle"
+    class:btn-disabled={!player}
+    onclick={() => {
+      bc.pub(user.channel, { type: "skip", payload: { delta: +1 } });
+    }}
+  >
+    <Icon src={Forward} solid class="size-6" aria-hidden="false" aria-label="next" role="img" />
+  </button>
+</div>
+
+{#if user.channel}
   <button
     class="btn"
     onclick={() => {
-      bc.pub({ type: "hi", payload: { src: "page" } });
-    }}>Pub</button
+      bc.pub(user.channel, { type: "skip", payload: {} });
+    }}>Skip</button
   >
   <button
     class="btn"
@@ -51,3 +87,11 @@
     }}>Sign in</button
   >
 {/if}
+
+{#each bc.messages as msg}
+  <p>{JSON.stringify(msg)}</p>
+{/each}
+
+{#each bc.presence as [k, v]}
+  <p>{k}: {v.name}</p>
+{/each}

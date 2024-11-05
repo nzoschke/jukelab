@@ -1,20 +1,12 @@
 <script lang="ts">
-  import { Auth } from "$lib/auth";
+  import { Auth, IUser } from "$lib/auth";
   import { pad } from "$lib/string";
+  import { mmss } from "$lib/time";
   import { Audio } from "$lib/types/audio";
-  import { Album, AlbumTracks } from "$lib/types/music";
+  import { AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
-  import {
-    Bars3,
-    CommandLine,
-    Icon,
-    QueueList,
-    Sun,
-    Play,
-    Clock,
-    Plus,
-    Signal,
-  } from "svelte-hero-icons";
+  import { Bars3, Clock, CommandLine, Icon, Play, Plus, QueueList, Sun } from "svelte-hero-icons";
+  import Broadcast from "../../audio/Broadcast.svelte";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Avatar from "../Avatar.svelte";
@@ -23,8 +15,6 @@
   import { Sleep } from "../Sleep.svelte";
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
-  import { mmss } from "$lib/time";
-  import { IUser } from "$lib/auth";
 
   const auth = Auth();
   const log = Log();
@@ -105,6 +95,9 @@
 
   onMount(async () => {
     user = await auth.user();
+    if (user.channel) {
+      // playlist.onplay = () => {}
+    }
 
     await playlist.get(auth.token);
     select.album = playlist.albums[0];
@@ -324,12 +317,8 @@
       <Icon src={CommandLine} class="size-5" solid={ui.details} />
     </button>
 
-    {#if user.id}
-      <div class="tooltip" data-tip={user.channel}>
-        <button class="btn btn-circle btn-ghost" onclick={() => {}}>
-          <Icon src={Signal} class="size-5" solid />
-        </button>
-      </div>
+    {#if user.channel}
+      <Broadcast bind:audio channel={user.channel} name="player" skip={playlist.skip} />
     {/if}
   {/snippet}
 

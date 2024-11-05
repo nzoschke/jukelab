@@ -11,11 +11,12 @@ export interface Message {
   type: string;
 }
 
-export const Broadcast = (channel: string) => {
+export const Broadcast = () => {
   const messages = $state<Message[]>([]);
   const presence = $state<Map<string, Presence>>(new Map());
+  let status = $state("");
 
-  const pub = (msg: Message) => {
+  const pub = (channel: string, msg: Message) => {
     client.channel(channel).send({
       type: "broadcast",
       event: "message",
@@ -23,12 +24,16 @@ export const Broadcast = (channel: string) => {
     });
   };
 
-  const sub = () => {
+  const sub = (channel: string, name: string, fn: (msg: Message) => void) => {
     var ch = client.channel(channel);
-
     ch.on("broadcast", { event: "message" }, (payload) => {
       const msg = payload.payload as Message;
-      messages.push(msg);
+      fn(msg);
+
+      const n = messages.push(msg);
+      if (n > 25) {
+        messages.splice(0, messages.length - 25);
+      }
     })
       .on("presence", { event: "sync" }, () => {
         const presences = ch.presenceState<Presence>();
@@ -47,10 +52,10 @@ export const Broadcast = (channel: string) => {
           presence.delete(p.presence_ref);
         });
       })
-      .subscribe(async (status) => {
-        if (status === "SUBSCRIBED") {
-          await ch.track({ name: "src" });
-          pub({ type: "hi", payload: { src: "src" } });
+      .subscribe(async (s) => {
+        status = s;
+        if (s === "SUBSCRIBED") {
+          await ch.track({ name });
         }
       });
   };
@@ -58,11 +63,15 @@ export const Broadcast = (channel: string) => {
   return {
     pub,
     sub,
+
     get messages() {
       return messages;
     },
     get presence() {
       return presence;
+    },
+    get status() {
+      return status;
     },
   };
 };
