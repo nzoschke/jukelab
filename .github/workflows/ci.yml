@@ -55,8 +55,8 @@ jobs:
       - uses: supabase/setup-cli@v1
 
       - env:
-          PUBLIC_SPOTIFY_CLIENT_ID: ""
-          SPOTIFY_CLIENT_SECRET: ""
+          PUBLIC_SPOTIFY_CLIENT_ID: id
+          SPOTIFY_CLIENT_SECRET: secret
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
