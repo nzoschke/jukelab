@@ -30,7 +30,7 @@ jobs:
           npm run check
           npm run build
 
-      - if: github.ref == "refs/heads/main"
+      - if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: build/
@@ -40,7 +40,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
 
-    if: github.ref == "refs/heads/main"
+    if: github.ref == 'refs/heads/main'
 
     needs: build
 
@@ -58,7 +58,7 @@ jobs:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
-          supabase link --project-ref $SUPABASE_PROJECT_ID
+          supabase link --project-ref $PRODUCTION_PROJECT_ID
           supabase db push
 
       - id: deploy
