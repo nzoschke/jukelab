@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Auth } from "$lib/spotify/auth";
+  import { Auth } from "$lib/auth";
   import { pad } from "$lib/string";
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";

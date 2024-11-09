@@ -1,12 +1,13 @@
 import { dev } from "$app/environment";
 import * as env from "$env/static/public";
+import { IUser, type IAuth } from "$lib/auth";
 import { href } from "$lib/href";
 import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 
-export const Auth = () => {
+export const Auth = (): IAuth => {
   const api = SpotifyApi.withUserAuthorization(
     env.PUBLIC_SPOTIFY_CLIENT_ID,
-    `${env.PUBLIC_ORIGIN}/spotify/callback`,
+    `${env.PUBLIC_ORIGIN}/auth/callback`,
     [
       "app-remote-control",
       "streaming",
@@ -18,31 +19,25 @@ export const Auth = () => {
     ],
   );
 
+  // exchange stores an access and refresh token. If successful it redirects, otherwise it returns an error string
   const exchange = async () => {
-    return api.authenticate();
-  };
+    const res = await api.authenticate();
+    if (!res.authenticated) return "auth user not found?";
 
-  const login = async (path: string) => {
-    localStorage.setItem("spotify-sdk:href", href(path));
-    return api.authenticate();
-  };
-
-  const logout = () => {
-    api.logOut();
-    window.location.reload();
-  };
-
-  // profile is the current user. undefined implies not authenticated
-  const profile = async () => {
-    const t = await api.getAccessToken();
-    return t ? api.currentUser.profile() : undefined;
-  };
-
-  const redirect = () => {
     const k = "spotify-sdk:href";
     const h = localStorage.getItem(k) || href("/spotify");
     localStorage.removeItem(k);
     window.location.href = h;
+  };
+
+  const login = async (path: string) => {
+    localStorage.setItem("spotify-sdk:href", href(path));
+    await api.authenticate();
+  };
+
+  const logout = async () => {
+    api.logOut();
+    window.location.reload();
   };
 
   // token is the current access token. "" implies not authenticated
@@ -56,13 +51,27 @@ export const Auth = () => {
     return t || "";
   };
 
+  // user is the current user. Empty ID means unauthenticated
+  const user = async () => {
+    const t = await api.getAccessToken();
+    if (!t) return IUser;
+
+    const p = await api.currentUser.profile();
+    return {
+      channel: "",
+      email: p.email,
+      id: p.id,
+      image: p.images[0].url,
+      name: p.display_name,
+    };
+  };
+
   return {
     exchange,
     login,
     logout,
-    profile,
-    redirect,
     token,
+    user,
   };
 };
 

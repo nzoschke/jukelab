@@ -1,10 +1,12 @@
 <script lang="ts">
-  import { Auth } from "$lib/spotify/auth";
+  import { Auth, IUser } from "$lib/auth";
   import { pad } from "$lib/string";
+  import { mmss } from "$lib/time";
   import { Audio } from "$lib/types/audio";
-  import { Album, AlbumTracks } from "$lib/types/music";
+  import { AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
-  import { Bars3, CommandLine, Icon, QueueList, Sun, Play, Clock, Plus } from "svelte-hero-icons";
+  import { Bars3, Clock, CommandLine, Icon, Play, Plus, QueueList, Sun } from "svelte-hero-icons";
+  import Broadcast from "../../audio/Broadcast.svelte";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Avatar from "../Avatar.svelte";
@@ -13,7 +15,6 @@
   import { Sleep } from "../Sleep.svelte";
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
-  import { mmss } from "$lib/time";
 
   const auth = Auth();
   const log = Log();
@@ -30,6 +31,7 @@
     details: false,
     toast: false,
   });
+  let user = $state(IUser);
 
   let page = $state(0);
   const pages = $derived(playlist.albums.length / 4);
@@ -92,6 +94,7 @@
   });
 
   onMount(async () => {
+    user = await auth.user();
     await playlist.get(auth.token);
     select.album = playlist.albums[0];
   });
@@ -309,6 +312,10 @@
     >
       <Icon src={CommandLine} class="size-5" solid={ui.details} />
     </button>
+
+    {#if user.channel}
+      <Broadcast bind:audio channel={user.channel} name="player" {playlist} />
+    {/if}
   {/snippet}
 
   {#snippet center()}

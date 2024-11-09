@@ -1,7 +1,6 @@
 <script lang="ts">
-  import type { UserProfile } from "@spotify/web-api-ts-sdk";
+  import { Auth, IUser } from "$lib/auth";
   import { onMount } from "svelte";
-  import { Auth } from "$lib/spotify/auth";
 
   let {
     href = "",
@@ -11,23 +10,22 @@
 
   const auth = Auth();
 
-  let profile = $state<UserProfile>();
+  let user = $state(IUser);
   let token = $state<string>();
 
   onMount(async () => {
     token = await auth.token();
     if (token == "") return;
-
-    profile = await auth.profile();
+    user = await auth.user();
   });
 </script>
 
 <button
   class="btn btn-primary btn-sm"
-  class:hidden={!profile}
+  class:hidden={!user}
   onclick={() => {
     auth.logout();
-  }}>Log Out {profile?.display_name}</button
+  }}>Log Out {user.name}</button
 >
 
 <button

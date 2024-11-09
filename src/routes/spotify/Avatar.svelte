@@ -1,20 +1,25 @@
 <script lang="ts">
-  import { Auth } from "$lib/spotify/auth";
-  import type { UserProfile } from "@spotify/web-api-ts-sdk";
+  import { Auth, IUser } from "$lib/auth";
   import { onMount } from "svelte";
 
+  let {
+    path = "/spotify/desktop",
+  }: {
+    path?: string;
+  } = $props();
+
   const auth = Auth();
-  let profile = $state<UserProfile>();
+  let user = $state(IUser);
   let token = $state<string>();
 
   onMount(async () => {
     token = await auth.token();
     if (!token) return;
-    profile = await auth.profile();
+    user = await auth.user();
   });
 </script>
 
-{#if profile}
+{#if user.id}
   <div class="group relative flex">
     <button
       class="avatar size-12 group-hover:opacity-0"
@@ -23,7 +28,7 @@
       }}
     >
       <div class="rounded-full">
-        <img alt="" src={profile.images[0].url} />
+        <img alt="" src={user.image} />
       </div>
     </button>
     <button
@@ -40,7 +45,7 @@
     class="btn btn-circle btn-ghost"
     class:hidden={token != ""}
     onclick={async () => {
-      await auth.login("/spotify/desktop");
+      await auth.login(path);
     }}
   >
     Login
