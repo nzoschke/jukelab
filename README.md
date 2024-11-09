@@ -21,7 +21,7 @@ JukeLab is built on TypeScript and Svelte 5.
 On Mac we recommend [Homebrew](https://brew.sh/) to install development tools:
 
 ```bash
-brew install git node
+brew install git node rustup
 
 git clone https://github.com/nzoschke/jukelab.git
 cd jukelab
@@ -33,6 +33,14 @@ supabase start
 
 npm install
 npm run dev -- --open
+```
+
+### Tauri
+
+```bash
+brew install rustup
+rustup default stable
+export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 ```
 
 ### Spotify
