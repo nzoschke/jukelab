@@ -22,6 +22,7 @@
 
   const pub = () => {
     bc.pub(channel, { type: "art", payload: { art: playlist.album.art } });
+    bc.pub(channel, { type: "pause", payload: { paused: audio.paused } });
     bc.pub(channel, { type: "track", payload: playlist.track });
   };
 
@@ -41,10 +42,6 @@
         if (p.name == "remote") pub();
       },
     );
-  });
-
-  $effect(() => {
-    bc.pub(channel, { type: "pause", payload: { paused: audio.paused } });
   });
 
   $effect(() => {
