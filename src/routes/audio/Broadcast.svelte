@@ -50,7 +50,7 @@
 </script>
 
 <div class="tooltip" data-tip={channel} class:hidden={!remote}>
-  <button class="btn btn-circle btn-ghost" onclick={() => {}}>
+  <button class="btn btn-circle btn-ghost">
     <Icon src={Signal} class="size-5" solid />
   </button>
 </div>

@@ -35,10 +35,10 @@
   });
 </script>
 
-<div class="flex h-svh flex-col border">
+<div class="flex h-svh flex-col">
   <div class="navbar bg-base-100">
     <div class="navbar-center flex h-16 w-full flex-col justify-center rounded border">
-      <div class="w-full text-center">
+      <div class="w-full p-2 text-center">
         {#if track.src != ""}
           <p class="truncate">{track.title}</p>
           <p class="truncate">
@@ -47,7 +47,7 @@
           </p>
         {:else}
           <p>JukeLab Remote</p>
-          <p>Login and start a player to connect</p>
+          <p>Login to a player then remote to connect</p>
         {/if}
       </div>
     </div>
@@ -67,7 +67,9 @@
 {#snippet footer()}
   <!-- component layout -->
   <div class="navbar relative min-h-20 bg-base-100 p-0">
-    <div class="navbar-start w-32 p-2"></div>
+    <div class="navbar-start w-32 p-2">
+      {@render start()}
+    </div>
     <div class="navbar-center flex grow justify-center">
       {@render center()}
     </div>
@@ -75,6 +77,14 @@
       {@render end()}
     </div>
   </div>
+
+  {#snippet start()}
+    <div class="tooltip tooltip-right" data-tip={user.channel} class:hidden={!user.channel}>
+      <button class="btn btn-circle btn-ghost">
+        <Icon src={Signal} class="size-5" solid />
+      </button>
+    </div>
+  {/snippet}
 
   {#snippet center()}
     <button
