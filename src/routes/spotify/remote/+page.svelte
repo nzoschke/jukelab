@@ -12,12 +12,13 @@
 
   let art = $state("");
   let paused = $state(false);
-  let player = $derived(bc.presence.values().find((v) => v.name == "player"));
+  let player = $derived(Array.from(bc.presence.values()).find((v) => v.name == "player"));
   let track = $state(Track);
   let user = $state(IUser);
 
   onMount(async () => {
     if (!(await auth.token())) return;
+
     user = await auth.user();
     bc.sub(user.channel, "remote", (msg) => {
       if (msg.type == "art") {
@@ -34,69 +35,34 @@
   });
 </script>
 
-<div class="flex flex-col">
-  {@render nav()}
-
-  <div class="flex flex-grow justify-end overflow-scroll">
-    <div class="flex w-full flex-col overflow-scroll">
-      {@render main()}
-    </div>
-  </div>
-
-  {@render footer()}
-</div>
-
-{#snippet nav()}
-  <!-- component layout -->
-  <div class="navbar min-h-20 bg-base-100 p-0">
-    <div class="navbar-start w-32 p-2">
-      {@render start()}
-    </div>
-    <div class="navbar-center flex grow justify-center">
-      {@render center()}
-    </div>
-    <div class="navbar-end w-32 p-2">
-      {@render end()}
-    </div>
-  </div>
-
-  <!-- section layouts -->
-  {#snippet start()}
-    <Icon src={Signal} class="size-5" />
-  {/snippet}
-
-  {#snippet center()}
-    <div class="flex size-full space-x-2 rounded border bg-base-200 md:w-[32rem]">
-      <div class="avatar size-16">
-        <div class="rounded">
-          {#if art != ""}
-            <img class="size-full" src={art} alt="" />
-          {/if}
-        </div>
-      </div>
-      <div class="flex grow flex-col items-center justify-center overflow-hidden">
-        <div class="w-full overflow-hidden text-center">
+<div class="flex h-svh flex-col border">
+  <div class="navbar bg-base-100">
+    <div class="navbar-center flex h-16 w-full flex-col justify-center rounded border">
+      <div class="w-full text-center">
+        {#if track.src != ""}
           <p class="truncate">{track.title}</p>
           <p class="truncate">
             {track.album}
             {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
           </p>
-        </div>
+        {:else}
+          <p>JukeLab Remote</p>
+          <p>Login and start a player to connect</p>
+        {/if}
       </div>
-      <div class="size-16 min-w-16"></div>
     </div>
-  {/snippet}
-
-  {#snippet end()}
-    <Avatar path="/spotify/remote" />
-  {/snippet}
-{/snippet}
-
-{#snippet main()}
-  <div class="flex h-full flex-col items-center justify-center">
-    <p>{user.channel}</p>
   </div>
-{/snippet}
+
+  <div class="flex flex-grow justify-end overflow-scroll">
+    {#if art != ""}
+      <div class="avatar w-full p-2">
+        <img src={art} alt="art" />
+      </div>
+    {/if}
+  </div>
+
+  {@render footer()}
+</div>
 
 {#snippet footer()}
   <!-- component layout -->
@@ -105,7 +71,9 @@
     <div class="navbar-center flex grow justify-center">
       {@render center()}
     </div>
-    <div class="navbar-end w-32 p-2"></div>
+    <div class="navbar-end w-32 p-2">
+      {@render end()}
+    </div>
   </div>
 
   {#snippet center()}
@@ -150,5 +118,9 @@
     >
       <Icon src={Forward} solid class="size-6" aria-hidden="false" aria-label="next" role="img" />
     </button>
+  {/snippet}
+
+  {#snippet end()}
+    <Avatar path="/spotify/remote" />
   {/snippet}
 {/snippet}
