@@ -41,6 +41,13 @@ npm run dev -- --open
 brew install rustup
 rustup default stable
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+
+PUBLIC_ORIGIN=tauri://localhost
+APPNAME=jukelab
+APPLE_API_ISSUER=f979e23c-8ca1-4feb-b2fe-EXAMPLE
+APPLE_API_KEY_ID=Q6LEXAMPLE
+npm run tauri ios build -- --export-method app-store-connect
+xcrun altool --upload-app --type ios --file "src-tauri/gen/apple/build/arm64/$APPNAME.ipa" --apiKey $APPLE_API_KEY_ID --apiIssuer $APPLE_API_ISSUER
 ```
 
 ### Spotify

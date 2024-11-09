@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { Auth } from "$lib/auth";
   import { href } from "$lib/href";
   import { Playlist } from "./playlist.svelte";
+
+  const auth = Auth();
 
   let {
     playlist,
@@ -12,6 +15,16 @@
 </script>
 
 <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
+  <li>
+    <button
+      class="btn btn-circle btn-ghost"
+      onclick={async () => {
+        await auth.login("/spotify/desktop");
+      }}
+    >
+      Login
+    </button>
+  </li>
   <li>
     <h2 class="menu-title">Playlists</h2>
     <ul>
@@ -39,6 +52,7 @@
     <h2 class="menu-title">Skins</h2>
     <ul>
       <li><a href={href("/spotify/desktop")}>Desktop</a></li>
+      <li><a href={href("/spotify/keypad")}>Keypad</a></li>
       <li><a href={href("/spotify/keypad")}>Keypad</a></li>
     </ul>
   </li>

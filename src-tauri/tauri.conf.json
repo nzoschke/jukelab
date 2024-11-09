@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "jukelab",
-  "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "version": "0.1.4",
+  "identifier": "com.jukelab.jukelab",
   "build": {
     "frontendDist": "../build",
     "devUrl": "http://localhost:5173",
