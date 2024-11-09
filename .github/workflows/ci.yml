@@ -24,6 +24,8 @@ jobs:
           PUBLIC_ORIGIN: ${{ secrets.PUBLIC_ORIGIN }}
           PUBLIC_SPOTIFY_TOKEN: ""
           PUBLIC_SPOTIFY_CLIENT_ID: ${{ secrets.PUBLIC_SPOTIFY_CLIENT_ID }}
+          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
         run: |
           npm run check
           npm run build
