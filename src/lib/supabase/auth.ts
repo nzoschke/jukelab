@@ -80,7 +80,7 @@ export const Auth = (): IAuth => {
 
     const api = SpotifyApi.withAccessToken(env.PUBLIC_SPOTIFY_CLIENT_ID, {
       access_token: session.provider_token,
-      expires_in: session.expires_in,
+      expires_in: 0,
       refresh_token: session.provider_refresh_token,
       token_type: "Bearer",
     });

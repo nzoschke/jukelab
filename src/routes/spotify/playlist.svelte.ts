@@ -153,6 +153,7 @@ export const Playlist = () => {
 
     s.set("history", history);
     s.set("queue", queue);
+    s.set("shuffle", shuffle);
 
     const at = find(src);
     album = at.album;
