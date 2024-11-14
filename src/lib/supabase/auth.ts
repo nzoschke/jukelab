@@ -3,6 +3,7 @@ import { type IAuth, IUser } from "$lib/auth";
 import { href } from "$lib/href";
 import { pad } from "$lib/string";
 import type { Database } from "$lib/types/database";
+import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 import { createClient } from "@supabase/supabase-js";
 
 export const client = createClient<Database>(env.PUBLIC_SUPABASE_URL, env.PUBLIC_SUPABASE_ANON_KEY);
@@ -74,7 +75,18 @@ export const Auth = (): IAuth => {
     const {
       data: { session },
     } = await client.auth.getSession();
-    return session?.provider_token || "";
+
+    if (!session?.provider_token || !session?.provider_refresh_token) return "";
+
+    const api = SpotifyApi.withAccessToken(env.PUBLIC_SPOTIFY_CLIENT_ID, {
+      access_token: session.provider_token,
+      expires_in: 0,
+      refresh_token: session.provider_refresh_token,
+      token_type: "Bearer",
+    });
+
+    const t = await api.getAccessToken();
+    return t?.access_token || "";
   };
 
   // user is the current user. Empty ID means unauthenticated
