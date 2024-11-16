@@ -1,6 +1,6 @@
 import { untrack } from "svelte";
 
-export type Level = "success" | "error" | "warning";
+export type Level = "error" | "info" | "success" | "warning";
 
 export interface Log {
   level: Level;
@@ -14,7 +14,7 @@ export const Log = () => {
     console.log(msg);
     untrack(() => {
       logs.push({
-        level: level || "success",
+        level: level || "info",
         msg,
       });
     });

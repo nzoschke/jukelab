@@ -121,6 +121,7 @@
       player = new Spotify.Player({
         getOAuthToken: async (cb) => {
           const t = await token();
+          log(`getOAuthToken ${t.slice(0, 5)}...`, "warning");
           if (t) cb(t);
         },
         name: "JukeLab",
