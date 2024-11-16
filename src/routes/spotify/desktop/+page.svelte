@@ -5,7 +5,18 @@
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
-  import { Bars3, Clock, CommandLine, Icon, Play, Plus, QueueList, Sun } from "svelte-hero-icons";
+  import {
+    Bars3,
+    Clock,
+    CommandLine,
+    Icon,
+    Play,
+    Plus,
+    QueueList,
+    Sun,
+    ChevronLeft,
+    ChevronRight,
+  } from "svelte-hero-icons";
   import Broadcast from "../../audio/Broadcast.svelte";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
@@ -34,13 +45,20 @@
   let user = $state(IUser);
 
   let page = $state(0);
-  const pages = $derived(playlist.albums.length / 4);
+  let pages = $state(1);
+
+  const pageJump = (n: number) => {
+    pageScroll(n - page);
+  };
+
   const pageScroll = (delta: number) => {
+    const el = document.getElementById("carousel") as HTMLDivElement;
+    pages = Math.round(el.scrollWidth / el.clientWidth);
+
     page += delta;
     if (page < 0) page = 0;
     if (page >= pages) page = pages - 1;
 
-    const el = document.getElementById("carousel") as HTMLDivElement;
     el.scrollLeft = page * (el.scrollWidth / pages);
   };
 
@@ -99,6 +117,7 @@
       select.album = a;
     });
     select.album = playlist.albums[0];
+    pageScroll(0);
   });
 </script>
 
@@ -202,7 +221,7 @@
   <div class="flex h-full flex-col">
     <div
       id="carousel"
-      class="carousel carousel-center w-full pb-1"
+      class="carousel carousel-center relative w-full pb-1"
       onscrollend={({ currentTarget: t }) => {
         page = Math.round(t.scrollLeft / t.clientWidth);
       }}
@@ -233,6 +252,22 @@
           </button>
         </div>
       {/each}
+    </div>
+    <div class="flex h-10 items-center justify-center space-x-1">
+      <button class="btn join-item btn-xs" onclick={() => pageScroll(-1)}>
+        <Icon src={ChevronLeft} class="size-4" solid />
+      </button>
+      {#each Array(pages) as _, n}
+        <button
+          aria-label="page"
+          class="badge badge-xs rounded-full"
+          class:badge-neutral={n == page}
+          onclick={() => pageJump(n)}
+        ></button>
+      {/each}
+      <button class="btn join-item btn-xs" onclick={() => pageScroll(+1)}>
+        <Icon src={ChevronRight} class="size-4" solid />
+      </button>
     </div>
     <div class="flex-1 overflow-scroll">
       <table class="table">
