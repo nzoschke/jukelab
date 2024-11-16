@@ -12,7 +12,7 @@
 </script>
 
 <button
-  class="btn btn-circle btn-primary {cls}"
+  class="btn btn-circle {cls}"
   class:btn-disabled={audio.readyState != ReadyState.EnoughData}
   onclick={() => {
     if (audio.ended) {

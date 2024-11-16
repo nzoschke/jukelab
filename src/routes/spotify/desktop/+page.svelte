@@ -5,7 +5,18 @@
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
-  import { Bars3, Clock, CommandLine, Icon, Play, Plus, QueueList, Sun } from "svelte-hero-icons";
+  import {
+    Bars3,
+    Clock,
+    CommandLine,
+    Icon,
+    Play,
+    Plus,
+    QueueList,
+    Sun,
+    ChevronLeft,
+    ChevronRight,
+  } from "svelte-hero-icons";
   import Broadcast from "../../audio/Broadcast.svelte";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
@@ -34,14 +45,22 @@
   let user = $state(IUser);
 
   let page = $state(0);
-  const pages = $derived(playlist.albums.length / 4);
+  let pages = $state(1);
+
   const pageScroll = (delta: number) => {
+    const el = document.getElementById("carousel") as HTMLDivElement;
+    pages = Math.round(el.scrollWidth / el.clientWidth);
+
     page += delta;
     if (page < 0) page = 0;
     if (page >= pages) page = pages - 1;
 
-    const el = document.getElementById("carousel") as HTMLDivElement;
     el.scrollLeft = page * (el.scrollWidth / pages);
+  };
+
+  const pageItemCenter = (n: number) => {
+    const el = document.getElementById("carousel") as HTMLDivElement;
+    el.scrollLeft = (el.scrollWidth / playlist.albums.length) * n - el.clientWidth / 2;
   };
 
   const onkeydown = (event: KeyboardEvent) => {
@@ -99,6 +118,7 @@
       select.album = a;
     });
     select.album = playlist.albums[0];
+    pageScroll(0);
   });
 </script>
 
@@ -113,7 +133,7 @@
 <AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
 
 <!-- page layout -->
-<div class="drawer">
+<div class="drawer" data-theme="corporate">
   <input id="drawer" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content">
     <div class="flex h-screen w-screen flex-col">
@@ -165,24 +185,31 @@
   {#snippet center()}
     {@const { album, track } = playlist}
 
-    <div class="flex size-full space-x-2 rounded border bg-base-200 md:w-[32rem]">
-      <div class="avatar size-16">
-        <div class="rounded">
-          {#if album.art != ""}
-            <img class="size-full" src={album.art} alt="" />
-          {/if}
+    <div class="relative">
+      <div class="flex size-full space-x-2 rounded border bg-base-200 md:w-[32rem]">
+        <div class="avatar size-16">
+          <div class="rounded">
+            {#if album.art != ""}
+              <img class="size-full" src={album.art} alt="" />
+            {/if}
+          </div>
         </div>
-      </div>
-      <div class="flex grow flex-col items-center justify-center overflow-hidden">
-        <div class="w-full overflow-hidden text-center">
-          <p class="truncate">{track.title}</p>
-          <p class="truncate">
-            {track.album}
-            {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
-          </p>
+        <div class="flex grow flex-col items-center justify-center overflow-hidden">
+          <div class="w-full overflow-hidden text-center">
+            <p class="truncate">{track.title}</p>
+            <p class="truncate">
+              {track.album}
+              {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
+            </p>
+          </div>
         </div>
+        <div class="size-16 min-w-16"></div>
       </div>
-      <div class="size-16 min-w-16"></div>
+      <progress
+        class="progress progress-primary absolute bottom-0 h-1"
+        max={audio.duration}
+        value={audio.currentTime}
+      ></progress>
     </div>
   {/snippet}
 
@@ -193,9 +220,10 @@
 
 {#snippet main()}
   <div class="flex h-full flex-col">
+    <div class="skeleton h-[19.5rem] w-full" class:hidden={playlist.albums.length > 0}></div>
     <div
       id="carousel"
-      class="carousel carousel-center w-full pb-1"
+      class="carousel carousel-center relative w-full pb-1"
       onscrollend={({ currentTarget: t }) => {
         page = Math.round(t.scrollLeft / t.clientWidth);
       }}
@@ -204,8 +232,9 @@
         <div class="carousel-item w-64">
           <button
             class="group w-full"
-            onclick={() => {
+            onclick={(e) => {
               select.album = album;
+              pageItemCenter(n);
             }}
             class:border-4={album == select.album}
           >
@@ -226,6 +255,22 @@
           </button>
         </div>
       {/each}
+    </div>
+    <div class="flex h-10 items-center justify-center space-x-1">
+      <button class="btn join-item btn-xs" onclick={() => pageScroll(-1)}>
+        <Icon src={ChevronLeft} class="size-4" solid />
+      </button>
+      {#each Array(pages) as _, n}
+        <button
+          aria-label="page"
+          class="badge badge-xs rounded-full"
+          class:badge-neutral={n == page}
+          onclick={() => pageScroll(n - page)}
+        ></button>
+      {/each}
+      <button class="btn join-item btn-xs" onclick={() => pageScroll(+1)}>
+        <Icon src={ChevronRight} class="size-4" solid />
+      </button>
     </div>
     <div class="flex-1 overflow-scroll">
       <table class="table">
@@ -358,9 +403,9 @@
 <div class="toast z-10" class:hidden={!ui.toast}>
   <div role="alert" class="alert shadow-lg">
     <Icon src={Plus} class="size-5" />
-    <div>
-      <h3 class="font-bold">{select.track.track.title}</h3>
-      <div class="text-xs">{select.track.track.artist}</div>
+    <div class="w-72 overflow-hidden">
+      <h3 class="truncate font-bold">{select.track.track.title}</h3>
+      <div class="truncate text-xs">{select.track.track.artist}</div>
     </div>
   </div>
 </div>
@@ -373,6 +418,7 @@
     <form method="dialog">
       <div class="modal-action justify-between">
         <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+        <button class="btn" onclick={() => {}}>NO</button>
         <button
           class="btn btn-accent"
           onclick={async () => {
@@ -384,7 +430,6 @@
             }, 2000);
           }}>OK</button
         >
-        <button class="btn btn-primary" onclick={() => {}}>NO</button>
       </div>
     </form>
   </div>
