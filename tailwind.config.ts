@@ -9,6 +9,7 @@ export default {
   ],
   daisyui: {
     logs: false,
+    themes: ["light", "dark", "corporate"],
   },
   theme: {
     extend: {},

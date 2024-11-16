@@ -113,7 +113,7 @@
 <AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
 
 <!-- page layout -->
-<div class="drawer">
+<div class="drawer" data-theme="corporate">
   <input id="drawer" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content">
     <div class="flex h-screen w-screen flex-col">
@@ -380,6 +380,7 @@
     <form method="dialog">
       <div class="modal-action justify-between">
         <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+        <button class="btn" onclick={() => {}}>NO</button>
         <button
           class="btn btn-accent"
           onclick={async () => {
@@ -391,7 +392,6 @@
             }, 2000);
           }}>OK</button
         >
-        <button class="btn btn-primary" onclick={() => {}}>NO</button>
       </div>
     </form>
   </div>
