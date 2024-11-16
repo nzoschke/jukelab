@@ -80,7 +80,7 @@ export const Playlist = () => {
   // get gets a playlist and updates the cache with:
   // latest playlist src, list of recent playlists, and playlist contents by Spotify snapshot ID.
   // It reads the location hash so navigate to /page#playlist=spotify:playlist:id to load a new playlist
-  const get = async (token: () => Promise<string>) => {
+  const get = async (token: () => Promise<string>, onalbum?: (album: AlbumTracks) => void) => {
     let src = s.get("playlist", defaults["playlist"]);
     let text = "";
 
@@ -109,6 +109,7 @@ export const Playlist = () => {
           if (n == 1) {
             album = a;
             track = a.tracks[0];
+            onalbum?.(a);
           }
         });
 
@@ -143,6 +144,7 @@ export const Playlist = () => {
 
     const at = history.length ? find(history[0]) : find(shuffle[0]);
     album = at.album;
+    onalbum?.(album);
     track = at.track;
   };
 
