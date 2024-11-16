@@ -165,24 +165,31 @@
   {#snippet center()}
     {@const { album, track } = playlist}
 
-    <div class="flex size-full space-x-2 rounded border bg-base-200 md:w-[32rem]">
-      <div class="avatar size-16">
-        <div class="rounded">
-          {#if album.art != ""}
-            <img class="size-full" src={album.art} alt="" />
-          {/if}
+    <div class="relative">
+      <div class="flex size-full space-x-2 rounded border bg-base-200 md:w-[32rem]">
+        <div class="avatar size-16">
+          <div class="rounded">
+            {#if album.art != ""}
+              <img class="size-full" src={album.art} alt="" />
+            {/if}
+          </div>
         </div>
-      </div>
-      <div class="flex grow flex-col items-center justify-center overflow-hidden">
-        <div class="w-full overflow-hidden text-center">
-          <p class="truncate">{track.title}</p>
-          <p class="truncate">
-            {track.album}
-            {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
-          </p>
+        <div class="flex grow flex-col items-center justify-center overflow-hidden">
+          <div class="w-full overflow-hidden text-center">
+            <p class="truncate">{track.title}</p>
+            <p class="truncate">
+              {track.album}
+              {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
+            </p>
+          </div>
         </div>
+        <div class="size-16 min-w-16"></div>
       </div>
-      <div class="size-16 min-w-16"></div>
+      <progress
+        class="progress progress-primary absolute bottom-0 h-1"
+        max={audio.duration}
+        value={audio.currentTime}
+      ></progress>
     </div>
   {/snippet}
 
