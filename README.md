@@ -67,8 +67,6 @@ supabase db diff --schema public > supabase/migrations/20241104092543_create_cha
 
 # generate types
 supabase gen types --local > src/lib/types/database.ts
-# copy / paste to POTO db.ts
-quicktype --framework kotlinx --lang kotlin --package vizlab src/lib/types/db.ts > app/src/main/kotlin/vizlab/Db.kt
 
 # reset data
 supabase db reset

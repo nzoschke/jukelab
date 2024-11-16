@@ -95,7 +95,9 @@
 
   onMount(async () => {
     user = await auth.user();
-    await playlist.get(auth.token);
+    await playlist.get(auth.token, (a) => {
+      select.album = a;
+    });
     select.album = playlist.albums[0];
   });
 </script>
