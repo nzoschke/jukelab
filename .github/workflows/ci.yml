@@ -64,7 +64,7 @@ jobs:
         run: |
           supabase link --project-ref $SUPABASE_PROJECT_ID
           supabase db push
-          supabase functions deploy --project-ref $PROJECT_ID
+          supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
 
       - id: deploy
         uses: actions/deploy-pages@v4
