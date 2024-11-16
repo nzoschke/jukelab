@@ -94,7 +94,7 @@ export const Auth = (): IAuth => {
     if (!session) return "";
 
     // call server side function to refresh token
-    const res = await fetch(`${env.PUBLIC_SUPABASE_URL}/functions/v1/token`, {
+    const res = await fetch(`${env.PUBLIC_SUPABASE_URL}/functions/v1/tokens`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${session.access_token}`,
