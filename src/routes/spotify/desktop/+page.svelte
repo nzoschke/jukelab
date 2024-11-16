@@ -365,9 +365,9 @@
 <div class="toast z-10" class:hidden={!ui.toast}>
   <div role="alert" class="alert shadow-lg">
     <Icon src={Plus} class="size-5" />
-    <div>
-      <h3 class="font-bold">{select.track.track.title}</h3>
-      <div class="text-xs">{select.track.track.artist}</div>
+    <div class="w-72 overflow-hidden">
+      <h3 class="truncate font-bold">{select.track.track.title}</h3>
+      <div class="truncate text-xs">{select.track.track.artist}</div>
     </div>
   </div>
 </div>
