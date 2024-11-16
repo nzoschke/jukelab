@@ -2,6 +2,7 @@ import { dev } from "$app/environment";
 import * as env from "$env/static/public";
 import { IUser, type IAuth } from "$lib/auth";
 import { href } from "$lib/href";
+import * as s from "$lib/storage";
 import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 
 export const Auth = (): IAuth => {
@@ -24,14 +25,15 @@ export const Auth = (): IAuth => {
     const res = await api.authenticate();
     if (!res.authenticated) return "auth user not found?";
 
-    const k = "spotify-sdk:href";
-    const h = localStorage.getItem(k) || href("/spotify");
-    localStorage.removeItem(k);
+    const k = "spotify:href";
+    const h = s.get(k, href("/spotify/desktop"));
+    s.rem(k);
     window.location.href = h;
   };
 
   const login = async (path: string) => {
-    localStorage.setItem("spotify-sdk:href", href(path));
+    s.set("spotify:href", href(path));
+
     await api.authenticate();
   };
 

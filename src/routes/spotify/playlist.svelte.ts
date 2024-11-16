@@ -1,8 +1,8 @@
 import { href } from "$lib/href";
 import { API } from "$lib/spotify/api";
+import * as s from "$lib/storage";
 import { pad } from "$lib/string";
 import { Album, AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
-import * as s from "./storage";
 
 export type Lists = "queue" | "shuffle" | "history";
 

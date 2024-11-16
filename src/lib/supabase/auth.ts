@@ -1,31 +1,41 @@
 import * as env from "$env/static/public";
-import { type IAuth, IUser } from "$lib/auth";
+import { IUser, type IAuth } from "$lib/auth";
 import { href } from "$lib/href";
+import * as s from "$lib/storage";
 import { pad } from "$lib/string";
 import type { Database } from "$lib/types/database";
-import { SpotifyApi } from "@spotify/web-api-ts-sdk";
+import { type AccessToken } from "@spotify/web-api-ts-sdk";
 import { createClient } from "@supabase/supabase-js";
 
 export const client = createClient<Database>(env.PUBLIC_SUPABASE_URL, env.PUBLIC_SUPABASE_ANON_KEY);
 
 export const Auth = (): IAuth => {
-  // exchange stores an access and refresh token. If successful it redirects, otherwise it returns an error string
+  // exchange stores the supabase access and refresh token. It also "upserts" a channel name and provider token in the database.
+  // If successful it redirects, otherwise it returns an error string
   const exchange = async () => {
+    const {
+      data: { session },
+    } = await client.auth.getSession();
+    if (!session || !session.provider_refresh_token) return "auth session not found";
+
     const {
       data: { user },
     } = await client.auth.getUser();
     if (!user) return "auth user not found";
 
-    const err = await getChannel(user.id);
+    let err = await setToken(user.id, session.provider_refresh_token);
+    if (err) return err;
+
+    err = await setChannel(user.id);
     if (err) return err;
 
     const k = "supabase:href";
-    const h = localStorage.getItem(k) || href("/supabase");
-    localStorage.removeItem(k);
+    const h = s.get(k, href("/spotify/desktop"));
+    s.rem(k);
     window.location.href = h;
   };
 
-  const getChannel = async (userId: string) => {
+  const setChannel = async (userId: string) => {
     const { count, error } = await client
       .from("channels")
       .select("*", { count: "exact", head: true })
@@ -40,8 +50,14 @@ export const Auth = (): IAuth => {
     }
   };
 
+  const setToken = async (userId: string, token: string) => {
+    const { error } = await client.from("tokens").upsert({ token, user_id: userId });
+    if (error) return error.message;
+  };
+
   const login = async (path: string) => {
-    localStorage.setItem("supabase:href", href(path));
+    s.set("supabase:href", href(path));
+
     await client.auth.signInWithOAuth({
       options: {
         redirectTo: `${env.PUBLIC_ORIGIN}/auth/callback`,
@@ -70,23 +86,23 @@ export const Auth = (): IAuth => {
     window.location.reload();
   };
 
-  // token is the current access token. "" implies not authenticated
+  // token is the current Spotify access token. "" implies not authenticated
   const token = async () => {
     const {
       data: { session },
     } = await client.auth.getSession();
+    if (!session) return "";
 
-    if (!session?.provider_token || !session?.provider_refresh_token) return "";
-
-    const api = SpotifyApi.withAccessToken(env.PUBLIC_SPOTIFY_CLIENT_ID, {
-      access_token: session.provider_token,
-      expires_in: 0,
-      refresh_token: session.provider_refresh_token,
-      token_type: "Bearer",
+    // call server side function to refresh token
+    const res = await fetch(`${env.PUBLIC_SUPABASE_URL}/functions/v1/token`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        "Content-Type": "application/json",
+      },
     });
-
-    const t = await api.getAccessToken();
-    return t?.access_token || "";
+    const json = (await res.json()) as AccessToken;
+    return json.access_token;
   };
 
   // user is the current user. Empty ID means unauthenticated
