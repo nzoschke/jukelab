@@ -47,10 +47,6 @@
   let page = $state(0);
   let pages = $state(1);
 
-  const pageJump = (n: number) => {
-    pageScroll(n - page);
-  };
-
   const pageScroll = (delta: number) => {
     const el = document.getElementById("carousel") as HTMLDivElement;
     pages = Math.round(el.scrollWidth / el.clientWidth);
@@ -60,6 +56,11 @@
     if (page >= pages) page = pages - 1;
 
     el.scrollLeft = page * (el.scrollWidth / pages);
+  };
+
+  const pageItemCenter = (n: number) => {
+    const el = document.getElementById("carousel") as HTMLDivElement;
+    el.scrollLeft = (el.scrollWidth / playlist.albums.length) * n - el.clientWidth / 2;
   };
 
   const onkeydown = (event: KeyboardEvent) => {
@@ -219,6 +220,7 @@
 
 {#snippet main()}
   <div class="flex h-full flex-col">
+    <div class="skeleton h-[19.5rem] w-full" class:hidden={playlist.albums.length > 0}></div>
     <div
       id="carousel"
       class="carousel carousel-center relative w-full pb-1"
@@ -230,8 +232,9 @@
         <div class="carousel-item w-64">
           <button
             class="group w-full"
-            onclick={() => {
+            onclick={(e) => {
               select.album = album;
+              pageItemCenter(n);
             }}
             class:border-4={album == select.album}
           >
@@ -262,7 +265,7 @@
           aria-label="page"
           class="badge badge-xs rounded-full"
           class:badge-neutral={n == page}
-          onclick={() => pageJump(n)}
+          onclick={() => pageScroll(n - page)}
         ></button>
       {/each}
       <button class="btn join-item btn-xs" onclick={() => pageScroll(+1)}>
