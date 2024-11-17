@@ -16,6 +16,7 @@
     Sun,
     ChevronLeft,
     ChevronRight,
+    Sparkles,
   } from "svelte-hero-icons";
   import Broadcast from "../../audio/Broadcast.svelte";
   import PlaySkip from "../../audio/PlaySkip.svelte";
@@ -26,6 +27,7 @@
   import { Sleep } from "../Sleep.svelte";
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
+  import Hero from "./Hero.svelte";
 
   const auth = Auth();
   const log = Log();
@@ -39,6 +41,7 @@
   });
   let ui = $state({
     aside: false,
+    attract: false,
     details: false,
     toast: false,
   });
@@ -155,6 +158,8 @@
     {@render menu()}
   </div>
 </div>
+
+<Hero bind:visible={ui.attract} />
 
 <!-- page components -->
 {#snippet menu()}
@@ -349,6 +354,15 @@
       }}
     >
       <Icon src={Sun} class="size-5" solid={sleep.disabled} />
+    </button>
+
+    <button
+      class="btn btn-circle btn-ghost"
+      onclick={() => {
+        ui.attract = !ui.attract;
+      }}
+    >
+      <Icon src={Sparkles} class="size-5" solid={sleep.disabled} />
     </button>
 
     <button
