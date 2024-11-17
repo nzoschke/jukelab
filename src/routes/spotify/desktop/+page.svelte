@@ -27,7 +27,7 @@
   import { Sleep } from "../Sleep.svelte";
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
-  import Hero from "./Hero.svelte";
+  import Attract from "./Attract.svelte";
 
   const auth = Auth();
   const log = Log();
@@ -158,7 +158,7 @@
     {@render menu()}
   </div>
 
-  <Hero bind:visible={ui.attract} {playlist} />
+  <Attract bind:visible={ui.attract} {playlist} />
 </div>
 
 <!-- page components -->
