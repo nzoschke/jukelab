@@ -50,6 +50,16 @@
   let page = $state(0);
   let pages = $state(1);
 
+  let attractTimeout = setTimeout(() => {}, 0);
+  const attractHide = () => {
+    console.log("attractHide");
+    ui.attract = false;
+    clearTimeout(attractTimeout);
+    attractTimeout = setTimeout(() => {
+      ui.attract = true;
+    }, 3000);
+  };
+
   const pageScroll = (delta: number) => {
     const el = document.getElementById("carousel") as HTMLDivElement;
     pages = Math.round(el.scrollWidth / el.clientWidth);
@@ -67,6 +77,8 @@
   };
 
   const onkeydown = (event: KeyboardEvent) => {
+    attractHide();
+
     if (event.metaKey) return;
     switch (event.key) {
       case "ArrowLeft":
@@ -138,7 +150,14 @@
 <!-- page layout -->
 <div class="drawer" data-theme="corporate">
   <input id="drawer" type="checkbox" class="drawer-toggle" />
-  <div class="drawer-content">
+  <div
+    class="drawer-content"
+    onmousemove={() => {
+      attractHide();
+    }}
+    role="button"
+    tabindex="0"
+  >
     <div class="flex h-screen w-screen flex-col">
       {@render nav()}
 
@@ -158,7 +177,13 @@
     {@render menu()}
   </div>
 
-  <Attract bind:visible={ui.attract} {playlist} />
+  <Attract
+    bind:visible={ui.attract}
+    {playlist}
+    onclose={() => {
+      attractHide();
+    }}
+  />
 </div>
 
 <!-- page components -->

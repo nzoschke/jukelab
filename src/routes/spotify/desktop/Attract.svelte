@@ -4,9 +4,11 @@
   import { Playlist } from "../playlist.svelte";
 
   let {
+    onclose,
     playlist,
     visible = $bindable(false),
   }: {
+    onclose: () => void;
     playlist: ReturnType<typeof Playlist>;
     visible: boolean;
   } = $props();
@@ -40,6 +42,7 @@
     out:fade
     onclick={() => {
       visible = false;
+      onclose();
     }}
   >
     <div class="hero-content h-full flex-col justify-start">
