@@ -157,9 +157,9 @@
     <label for="drawer" aria-label="close menu" class="drawer-overlay"></label>
     {@render menu()}
   </div>
-</div>
 
-<Hero bind:visible={ui.attract} {playlist} />
+  <Hero bind:visible={ui.attract} {playlist} />
+</div>
 
 <!-- page components -->
 {#snippet menu()}
@@ -362,7 +362,7 @@
         ui.attract = !ui.attract;
       }}
     >
-      <Icon src={Sparkles} class="size-5" solid={sleep.disabled} />
+      <Icon src={Sparkles} class="size-5" solid={ui.attract} />
     </button>
 
     <button

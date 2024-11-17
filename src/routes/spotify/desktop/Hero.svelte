@@ -35,7 +35,7 @@
   } = playlist}
 
   <button
-    class="hero absolute left-0 top-0 min-h-screen bg-base-200"
+    class="hero absolute left-0 top-0 min-h-screen bg-base-100"
     in:fade
     out:fade
     onclick={() => {
