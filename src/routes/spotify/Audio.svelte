@@ -32,7 +32,7 @@
     } = s;
 
     if (!current_track) return;
-    const { id, duration_ms } = current_track;
+    const { id, duration_ms, name } = current_track;
 
     // determine start of track
     if (id && id != trackId) {
@@ -52,6 +52,7 @@
     ) {
       endedTs = timestamp;
       audio.ended = true;
+      log(`ended ${name} ${id}`);
       return;
     }
 

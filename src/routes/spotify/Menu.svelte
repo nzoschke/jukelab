@@ -47,6 +47,13 @@
     <h2 class="menu-title">Links</h2>
     <ul>
       <li><a href={href("/")}>Home</a></li>
+      <li>
+        <button
+          onclick={() => {
+            window.location.reload();
+          }}>Reload</button
+        >
+      </li>
       <li><a href="https://github.com/nzoschke/jukelab">GitHub</a></li>
     </ul>
   </li>

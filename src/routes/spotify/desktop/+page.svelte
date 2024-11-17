@@ -16,6 +16,7 @@
     Sun,
     ChevronLeft,
     ChevronRight,
+    Sparkles,
   } from "svelte-hero-icons";
   import Broadcast from "../../audio/Broadcast.svelte";
   import PlaySkip from "../../audio/PlaySkip.svelte";
@@ -26,6 +27,7 @@
   import { Sleep } from "../Sleep.svelte";
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
+  import Attract from "./Attract.svelte";
 
   const auth = Auth();
   const log = Log();
@@ -39,6 +41,7 @@
   });
   let ui = $state({
     aside: false,
+    attract: false,
     details: false,
     toast: false,
   });
@@ -46,6 +49,15 @@
 
   let page = $state(0);
   let pages = $state(1);
+
+  let attractTimeout = setTimeout(() => {}, 0);
+  const attractReset = () => {
+    ui.attract = false;
+    clearTimeout(attractTimeout);
+    attractTimeout = setTimeout(() => {
+      ui.attract = true;
+    }, 30000);
+  };
 
   const pageScroll = (delta: number) => {
     const el = document.getElementById("carousel") as HTMLDivElement;
@@ -64,6 +76,8 @@
   };
 
   const onkeydown = (event: KeyboardEvent) => {
+    attractReset();
+
     if (event.metaKey) return;
     switch (event.key) {
       case "ArrowLeft":
@@ -112,6 +126,10 @@
     }
   });
 
+  $effect(() => {
+    if (!ui.attract) attractReset();
+  });
+
   onMount(async () => {
     user = await auth.user();
     await playlist.get(auth.token, (a) => {
@@ -135,7 +153,14 @@
 <!-- page layout -->
 <div class="drawer" data-theme="corporate">
   <input id="drawer" type="checkbox" class="drawer-toggle" />
-  <div class="drawer-content">
+  <div
+    class="drawer-content"
+    onmousemove={() => {
+      attractReset();
+    }}
+    role="button"
+    tabindex="0"
+  >
     <div class="flex h-screen w-screen flex-col">
       {@render nav()}
 
@@ -154,6 +179,8 @@
     <label for="drawer" aria-label="close menu" class="drawer-overlay"></label>
     {@render menu()}
   </div>
+
+  <Attract bind:visible={ui.attract} {playlist} />
 </div>
 
 <!-- page components -->
@@ -354,6 +381,15 @@
     <button
       class="btn btn-circle btn-ghost"
       onclick={() => {
+        ui.attract = !ui.attract;
+      }}
+    >
+      <Icon src={Sparkles} class="size-5" solid={ui.attract} />
+    </button>
+
+    <button
+      class="btn btn-circle btn-ghost"
+      onclick={() => {
         ui.details = !ui.details;
       }}
     >
@@ -372,7 +408,7 @@
   {#snippet end()}
     <div class="indicator">
       <span
-        class="badge indicator-item badge-neutral badge-sm mr-2 mt-2"
+        class="badge indicator-item badge-neutral badge-sm z-0 mr-2 mt-2"
         class:hidden={!playlist.queue.length}>{playlist.queue.length}</span
       >
       <button
