@@ -51,13 +51,12 @@
   let pages = $state(1);
 
   let attractTimeout = setTimeout(() => {}, 0);
-  const attractHide = () => {
-    console.log("attractHide");
+  const attractReset = () => {
     ui.attract = false;
     clearTimeout(attractTimeout);
     attractTimeout = setTimeout(() => {
       ui.attract = true;
-    }, 3000);
+    }, 30000);
   };
 
   const pageScroll = (delta: number) => {
@@ -77,7 +76,7 @@
   };
 
   const onkeydown = (event: KeyboardEvent) => {
-    attractHide();
+    attractReset();
 
     if (event.metaKey) return;
     switch (event.key) {
@@ -127,6 +126,10 @@
     }
   });
 
+  $effect(() => {
+    if (!ui.attract) attractReset();
+  });
+
   onMount(async () => {
     user = await auth.user();
     await playlist.get(auth.token, (a) => {
@@ -153,7 +156,7 @@
   <div
     class="drawer-content"
     onmousemove={() => {
-      attractHide();
+      attractReset();
     }}
     role="button"
     tabindex="0"
@@ -177,13 +180,7 @@
     {@render menu()}
   </div>
 
-  <Attract
-    bind:visible={ui.attract}
-    {playlist}
-    onclose={() => {
-      attractHide();
-    }}
-  />
+  <Attract bind:visible={ui.attract} {playlist} />
 </div>
 
 <!-- page components -->
