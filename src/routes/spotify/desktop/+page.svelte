@@ -159,7 +159,7 @@
   </div>
 </div>
 
-<Hero bind:visible={ui.attract} />
+<Hero bind:visible={ui.attract} {playlist} />
 
 <!-- page components -->
 {#snippet menu()}
@@ -386,7 +386,7 @@
   {#snippet end()}
     <div class="indicator">
       <span
-        class="badge indicator-item badge-neutral badge-sm mr-2 mt-2"
+        class="badge indicator-item badge-neutral badge-sm z-0 mr-2 mt-2"
         class:hidden={!playlist.queue.length}>{playlist.queue.length}</span
       >
       <button
