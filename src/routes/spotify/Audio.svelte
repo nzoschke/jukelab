@@ -32,10 +32,15 @@
     } = s;
 
     if (!current_track) return;
-    const { id, duration_ms, name } = current_track;
+    const { id, duration_ms, name, artists } = current_track;
+
+    log(
+      `onState paused=${paused} position=${position} duration_ms=${duration_ms} id=${id} name=${name} artists=${artists[0].name}`,
+    );
 
     // determine start of track
     if (id && id != trackId) {
+      log(`onState start id=${id} name=${name}`);
       trackId = id;
       audio.ended = false;
       return;
@@ -52,7 +57,7 @@
     ) {
       endedTs = timestamp;
       audio.ended = true;
-      log(`ended ${name} ${id}`);
+      log(`onState ended id=${id} name=${name}`);
       return;
     }
 
@@ -159,7 +164,7 @@
 
       setInterval(async () => {
         onState(await player?.getCurrentState());
-      }, 500);
+      }, 1000);
     };
 
     const script = document.createElement("script");
