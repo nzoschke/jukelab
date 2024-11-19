@@ -128,6 +128,21 @@ export const Playlist = () => {
       return v;
     });
 
+    albums.forEach((a) => {
+      const suffixRe = /\s-\s[\w\d\s]+$/;
+      if (!a.tracks) {
+        return;
+      }
+      const suffixMatch = a.tracks[0].title.match(suffixRe);
+      const suffix = suffixMatch ? suffixMatch[0] : null;
+      if (!suffix) {
+        return;
+      }
+      a.tracks.forEach((t) => {
+        t.title = t.title.replace(suffixRe, "");
+      });
+    });
+
     // update storage
     playlists = s.get("playlists", defaults["playlists"]);
     const n = playlists.findIndex((p) => p[1] == src);
