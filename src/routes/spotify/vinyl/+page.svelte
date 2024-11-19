@@ -60,8 +60,8 @@
         })
 
         .set(VINYL, {
-          opacity: 0,
           top: 0,
+          rotate: 14,
         })
 
         // Opacity && Scale
@@ -159,10 +159,10 @@
         .to(
           VINYL,
           {
-            opacity: 1,
             duration: 0.1,
-            top: -40,
+            top: "-50%",
             repeat: 1,
+            rotate: 288,
             yoyo: true,
           },
           0.4,
@@ -311,7 +311,9 @@
 <div class="boxes absolute h-svh w-svw touch-none overflow-hidden">
   {#each playlist.albums as album}
     <div class="box absolute left-1/2 top-1/2 h-[36vmin] min-h-[200px] w-[36vmin] min-w-[200px]">
-      <div class="vinyl skeleton absolute -top-10 size-full rounded-full"></div>
+      <div class="vinyl absolute flex size-full items-center justify-center rounded-full">
+        <img class="h-2/3 w-2/3" src={album.art} alt="" />
+      </div>
       <img class="absolute size-full object-cover" src={album.art} alt="" />
       <div class="label absolute size-full p-0">
         <div class="flex size-full flex-col bg-black p-2 opacity-85">
@@ -345,6 +347,17 @@
   .boxes {
     transform-style: preserve-3d;
     perspective: 800px;
+  }
+  .box .vinyl {
+    background-image: url("/vinyl.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .box .vinyl img {
+    background-repeat: no-repeat;
+    mask-image: radial-gradient(circle, black 70%, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle, black 70%, transparent 70%);
   }
   .box img {
     -webkit-box-reflect: below 0.1vmin
