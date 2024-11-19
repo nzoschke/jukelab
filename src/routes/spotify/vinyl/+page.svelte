@@ -5,9 +5,12 @@
   import { onMount } from "svelte";
   import { Auth, IUser } from "$lib/auth";
   import { Audio } from "$lib/types/audio";
+  import AudioC from "../Audio.svelte";
   import { Playlist } from "../playlist.svelte";
+  import { Log } from "../log.svelte";
 
   const auth = Auth();
+  const log = Log();
 
   let user = $state(IUser);
   let audio = $state(Audio);
@@ -60,8 +63,8 @@
         })
 
         .set(VINYL, {
-          opacity: 0,
           top: 0,
+          rotate: 14,
         })
 
         // Opacity && Scale
@@ -120,7 +123,7 @@
           BOX,
           {
             z: 100,
-            scale: 1.25,
+            scale: 1.5,
             duration: 0.1,
             repeat: 1,
             yoyo: true,
@@ -159,10 +162,10 @@
         .to(
           VINYL,
           {
-            opacity: 1,
             duration: 0.1,
-            top: -40,
+            top: "-50%",
             repeat: 1,
+            rotate: 288,
             yoyo: true,
           },
           0.4,
@@ -298,7 +301,7 @@
         this.startOffset = SCRUB.vars.position;
       },
       onDrag() {
-        SCRUB.vars.position = this.startOffset + (this.startX - this.x) * 0.001;
+        SCRUB.vars.position = this.startOffset + (this.startX - this.x) * 0.0005;
         SCRUB.invalidate().restart(); // same thing as we do in the ScrollTrigger's onUpdate
       },
       onDragEnd() {
@@ -306,20 +309,59 @@
       },
     });
   });
+
+  // if queued when nothing is playing, play
+  $effect(() => {
+    if (
+      audio.currentTime == 0 &&
+      audio.paused &&
+      playlist.queue.length == 1 &&
+      playlist.history.length == 0
+    ) {
+      playlist.skip(1);
+      audio.paused = false;
+    }
+  });
+
+  // if playing with nothing queued, dequeue
+  $effect(() => {
+    if (!audio.paused && playlist.queue.length == 0 && playlist.history.length == 0) {
+      playlist.skip(1);
+    }
+  });
+
+  // if ended, play next
+  $effect(() => {
+    if (audio.ended) playlist.skip(1);
+  });
 </script>
+
+<AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
 
 <div class="boxes absolute h-svh w-svw touch-none overflow-hidden">
   {#each playlist.albums as album}
     <div class="box absolute left-1/2 top-1/2 h-[36vmin] min-h-[200px] w-[36vmin] min-w-[200px]">
-      <div class="vinyl skeleton absolute -top-10 size-full rounded-full"></div>
+      <div class="vinyl absolute flex size-full items-center justify-center rounded-full">
+        <img class="h-2/3 w-2/3" src={album.art} alt="" />
+      </div>
       <img class="absolute size-full object-cover" src={album.art} alt="" />
       <div class="label absolute size-full p-0">
-        <div class="flex size-full flex-col bg-black p-2 opacity-85">
-          <p class="truncate font-bold">{album.title}</p>
-          <p class="truncate">{album.artist}</p>
-          <div class="flex-1 overflow-scroll text-[12px]">
+        <div class="flex size-full flex-col bg-black/85 p-2 text-white">
+          <div class="mb-1 border-b-2 border-white pb-2">
+            <p class="truncate font-bold">{album.title}</p>
+            <p class="truncate">{album.artist}</p>
+          </div>
+          <div class="flex-1 justify-start overflow-scroll text-left text-[12px]">
             {#each album.tracks as track}
-              <p class="truncate">{track.title}</p>
+              <button
+                class="w-full text-left"
+                onclick={() => {
+                  const t = playlist.find({ albumSrc: album.src, trackSrc: track.src });
+                  playlist.enqueue(t);
+                }}
+              >
+                <p class="truncate">{track.title}</p>
+              </button>
             {/each}
           </div>
         </div>
@@ -327,6 +369,7 @@
     </div>
   {/each}
 </div>
+
 <div class="drag-proxy"></div>
 
 <style>
@@ -345,6 +388,17 @@
   .boxes {
     transform-style: preserve-3d;
     perspective: 800px;
+  }
+  .box .vinyl {
+    background-image: url("/vinyl.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .box .vinyl img {
+    background-repeat: no-repeat;
+    mask-image: radial-gradient(circle, black 70%, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle, black 70%, transparent 70%);
   }
   .box img {
     -webkit-box-reflect: below 0.1vmin
