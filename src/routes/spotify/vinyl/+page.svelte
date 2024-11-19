@@ -301,7 +301,7 @@
         this.startOffset = SCRUB.vars.position;
       },
       onDrag() {
-        SCRUB.vars.position = this.startOffset + (this.startX - this.x) * 0.001;
+        SCRUB.vars.position = this.startOffset + (this.startX - this.x) * 0.0005;
         SCRUB.invalidate().restart(); // same thing as we do in the ScrollTrigger's onUpdate
       },
       onDragEnd() {
