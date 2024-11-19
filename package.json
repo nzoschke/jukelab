@@ -60,6 +60,7 @@
   "type": "module",
   "dependencies": {
     "@supabase/supabase-js": "^2.46.1",
-    "nosleep.js": "^0.12.0"
+    "nosleep.js": "^0.12.0",
+    "gsap": "^3.12.5"
   }
 }
