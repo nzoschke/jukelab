@@ -17,6 +17,7 @@
     ChevronLeft,
     ChevronRight,
     Sparkles,
+    ArrowsPointingOut,
   } from "svelte-hero-icons";
   import Broadcast from "../../audio/Broadcast.svelte";
   import PlaySkip from "../../audio/PlaySkip.svelte";
@@ -43,6 +44,8 @@
     aside: false,
     attract: false,
     details: false,
+    footer: true,
+    nav: true,
     toast: false,
   });
   let user = $state(IUser);
@@ -190,7 +193,7 @@
 
 {#snippet nav()}
   <!-- component layout -->
-  <div class="navbar min-h-20 bg-base-100 p-0">
+  <div class="navbar min-h-20 bg-base-100 p-0" class:hidden={!ui.nav}>
     <div class="navbar-start w-32 p-2">
       {@render start()}
     </div>
@@ -349,7 +352,7 @@
   {@const { progress } = playlist}
 
   <!-- component layout -->
-  <div class="navbar relative min-h-20 bg-base-100 p-0">
+  <div class="navbar relative min-h-20 bg-base-100 p-0" class:hidden={!ui.footer}>
     <progress
       class="progress progress-primary absolute -top-1 h-1"
       max={progress.max}
@@ -357,18 +360,28 @@
       class:hidden={progress.value == progress.max}
     ></progress>
 
-    <div class="navbar-start w-32 p-2">
+    <div class="navbar-start w-48 p-2">
       {@render start()}
     </div>
     <div class="navbar-center flex grow justify-center">
       {@render center()}
     </div>
-    <div class="navbar-end w-32 p-2">
+    <div class="navbar-end w-48 p-2">
       {@render end()}
     </div>
   </div>
 
   {#snippet start()}
+    <button
+      class="btn btn-circle btn-ghost"
+      onclick={() => {
+        ui.nav = !ui.nav;
+        ui.footer = !ui.footer;
+      }}
+    >
+      <Icon src={ArrowsPointingOut} class="size-5" />
+    </button>
+
     <button
       class="btn btn-circle btn-ghost"
       onclick={() => {
