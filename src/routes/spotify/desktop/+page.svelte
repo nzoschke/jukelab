@@ -7,16 +7,17 @@
   import { onMount } from "svelte";
   import {
     Bars3,
+    ChevronLeft,
+    ChevronRight,
     Clock,
+    CodeBracketSquare,
     CommandLine,
     Icon,
     Play,
     Plus,
     QueueList,
-    Sun,
-    ChevronLeft,
-    ChevronRight,
     Sparkles,
+    Sun,
   } from "svelte-hero-icons";
   import Broadcast from "../../audio/Broadcast.svelte";
   import PlaySkip from "../../audio/PlaySkip.svelte";
@@ -34,6 +35,8 @@
   const sleep = Sleep();
 
   let audio = $state(Audio);
+  let page = $state(0);
+  let pages = $state(1);
   let playlist = Playlist();
   let select = $state({
     album: AlbumTracks,
@@ -43,12 +46,11 @@
     aside: false,
     attract: false,
     details: false,
+    full: false,
+    portrait: false,
     toast: false,
   });
   let user = $state(IUser);
-
-  let page = $state(0);
-  let pages = $state(1);
 
   let attractTimeout = setTimeout(() => {}, 0);
   const attractReset = () => {
@@ -75,6 +77,10 @@
     el.scrollLeft = (el.scrollWidth / playlist.albums.length) * n - el.clientWidth / 2;
   };
 
+  const oncontextmenu = (e: MouseEvent) => {
+    if (ui.full) e.preventDefault();
+  };
+
   const onkeydown = (event: KeyboardEvent) => {
     attractReset();
 
@@ -92,6 +98,10 @@
         pageScroll(+1);
         break;
     }
+  };
+
+  const onscreenchange = () => {
+    ui.portrait = screen.orientation.type.includes("portrait");
   };
 
   // if queued when nothing is playing, play
@@ -131,16 +141,20 @@
   });
 
   onMount(async () => {
+    onscreenchange();
+    screen.orientation.addEventListener("change", onscreenchange);
+
     user = await auth.user();
     await playlist.get(auth.token, (a) => {
       select.album = a;
     });
     select.album = playlist.albums[0];
+
     pageScroll(0);
   });
 </script>
 
-<svelte:window {onkeydown} />
+<svelte:window {onkeydown} {oncontextmenu} />
 
 <svelte:head>
   <title>Spotify Jukebox</title>
@@ -161,7 +175,7 @@
     role="button"
     tabindex="0"
   >
-    <div class="flex h-screen w-screen flex-col">
+    <div class="flex h-svh w-svw flex-col">
       {@render nav()}
 
       <div class="flex flex-grow justify-end overflow-scroll">
@@ -190,7 +204,7 @@
 
 {#snippet nav()}
   <!-- component layout -->
-  <div class="navbar min-h-20 bg-base-100 p-0">
+  <div class="navbar min-h-20 bg-base-100 p-0" class:hidden={ui.full && !ui.portrait}>
     <div class="navbar-start w-32 p-2">
       {@render start()}
     </div>
@@ -305,6 +319,7 @@
           <tr>
             <th>#</th>
             <th>Title</th>
+            <th>Artist</th>
             <th>Album</th>
             <th><Icon src={Clock} class="size-4" /></th>
           </tr>
@@ -327,7 +342,9 @@
               </th>
               <td class="min-w-24 max-w-24">
                 <div class="truncate">{track.title}</div>
-                <div class="truncate text-sm font-bold">{track.artist}</div>
+              </td>
+              <td class="min-w-24 max-w-24">
+                <div class="truncate">{track.artist}</div>
               </td>
               <td class="min-w-24 max-w-24">
                 <div class="truncate">{select.album.title}</div>
@@ -349,7 +366,7 @@
   {@const { progress } = playlist}
 
   <!-- component layout -->
-  <div class="navbar relative min-h-20 bg-base-100 p-0">
+  <div class="navbar relative min-h-20 bg-base-100 p-0" class:hidden={ui.full && !ui.portrait}>
     <progress
       class="progress progress-primary absolute -top-1 h-1"
       max={progress.max}
@@ -357,18 +374,27 @@
       class:hidden={progress.value == progress.max}
     ></progress>
 
-    <div class="navbar-start w-32 p-2">
+    <div class="navbar-start w-48 p-2">
       {@render start()}
     </div>
     <div class="navbar-center flex grow justify-center">
       {@render center()}
     </div>
-    <div class="navbar-end w-32 p-2">
+    <div class="navbar-end w-48 p-2">
       {@render end()}
     </div>
   </div>
 
   {#snippet start()}
+    <button
+      class="btn btn-circle btn-ghost"
+      onclick={() => {
+        ui.full = !ui.full;
+      }}
+    >
+      <Icon src={CodeBracketSquare} class="size-5" solid={ui.full} />
+    </button>
+
     <button
       class="btn btn-circle btn-ghost"
       onclick={() => {
