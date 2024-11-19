@@ -319,6 +319,7 @@
           <tr>
             <th>#</th>
             <th>Title</th>
+            <th>Artist</th>
             <th>Album</th>
             <th><Icon src={Clock} class="size-4" /></th>
           </tr>
@@ -341,7 +342,9 @@
               </th>
               <td class="min-w-24 max-w-24">
                 <div class="truncate">{track.title}</div>
-                <div class="truncate text-sm font-bold">{track.artist}</div>
+              </td>
+              <td class="min-w-24 max-w-24">
+                <div class="truncate">{track.artist}</div>
               </td>
               <td class="min-w-24 max-w-24">
                 <div class="truncate">{select.album.title}</div>
