@@ -39,7 +39,6 @@
     <h2 class="menu-title">Skins</h2>
     <ul>
       <li><a href={href("/spotify/desktop")}>Desktop</a></li>
-      <li><a href={href("/spotify/kiosk")}>Kiosk</a></li>
       <li><a href={href("/spotify/keypad")}>Keypad</a></li>
     </ul>
   </li>

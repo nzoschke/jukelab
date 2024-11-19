@@ -7,17 +7,17 @@
   import { onMount } from "svelte";
   import {
     Bars3,
+    ChevronLeft,
+    ChevronRight,
     Clock,
+    CodeBracketSquare,
     CommandLine,
     Icon,
     Play,
     Plus,
     QueueList,
-    Sun,
-    ChevronLeft,
-    ChevronRight,
     Sparkles,
-    ArrowsPointingOut,
+    Sun,
   } from "svelte-hero-icons";
   import Broadcast from "../../audio/Broadcast.svelte";
   import PlaySkip from "../../audio/PlaySkip.svelte";
@@ -44,6 +44,7 @@
     aside: false,
     attract: false,
     details: false,
+    full: false,
     footer: true,
     nav: true,
     toast: false,
@@ -78,6 +79,11 @@
     el.scrollLeft = (el.scrollWidth / playlist.albums.length) * n - el.clientWidth / 2;
   };
 
+  const oncontextmenu = (e: MouseEvent) => {
+    if (!ui.full) return;
+    e.preventDefault();
+  };
+
   const onkeydown = (event: KeyboardEvent) => {
     attractReset();
 
@@ -95,6 +101,18 @@
         pageScroll(+1);
         break;
     }
+  };
+
+  const onscreenchange = () => {
+    if (!ui.full) {
+      ui.footer = true;
+      ui.nav = true;
+      return;
+    }
+
+    const portrait = screen.orientation.type.includes("portrait");
+    ui.footer = portrait;
+    ui.nav = portrait;
   };
 
   // if queued when nothing is playing, play
@@ -134,16 +152,20 @@
   });
 
   onMount(async () => {
+    onscreenchange();
+    screen.orientation.addEventListener("change", onscreenchange);
+
     user = await auth.user();
     await playlist.get(auth.token, (a) => {
       select.album = a;
     });
     select.album = playlist.albums[0];
+
     pageScroll(0);
   });
 </script>
 
-<svelte:window {onkeydown} />
+<svelte:window {onkeydown} {oncontextmenu} />
 
 <svelte:head>
   <title>Spotify Jukebox</title>
@@ -164,7 +186,7 @@
     role="button"
     tabindex="0"
   >
-    <div class="flex h-screen w-screen flex-col">
+    <div class="flex h-svh w-svw flex-col">
       {@render nav()}
 
       <div class="flex flex-grow justify-end overflow-scroll">
@@ -375,11 +397,11 @@
     <button
       class="btn btn-circle btn-ghost"
       onclick={() => {
-        ui.nav = !ui.nav;
-        ui.footer = !ui.footer;
+        ui.full = !ui.full;
+        onscreenchange();
       }}
     >
-      <Icon src={ArrowsPointingOut} class="size-5" />
+      <Icon src={CodeBracketSquare} class="size-5" solid={ui.full} />
     </button>
 
     <button
