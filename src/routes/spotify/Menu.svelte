@@ -40,6 +40,7 @@
     <ul>
       <li><a href={href("/spotify/desktop")}>Desktop</a></li>
       <li><a href={href("/spotify/keypad")}>Keypad</a></li>
+      <li><a href={href("/spotify/vinyl")}>Vinyl</a></li>
     </ul>
   </li>
 
