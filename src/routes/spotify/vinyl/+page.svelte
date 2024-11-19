@@ -5,9 +5,12 @@
   import { onMount } from "svelte";
   import { Auth, IUser } from "$lib/auth";
   import { Audio } from "$lib/types/audio";
+  import AudioC from "../Audio.svelte";
   import { Playlist } from "../playlist.svelte";
+  import { Log } from "../log.svelte";
 
   const auth = Auth();
+  const log = Log();
 
   let user = $state(IUser);
   let audio = $state(Audio);
@@ -306,7 +309,34 @@
       },
     });
   });
+
+  // if queued when nothing is playing, play
+  $effect(() => {
+    if (
+      audio.currentTime == 0 &&
+      audio.paused &&
+      playlist.queue.length == 1 &&
+      playlist.history.length == 0
+    ) {
+      playlist.skip(1);
+      audio.paused = false;
+    }
+  });
+
+  // if playing with nothing queued, dequeue
+  $effect(() => {
+    if (!audio.paused && playlist.queue.length == 0 && playlist.history.length == 0) {
+      playlist.skip(1);
+    }
+  });
+
+  // if ended, play next
+  $effect(() => {
+    if (audio.ended) playlist.skip(1);
+  });
 </script>
+
+<AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
 
 <div class="boxes absolute h-svh w-svw touch-none overflow-hidden">
   {#each playlist.albums as album}
