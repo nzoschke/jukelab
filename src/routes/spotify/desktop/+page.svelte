@@ -35,6 +35,8 @@
   const sleep = Sleep();
 
   let audio = $state(Audio);
+  let page = $state(0);
+  let pages = $state(1);
   let playlist = Playlist();
   let select = $state({
     album: AlbumTracks,
@@ -45,14 +47,10 @@
     attract: false,
     details: false,
     full: false,
-    footer: true,
-    nav: true,
+    portrait: false,
     toast: false,
   });
   let user = $state(IUser);
-
-  let page = $state(0);
-  let pages = $state(1);
 
   let attractTimeout = setTimeout(() => {}, 0);
   const attractReset = () => {
@@ -80,8 +78,7 @@
   };
 
   const oncontextmenu = (e: MouseEvent) => {
-    if (!ui.full) return;
-    e.preventDefault();
+    if (ui.full) e.preventDefault();
   };
 
   const onkeydown = (event: KeyboardEvent) => {
@@ -104,15 +101,7 @@
   };
 
   const onscreenchange = () => {
-    if (!ui.full) {
-      ui.footer = true;
-      ui.nav = true;
-      return;
-    }
-
-    const portrait = screen.orientation.type.includes("portrait");
-    ui.footer = portrait;
-    ui.nav = portrait;
+    ui.portrait = screen.orientation.type.includes("portrait");
   };
 
   // if queued when nothing is playing, play
@@ -215,7 +204,7 @@
 
 {#snippet nav()}
   <!-- component layout -->
-  <div class="navbar min-h-20 bg-base-100 p-0" class:hidden={!ui.nav}>
+  <div class="navbar min-h-20 bg-base-100 p-0" class:hidden={ui.full && !ui.portrait}>
     <div class="navbar-start w-32 p-2">
       {@render start()}
     </div>
@@ -374,7 +363,7 @@
   {@const { progress } = playlist}
 
   <!-- component layout -->
-  <div class="navbar relative min-h-20 bg-base-100 p-0" class:hidden={!ui.footer}>
+  <div class="navbar relative min-h-20 bg-base-100 p-0" class:hidden={ui.full && !ui.portrait}>
     <progress
       class="progress progress-primary absolute -top-1 h-1"
       max={progress.max}
@@ -398,7 +387,6 @@
       class="btn btn-circle btn-ghost"
       onclick={() => {
         ui.full = !ui.full;
-        onscreenchange();
       }}
     >
       <Icon src={CodeBracketSquare} class="size-5" solid={ui.full} />
