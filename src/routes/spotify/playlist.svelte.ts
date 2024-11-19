@@ -39,12 +39,12 @@ export const Playlist = () => {
   let history = $state<Src[]>([]);
   let playlist = $state(PlaylistTracks);
   let playlists: string[][] = $state([]);
-  let progress = $state({ max: 0, value: 0 });
+  const progress = $state({ max: 0, value: 0 });
   let queue = $state<Src[]>([]);
   let shuffle = $state<Src[]>([]);
   let track = $state(Track);
 
-  let playing = $derived.by(() => {
+  const playing = $derived.by(() => {
     const an = albums.indexOf(album);
     const tn = album.tracks.indexOf(track);
     return tn >= 0 ? `${pad(an)}${pad(tn + 1)}` : "____";
@@ -120,7 +120,7 @@ export const Playlist = () => {
     }
 
     // parse text into dates
-    var re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
+    const re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
     albums = JSON.parse(text, (k, v) => {
       if (typeof v == "string" && re.test(v)) {
         return new Date(v);
@@ -177,7 +177,7 @@ export const Playlist = () => {
     else if (key == "shuffle") l = shuffle;
     else return;
 
-    var i = l.indexOf(src);
+    const i = l.indexOf(src);
     if (i == -1) return;
 
     if (delta === -Infinity) {
