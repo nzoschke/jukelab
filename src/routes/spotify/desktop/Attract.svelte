@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
+  import { fade, slide } from "svelte/transition";
   import { browser } from "$app/environment";
   import { Playlist } from "../playlist.svelte";
 
@@ -35,31 +35,48 @@
   } = playlist}
 
   <button
-    class="hero absolute left-0 top-0 min-h-screen bg-base-100"
+    class="flex h-screen w-screen flex-col items-center justify-center bg-base-100"
     in:fade
     out:fade
     onclick={() => {
       visible = false;
     }}
   >
-    <div class="hero-content h-full flex-col justify-start">
-      <div class="relative h-20 w-screen">
-        {#key message}
-          <h1
-            class="absolute left-1/2 -translate-x-1/2 text-5xl font-bold"
-            in:fade={{ duration: 400 }}
-            out:fade={{ duration: 400 }}
-          >
-            {message}
-          </h1>
-        {/key}
-      </div>
-      {#if art != ""}
-        <img class=" aspect-square h-4/6" src={art} alt="" />
-      {/if}
+    <div class="relative h-20 w-screen">
+      {#key message}
+        <h1
+          class="absolute left-1/2 -translate-x-1/2 text-5xl font-bold"
+          in:fade={{ duration: 400 }}
+          out:fade={{ duration: 400 }}
+        >
+          {message}
+        </h1>
+      {/key}
+    </div>
 
-      <div class="truncate">{title}</div>
-      <div class="truncate font-bold">{artist}</div>
+    {#if art != ""}
+      <img class="aspect-square h-1/6" src={art} alt="" />
+    {/if}
+
+    <div class="inline-flex w-full flex-nowrap">
+      {#each Array(2) as _, n}
+        <div class="ml-1 flex animate-infinite-scroll items-center justify-center space-x-1">
+          {#each playlist.albums as album, n}
+            <img class="aspect-square h-32 w-32 max-w-none" src={album.art} alt="art" />
+          {/each}
+        </div>
+      {/each}
+    </div>
+    <div class="inline-flex w-full flex-nowrap">
+      {#each Array(2) as _, n}
+        <div
+          class="ml-1 flex animate-infinite-scroll-reverse items-center justify-center space-x-1"
+        >
+          {#each playlist.albums as album, n}
+            <img class="aspect-square h-32 w-32 max-w-none" src={album.art} alt="art" />
+          {/each}
+        </div>
+      {/each}
     </div>
   </button>
 {/if}
