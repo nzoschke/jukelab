@@ -120,7 +120,7 @@
           BOX,
           {
             z: 100,
-            scale: 1.25,
+            scale: 1.5,
             duration: 0.1,
             repeat: 1,
             yoyo: true,
@@ -316,12 +316,22 @@
       </div>
       <img class="absolute size-full object-cover" src={album.art} alt="" />
       <div class="label absolute size-full p-0">
-        <div class="flex size-full flex-col bg-black p-2 opacity-85">
-          <p class="truncate font-bold">{album.title}</p>
-          <p class="truncate">{album.artist}</p>
-          <div class="flex-1 overflow-scroll text-[12px]">
+        <div class="flex size-full flex-col bg-black/85 p-2 text-white">
+          <div class="mb-1 border-b-2 border-white pb-2">
+            <p class="truncate font-bold">{album.title}</p>
+            <p class="truncate">{album.artist}</p>
+          </div>
+          <div class="flex-1 justify-start overflow-scroll text-left text-[12px]">
             {#each album.tracks as track}
-              <p class="truncate">{track.title}</p>
+              <button
+                class="w-full text-left"
+                onclick={() => {
+                  const t = playlist.find({ albumSrc: album.src, trackSrc: track.src });
+                  playlist.enqueue(t);
+                }}
+              >
+                <p class="truncate">{track.title}</p>
+              </button>
             {/each}
           </div>
         </div>
@@ -329,6 +339,7 @@
     </div>
   {/each}
 </div>
+
 <div class="drag-proxy"></div>
 
 <style>
