@@ -35,14 +35,14 @@
   } = playlist}
 
   <button
-    class="flex h-screen w-screen flex-col items-center justify-center bg-base-100"
+    class="flex h-screen w-screen flex-col items-center justify-around bg-base-100"
     in:fade
     out:fade
     onclick={() => {
       visible = false;
     }}
   >
-    <div class="relative h-20 w-screen">
+    <div class="relative h-12 w-screen">
       {#key message}
         <h1
           class="absolute left-1/2 -translate-x-1/2 text-5xl font-bold"
@@ -55,7 +55,8 @@
     </div>
 
     {#if art != ""}
-      <img class="aspect-square h-1/6" src={art} alt="" />
+      <img class="aspect-square h-1/2" src={art} alt="" />
+      <p class="italic">{title} by <b>{artist}</b></p>
     {/if}
 
     <div class="inline-flex w-full flex-nowrap">
