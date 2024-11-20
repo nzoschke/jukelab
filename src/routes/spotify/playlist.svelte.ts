@@ -137,6 +137,13 @@ export const Playlist = () => {
       }
     });
 
+    // if playlist changed clear queue
+    if (!s.check("playlist", src)) {
+      s.set("history", []);
+      s.set("queue", []);
+      s.set("shuffle", []);
+    }
+
     // update storage
     playlists = s.get("playlists", defaults["playlists"]);
     const n = playlists.findIndex((p) => p[1] == src);
