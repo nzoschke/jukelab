@@ -60,7 +60,7 @@ export const Playlist = () => {
     }, []);
 
   const enqueue = async (at: AlbumTrack) => {
-    if (album.src == at.album.src && track.src == at.track.src) {
+    if (album?.src == at.album.src && track?.src == at.track.src) {
       return;
     }
     if (queue.find((q) => q.albumSrc == at.album.src && q.trackSrc == at.track.src)) {
