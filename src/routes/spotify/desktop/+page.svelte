@@ -297,62 +297,40 @@
         </div>
       {/each}
     </div>
-    <div class="flex h-10 items-center justify-center space-x-1">
-      <button class="btn join-item btn-xs" onclick={() => pageScroll(-1)}>
-        <Icon src={ChevronLeft} class="size-4" solid />
-      </button>
-      {#each Array(pages) as _, n}
-        <button
-          aria-label="page"
-          class="badge badge-xs rounded-full"
-          class:badge-neutral={n == page}
-          onclick={() => pageScroll(n - page)}
-        ></button>
-      {/each}
-      <button class="btn join-item btn-xs" onclick={() => pageScroll(+1)}>
-        <Icon src={ChevronRight} class="size-4" solid />
-      </button>
+    <div class="flex justify-center">
+      <div class="flex h-10 w-2/3 items-center justify-between space-x-1">
+        <button class="btn join-item btn-sm rounded" onclick={() => pageScroll(-1)}>
+          <Icon src={ChevronLeft} class="size-4" solid />
+        </button>
+        {#each Array(pages) as _, n}
+          <button
+            aria-label="page"
+            class="badge badge-xs rounded-full"
+            class:badge-neutral={n == page}
+            onclick={() => pageScroll(n - page)}
+          ></button>
+        {/each}
+        <button class="btn join-item btn-sm rounded" onclick={() => pageScroll(+1)}>
+          <Icon src={ChevronRight} class="size-4" solid />
+        </button>
+      </div>
     </div>
-    <div class="flex-1 overflow-scroll">
-      <table class="table" id="tracks">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Title</th>
-            <th>Artist</th>
-            <th>Album</th>
-            <th><Icon src={Clock} class="size-4" /></th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each select.album.tracks as track, n}
-            <tr
-              class="group hover cursor-pointer"
-              onclick={() => {
-                select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
-                const el = document.getElementById("select") as HTMLDialogElement;
-                el.showModal();
-              }}
-            >
-              <th class="w-12">
-                <div class="">
-                  <Icon src={Play} class="size-4" solid />
-                </div>
-              </th>
-              <td class="min-w-24 max-w-24">
-                <div class="truncate">{track.title}</div>
-              </td>
-              <td class="min-w-24 max-w-24">
-                <div class="truncate">{track.artist}</div>
-              </td>
-              <td class="min-w-24 max-w-24">
-                <div class="truncate">{select.album.title}</div>
-              </td>
-              <td class="w-12">{mmss(track.length / 1000)}</td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
+    <div class="flex flex-1 justify-center overflow-scroll">
+      <div class="grid w-2/3 grid-cols-2">
+        {#each select.album.tracks as track, n}
+          <button
+            class="flex h-10 w-full items-center gap-2 rounded p-2 hover:bg-base-200"
+            onclick={() => {
+              select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
+              const el = document.getElementById("select") as HTMLDialogElement;
+              el.showModal();
+            }}
+          >
+            <Icon src={Play} class="size-4 shrink-0" solid />
+            <span class="truncate text-left">{track.title}</span>
+          </button>
+        {/each}
+      </div>
     </div>
   </div>
 {/snippet}
