@@ -35,7 +35,7 @@
   } = playlist}
 
   <button
-    class="flex h-screen w-screen flex-col items-center justify-center bg-slate-200"
+    class="flex h-screen w-screen flex-col items-center justify-center bg-slate-200 pb-20"
     in:fade
     out:fade
     onclick={() => {
@@ -53,7 +53,7 @@
         </div>
       {/each}
     </div>
-    <div class="mt-4 inline-flex w-full flex-nowrap">
+    <div class="mt-1 inline-flex w-full flex-nowrap">
       {#each Array(2) as _, n}
         <div
           class="ml-1 flex animate-infinite-scroll-reverse items-center justify-center space-x-1 opacity-50"
@@ -65,9 +65,9 @@
       {/each}
     </div>
 
-    <div class="fixed inset-0 flex flex-col items-center justify-center">
+    <div class="fixed inset-0 flex flex-col items-center justify-center pb-20">
       {#if art != ""}
-        <div class="mb-20 rounded bg-white p-2 shadow-xl">
+        <div class="rounded bg-white p-2 shadow-xl">
           <img class="aspect-square h-[60vmin] w-[60vmin] rounded" src={art} alt="" />
           <p class="pt-2 italic">{title} by <b>{artist}</b></p>
         </div>
