@@ -35,43 +35,17 @@
   } = playlist}
 
   <button
-    class="flex h-screen w-screen flex-col items-center justify-around bg-base-100"
+    class="flex h-screen w-screen flex-col items-center justify-center bg-slate-200 pb-20"
     in:fade
     out:fade
     onclick={() => {
       visible = false;
     }}
   >
-    <div class="relative h-12 w-screen">
-      {#key message}
-        <h1
-          class="absolute left-1/2 -translate-x-1/2 text-5xl font-bold"
-          in:fade={{ duration: 400 }}
-          out:fade={{ duration: 400 }}
-        >
-          {message}
-        </h1>
-      {/key}
-    </div>
-
-    {#if art != ""}
-      <img class="aspect-square h-1/2" src={art} alt="" />
-      <p class="italic">{title} by <b>{artist}</b></p>
-    {/if}
-
-    <div class="inline-flex w-full flex-nowrap">
-      {#each Array(2) as _, n}
-        <div class="ml-1 flex animate-infinite-scroll items-center justify-center space-x-1">
-          {#each playlist.albums as album, n}
-            <img class="aspect-square h-32 w-32 max-w-none" src={album.art} alt="art" />
-          {/each}
-        </div>
-      {/each}
-    </div>
     <div class="inline-flex w-full flex-nowrap">
       {#each Array(2) as _, n}
         <div
-          class="ml-1 flex animate-infinite-scroll-reverse items-center justify-center space-x-1"
+          class="ml-1 flex animate-infinite-scroll items-center justify-center space-x-1 opacity-50"
         >
           {#each playlist.albums as album, n}
             <img class="aspect-square h-32 w-32 max-w-none" src={album.art} alt="art" />
@@ -79,5 +53,35 @@
         </div>
       {/each}
     </div>
+    <div class="mt-1 inline-flex w-full flex-nowrap">
+      {#each Array(2) as _, n}
+        <div
+          class="ml-1 flex animate-infinite-scroll-reverse items-center justify-center space-x-1 opacity-50"
+        >
+          {#each playlist.albums as album, n}
+            <img class="aspect-square h-32 w-32 max-w-none" src={album.art} alt="art" />
+          {/each}
+        </div>
+      {/each}
+    </div>
+
+    <div class="fixed inset-0 flex flex-col items-center justify-center pb-20">
+      {#if art != ""}
+        <div class="rounded bg-white p-2 shadow-xl">
+          <img class="aspect-square h-[60vmin] w-[60vmin] rounded" src={art} alt="" />
+          <p class="pt-2 italic">{title} by <b>{artist}</b></p>
+        </div>
+      {/if}
+    </div>
+
+    {#key message}
+      <h1
+        class="absolute bottom-20 left-1/2 -translate-x-1/2 transform text-5xl font-bold"
+        in:fade={{ duration: 400 }}
+        out:fade={{ duration: 400 }}
+      >
+        {message}
+      </h1>
+    {/key}
   </button>
 {/if}
