@@ -204,14 +204,14 @@
 
 {#snippet nav()}
   <!-- component layout -->
-  <div class="navbar min-h-20 bg-base-100 p-0" class:hidden={ui.full && !ui.portrait}>
-    <div class="navbar-start w-32 p-2">
+  <div class="navbar min-h-20 bg-base-100 p-0">
+    <div class="navbar-start w-32 p-2" class:hidden={ui.full && !ui.portrait}>
       {@render start()}
     </div>
     <div class="navbar-center flex grow justify-center">
       {@render center()}
     </div>
-    <div class="navbar-end w-32 p-2">
+    <div class="navbar-end w-32 p-2" class:hidden={ui.full && !ui.portrait}>
       {@render end()}
     </div>
   </div>
