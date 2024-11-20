@@ -2,6 +2,7 @@
   import { fade, slide } from "svelte/transition";
   import { browser } from "$app/environment";
   import { Playlist } from "../playlist.svelte";
+  import { pad } from "$lib/string";
 
   let {
     playlist,
@@ -35,13 +36,17 @@
   } = playlist}
 
   <button
-    class="flex h-screen w-screen flex-col items-center justify-center bg-slate-200 pb-20"
+    class="flex h-screen w-screen flex-col items-center justify-center border bg-slate-200 pb-20"
     in:fade
     out:fade
     onclick={() => {
       visible = false;
     }}
   >
+    <h1 class="absolute right-5 top-5 text-5xl text-base-300">
+      Queue: {pad(playlist.queue.length)}
+    </h1>
+
     <div class="inline-flex w-full flex-nowrap">
       {#each Array(2) as _, n}
         <div
@@ -53,6 +58,7 @@
         </div>
       {/each}
     </div>
+
     <div class="mt-1 inline-flex w-full flex-nowrap">
       {#each Array(2) as _, n}
         <div
