@@ -129,13 +129,18 @@ export const Playlist = () => {
     });
 
     albums.forEach((a) => {
-      const suffixRe = /\s-\s[\w\d\s]+$/;
+      const titleRe = /\s+[([].*(deluxe|remaster|expanded|anniversary).*[)\]]$/i;
+      const titleMatch = a.title.match(titleRe);
+      if (titleMatch && titleMatch[0]) {
+        a.title = a.title.replace(titleRe, "");
+      }
+
       if (!a.tracks) {
         return;
       }
+      const suffixRe = /\s-\s[\w\d\s]+$/;
       const suffixMatch = a.tracks[0].title.match(suffixRe);
-      const suffix = suffixMatch ? suffixMatch[0] : null;
-      if (!suffix) {
+      if (!suffixMatch || !suffixMatch[0]) {
         return;
       }
       a.tracks.forEach((t) => {
