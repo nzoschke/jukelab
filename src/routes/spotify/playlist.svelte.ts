@@ -1,4 +1,5 @@
 import { href } from "$lib/href";
+import { normalizeAlbumTitle, normalizeTrackTitles } from "$lib/recordutil";
 import { API } from "$lib/spotify/api";
 import * as s from "$lib/storage";
 import { pad } from "$lib/string";
@@ -129,23 +130,11 @@ export const Playlist = () => {
     });
 
     albums.forEach((a) => {
-      const titleRe = /\s+[([].*(deluxe|remaster|expanded|anniversary).*[)\]]$/i;
-      const titleMatch = a.title.match(titleRe);
-      if (titleMatch && titleMatch[0]) {
-        a.title = a.title.replace(titleRe, "");
+      a.title = normalizeAlbumTitle(a.title);
+      const [newTitles, ok] = normalizeTrackTitles(a.tracks.map((t) => t.title));
+      if (ok) {
+        newTitles.forEach((t, i) => (a.tracks[i].title = t));
       }
-
-      if (!a.tracks) {
-        return;
-      }
-      const suffixRe = /\s-\s[\w\d\s]+$/;
-      const suffixMatch = a.tracks[0].title.match(suffixRe);
-      if (!suffixMatch || !suffixMatch[0]) {
-        return;
-      }
-      a.tracks.forEach((t) => {
-        t.title = t.title.replace(suffixRe, "");
-      });
     });
 
     // update storage
