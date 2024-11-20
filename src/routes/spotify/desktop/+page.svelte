@@ -314,7 +314,7 @@
       </button>
     </div>
     <div class="flex-1 overflow-scroll">
-      <table class="table">
+      <table class="table" id="tracks">
         <thead>
           <tr>
             <th>#</th>
@@ -335,8 +335,7 @@
               }}
             >
               <th class="w-12">
-                <div class="group-hover:hidden">{pad(n + 1)}</div>
-                <div class="hidden group-hover:block">
+                <div class="">
                   <Icon src={Play} class="size-4" solid />
                 </div>
               </th>
@@ -489,7 +488,7 @@
             ui.toast = true;
             setTimeout(() => {
               ui.toast = false;
-            }, 2000);
+            }, 3000);
           }}>OK</button
         >
       </div>
