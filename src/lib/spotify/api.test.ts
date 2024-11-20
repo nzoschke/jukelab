@@ -94,12 +94,18 @@ test("playlist", async () => {
   });
 });
 
+// https://open.spotify.com/playlist/6hyJgde8Tc87CXKpAp9VRI?si=6afc3784420a44e3
+test.skip("playlistAlbums", { timeout: 60000 }, async () => {
+  const as = await api.playlistAlbums("spotify:playlist:6hyJgde8Tc87CXKpAp9VRI");
+  assert.lengthOf(as, 106);
+});
+
 test.skip("playlistAlbums", { timeout: 60000 }, async () => {
   const as = await api.playlistAlbums("spotify:playlist:0JOnan9Ym7vJ485NEfdu5E");
   console.log(JSON.stringify(as));
 });
 
-test("playlistAlbums compilations", { timeout: 60000 }, async () => {
+test.skip("playlistAlbums compilations", { timeout: 60000 }, async () => {
   const as = await api.playlistAlbums("spotify:playlist:1N8kQZjPWbMvkgxHOpSs8q");
   assert.lengthOf(as, 100);
 

@@ -5,6 +5,12 @@ export const hash = (key: string) => {
   }
 };
 
+export const check = (key: string, value: any) => {
+  const i = localStorage.getItem(`jukelab:${key}`);
+  const v = i ? JSON.parse(i) : undefined;
+  return v == value;
+};
+
 export const get = <T>(key: string, def: T): T => {
   let v = hash(key);
   if (v) return v as any;

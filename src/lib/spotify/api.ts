@@ -57,12 +57,11 @@ export const API = (token: () => Promise<string>) => {
   const playlists = async (userUri: string): Promise<s.SimplifiedPlaylist[]> => {
     const a = await api();
 
-    a.playlists.getUsersPlaylists(userUri.split(":")[2]);
     let ps: s.SimplifiedPlaylist[] = [];
     let offset = 0;
     let total = 1;
     while (offset < total) {
-      const out = await a.playlists.getUsersPlaylists(userUri.split(":")[2]);
+      const out = await a.playlists.getUsersPlaylists(userUri.split(":")[2], 50, offset);
       total = out.total;
       offset += out.limit;
       ps.push(...out.items);
@@ -77,14 +76,31 @@ export const API = (token: () => Promise<string>) => {
   ): Promise<AlbumTracks[]> => {
     const a = await api();
 
+    let ts: s.PlaylistedTrack<s.Track>[] = [];
+    let offset = 0;
+    let total = 1;
+    while (offset < total) {
+      const out = await a.playlists.getPlaylistItems(
+        playlistUri.split(":")[2],
+        undefined,
+        undefined,
+        50,
+        offset,
+      );
+      total = out.total;
+      offset += out.limit;
+      ts.push(...out.items);
+    }
+
     const out = await a.playlists.getPlaylist(playlistUri.split(":")[2]);
     const comps = await compilations(out.owner.uri);
 
     const p = await playlist(playlistUri);
     const albums: AlbumTracks[] = [];
-    for (const t of p.tracks) {
-      const comp = comps.find((c) => c.description.includes(t.src.split(":")[2]));
-      const a = comp ? await compilation(comp.uri) : await trackAlbum(t.src);
+    for (const t of ts) {
+      const { uri } = t.track;
+      const comp = comps.find((c) => c.description.includes(uri.split(":")[2]));
+      const a = comp ? await compilation(comp.uri) : await trackAlbum(uri);
       albums.push(a);
       if (cb) cb(a);
 
