@@ -315,21 +315,23 @@
         </button>
       </div>
     </div>
-    <div class="flex flex-1 justify-center overflow-scroll">
-      <div class="grid w-2/3 grid-cols-2">
-        {#each select.album.tracks as track, n}
-          <button
-            class="flex h-10 w-full items-center gap-2 rounded p-2 hover:bg-base-200"
-            onclick={() => {
-              select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
-              const el = document.getElementById("select") as HTMLDialogElement;
-              el.showModal();
-            }}
-          >
-            <Icon src={Play} class="size-4 shrink-0" solid />
-            <span class="truncate text-left">{track.title}</span>
-          </button>
-        {/each}
+    <div class="overflow-scroll">
+      <div class="flex flex-1 justify-center overflow-scroll">
+        <div class="grid w-2/3 grid-cols-2 rounded bg-slate-100">
+          {#each select.album.tracks as track, n}
+            <button
+              class="flex h-10 w-full items-center gap-2 rounded p-2 hover:bg-base-200"
+              onclick={() => {
+                select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
+                const el = document.getElementById("select") as HTMLDialogElement;
+                el.showModal();
+              }}
+            >
+              <Icon src={Play} class="size-4 shrink-0" solid />
+              <span class="truncate text-left">{track.title}</span>
+            </button>
+          {/each}
+        </div>
       </div>
     </div>
   </div>
