@@ -172,6 +172,9 @@
     onmousemove={() => {
       attractReset();
     }}
+    ontouchstart={() => {
+      attractReset();
+    }}
     role="button"
     tabindex="0"
   >
@@ -205,22 +208,33 @@
 {#snippet nav()}
   <!-- component layout -->
   <div class="navbar min-h-20 bg-base-100 p-0">
-    <div class="navbar-start w-32 p-2" class:hidden={ui.full && !ui.portrait}>
+    <div class="navbar-start w-32 p-2">
       {@render start()}
     </div>
     <div class="navbar-center flex grow justify-center">
       {@render center()}
     </div>
-    <div class="navbar-end w-32 p-2" class:hidden={ui.full && !ui.portrait}>
+    <div class="navbar-end w-32 p-2" class:hidden={ui.full}>
       {@render end()}
     </div>
   </div>
 
   <!-- section layouts -->
   {#snippet start()}
-    <label for="drawer" class="btn btn-circle btn-ghost">
-      <Icon src={Bars3} class="size-5" />
-    </label>
+    {#if ui.full}
+      <button
+        aria-label="exit"
+        class="btn btn-circle btn-link"
+        onclick={() => {
+          ui.full = false;
+        }}
+      >
+      </button>
+    {:else}
+      <label for="drawer" class="btn btn-circle btn-ghost">
+        <Icon src={Bars3} class="size-5" />
+      </label>
+    {/if}
   {/snippet}
 
   {#snippet center()}
@@ -343,7 +357,7 @@
   {@const { progress } = playlist}
 
   <!-- component layout -->
-  <div class="navbar relative min-h-20 bg-base-100 p-0" class:hidden={ui.full && !ui.portrait}>
+  <div class="navbar relative min-h-20 bg-base-100 p-0" class:hidden={ui.full}>
     <progress
       class="progress progress-primary absolute -top-1 h-1"
       max={progress.max}
