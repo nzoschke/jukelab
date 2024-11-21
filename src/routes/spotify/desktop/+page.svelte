@@ -330,7 +330,7 @@
       </div>
     </div>
     <div class="flex flex-1 justify-center overflow-scroll">
-      <div class="grid w-2/3 grid-cols-2">
+      <div class="grid w-2/3 grid-cols-2 content-start">
         {#each select.album.tracks as track, n}
           <button
             class="flex h-10 w-full items-center gap-2 rounded p-2 hover:bg-base-200"
