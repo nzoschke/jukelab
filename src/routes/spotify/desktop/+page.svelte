@@ -214,7 +214,7 @@
     <div class="navbar-center flex grow justify-center">
       {@render center()}
     </div>
-    <div class="navbar-end w-32 p-2" class:hidden={ui.full}>
+    <div class="navbar-end w-32 p-2">
       {@render end()}
     </div>
   </div>
@@ -269,7 +269,9 @@
   {/snippet}
 
   {#snippet end()}
-    <Avatar />
+    {#if !ui.full}
+      <Avatar />
+    {/if}
   {/snippet}
 {/snippet}
 
