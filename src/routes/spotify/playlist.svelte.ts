@@ -141,6 +141,10 @@ export const Playlist = () => {
       if (ok) {
         newTitles.forEach((t, i) => (a.tracks[i].title = t));
       }
+
+      if (a.tracks.length > 1 && a.tracks[0].artist !== a.tracks[1].artist) {
+        a.tracks.forEach((t) => (t.title = `${t.title} by ${t.artist}`));
+      }
     });
 
     // if playlist changed clear queue
