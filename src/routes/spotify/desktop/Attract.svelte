@@ -47,7 +47,8 @@
 
   onMount(() => shuffleAlbums());
   $effect(() => {
-    if (visible) {
+    if (!visible) {
+      // shuffle while in background
       shuffleAlbums();
     }
   });
