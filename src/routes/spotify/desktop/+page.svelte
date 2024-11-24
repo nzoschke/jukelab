@@ -15,6 +15,7 @@
     Icon,
     Play,
     Plus,
+    MagnifyingGlass,
     QueueList,
     Sparkles,
     Sun,
@@ -280,7 +281,7 @@
     <div class="skeleton h-[19.5rem] w-full" class:hidden={playlist.albums.length > 0}></div>
     <div
       id="carousel"
-      class="carousel carousel-center relative w-full pb-1"
+      class="carousel carousel-center relative w-full"
       onscrollend={({ currentTarget: t }) => {
         page = Math.round(t.scrollLeft / t.clientWidth);
       }}
@@ -288,20 +289,20 @@
       {#each playlist.albums as album, n}
         <div class="carousel-item w-64">
           <button
-            class="group w-full"
+            class="group w-full border-b-4 border-gray-300"
             onclick={(e) => {
               select.album = album;
               pageItemCenter(n);
             }}
-            class:border-4={album == select.album}
+            class:border-accent={album == select.album}
           >
-            <div class="card w-full rounded-sm bg-base-100 shadow">
+            <div class="card w-full rounded-sm bg-base-100">
               <figure class="relative size-full">
                 <img class="aspect-square object-cover object-center" src={album?.art} alt="art" />
                 <div
                   class="btn btn-circle btn-accent absolute bottom-0 right-0 m-2 hidden items-center group-hover:flex"
                 >
-                  <Icon src={Play} class="size-6" solid />
+                  <Icon src={MagnifyingGlass} class="size-6" solid />
                 </div>
               </figure>
               <div class="card-body w-full gap-0 p-2 text-left">
@@ -313,37 +314,43 @@
         </div>
       {/each}
     </div>
-    <div class="flex justify-center">
-      <div class="flex h-10 w-2/3 items-center justify-between space-x-1">
-        <button class="btn join-item btn-sm rounded" onclick={() => pageScroll(-1)}>
-          <Icon src={ChevronLeft} class="size-4" solid />
-        </button>
-        {#each Array(pages) as _, n}
-          <button
-            aria-label="page"
-            class="badge badge-xs rounded-full"
-            class:badge-neutral={n == page}
-            onclick={() => pageScroll(n - page)}
-          ></button>
-        {/each}
-        <button class="btn join-item btn-sm rounded" onclick={() => pageScroll(+1)}>
-          <Icon src={ChevronRight} class="size-4" solid />
-        </button>
-      </div>
+    <div class="flex w-full items-center justify-between bg-base-200 px-1">
+      <button class="btn join-item btn-sm rounded" onclick={() => pageScroll(-1)}>
+        <Icon src={ChevronLeft} class="size-4" solid />
+      </button>
+      {#each Array(pages) as _, n}
+        <button
+          aria-label="page"
+          class="h-2 w-2 rounded-full bg-base-100 hover:bg-base-300"
+          class:bg-base-300={n == page}
+          onclick={() => pageScroll(n - page)}
+        ></button>
+      {/each}
+      <button class="btn join-item btn-sm rounded" onclick={() => pageScroll(+1)}>
+        <Icon src={ChevronRight} class="size-4" solid />
+      </button>
     </div>
-    <div class="flex flex-1 justify-center overflow-scroll">
-      <div class="flex w-full justify-center overflow-scroll rounded border md:w-[32rem]">
+    <div
+      class="flex flex-1 justify-center overflow-scroll bg-gradient-to-b from-base-200 to-gray-300"
+    >
+      <div
+        class="mb-3 mt-1 flex w-full justify-center overflow-scroll rounded bg-base-100 shadow-xl md:w-[32rem]"
+      >
         <div class="grid w-full grid-cols-1 content-start">
           {#each select.album.tracks as track, n}
             <button
-              class="flex h-10 w-full items-center gap-2 rounded p-2 hover:bg-base-200"
+              class="group flex h-10 w-full items-center gap-2 p-2 hover:bg-base-300 hover:text-primary"
               onclick={() => {
                 select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
                 const el = document.getElementById("select") as HTMLDialogElement;
                 el.showModal();
               }}
             >
-              <Icon src={Play} class="size-4 shrink-0" solid />
+              <Icon
+                src={Play}
+                class="size-4 shrink-0 text-gray-300 group-hover:text-primary"
+                solid
+              />
               {n + 1}.
               <span class="truncate text-left">{track.title}</span>
             </button>
