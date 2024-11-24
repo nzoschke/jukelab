@@ -22,7 +22,7 @@ export const API = (token: () => Promise<string>) => {
   const albumTracks = async (uri: string) => {
     let album = s.get(uri, AlbumTracks);
     if (album.src != "") {
-      let text = JSON.stringify(album);
+      const text = JSON.stringify(album);
       const re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/; // startswith: 2015-04-29T22:06:55
       album = JSON.parse(text, (k, v) => {
         if (typeof v == "string" && re.test(v)) {
@@ -68,7 +68,7 @@ export const API = (token: () => Promise<string>) => {
     const id = uri.split(":")[2];
     const out = await a.playlists.getPlaylist(id);
 
-    let ts: sdk.PlaylistedTrack<sdk.Track>[] = [];
+    const ts: sdk.PlaylistedTrack<sdk.Track>[] = [];
     let offset = 0;
     let total = 1;
     while (offset < total) {
@@ -88,7 +88,7 @@ export const API = (token: () => Promise<string>) => {
   const playlists = async (userUri: string): Promise<sdk.SimplifiedPlaylist[]> => {
     const a = await api();
 
-    let ps: sdk.SimplifiedPlaylist[] = [];
+    const ps: sdk.SimplifiedPlaylist[] = [];
     let offset = 0;
     let total = 1;
     while (offset < total) {
