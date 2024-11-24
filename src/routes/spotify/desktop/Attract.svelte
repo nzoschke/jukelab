@@ -3,6 +3,8 @@
   import { browser } from "$app/environment";
   import { Playlist } from "../playlist.svelte";
   import { pad } from "$lib/string";
+  import { onMount } from "svelte";
+  import type { AlbumTracks } from "$lib/types/music";
 
   let {
     playlist,
@@ -27,6 +29,28 @@
       message = messages[(i + 1) % messages.length];
     }, 5000);
   }
+
+  const shuffleArray = <T,>(array: T[]): T[] =>
+    array
+      .map((value) => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
+
+  let albums1: AlbumTracks[] = [];
+  let albums2: AlbumTracks[] = [];
+  const shuffleAlbums = () => {
+    const shuffled = shuffleArray([...playlist.albums]);
+    const half = Math.ceil(shuffled.length / 2);
+    albums1 = shuffled.slice(0, half);
+    albums2 = shuffled.slice(half);
+  };
+
+  onMount(() => shuffleAlbums());
+  $effect(() => {
+    if (visible) {
+      shuffleAlbums();
+    }
+  });
 </script>
 
 {#if visible}
@@ -52,7 +76,7 @@
         <div
           class="ml-1 flex animate-infinite-scroll items-center justify-center space-x-1 opacity-50"
         >
-          {#each playlist.albums as album, n}
+          {#each albums1 as album, n}
             <img class="aspect-square h-32 w-32 max-w-none" src={album.art} alt="art" />
           {/each}
         </div>
@@ -64,7 +88,7 @@
         <div
           class="ml-1 flex animate-infinite-scroll-reverse items-center justify-center space-x-1 opacity-50"
         >
-          {#each playlist.albums as album, n}
+          {#each albums2 as album, n}
             <img class="aspect-square h-32 w-32 max-w-none" src={album.art} alt="art" />
           {/each}
         </div>
