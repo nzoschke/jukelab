@@ -1,3 +1,4 @@
+import { shuffle as arrayShuffle } from "$lib/array";
 import { href } from "$lib/href";
 import { normalizeAlbumTitle, normalizeTrackTitles } from "$lib/recordutil";
 import { API } from "$lib/spotify/api";
@@ -50,14 +51,6 @@ export const Playlist = () => {
     const tn = album.tracks.indexOf(track);
     return tn >= 0 ? `${pad(an)}${pad(tn + 1)}` : "____";
   });
-
-  const chunk = (size: number) =>
-    albums.reduce<AlbumTracks[][]>((all, one, i) => {
-      const ch = Math.floor(i / size);
-      if (!all[ch]) all[ch] = [];
-      all[ch].push(one);
-      return all;
-    }, []);
 
   const enqueue = async (at: AlbumTrack) => {
     if (album?.src == at.album.src && track?.src == at.track.src) {
@@ -236,21 +229,12 @@ export const Playlist = () => {
 
   const reshuffle = () => {
     const srcs = albums.map((a) => a.tracks.map((t) => _src(a, t))).flat();
-    let i = srcs.length;
-    while (i != 0) {
-      const ri = Math.floor(Math.random() * i);
-      i--;
-      [srcs[i], srcs[ri]] = [srcs[ri]!, srcs[i]!];
-    }
-
-    shuffle = srcs;
-    s.set("shuffle", shuffle);
+    s.set("shuffle", arrayShuffle(srcs));
   };
 
   const _src = (a: Album, t: Track): Src => ({ albumSrc: a.src, trackSrc: t.src });
 
   return {
-    chunk,
     enqueue,
     find,
     get,

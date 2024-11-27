@@ -5,6 +5,7 @@
   import { pad } from "$lib/string";
   import { onMount } from "svelte";
   import type { AlbumTracks } from "$lib/types/music";
+  import { shuffle } from "$lib/array";
 
   let {
     playlist,
@@ -30,16 +31,10 @@
     }, 5000);
   }
 
-  const shuffleArray = <T,>(array: T[]): T[] =>
-    array
-      .map((value) => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
-
   let albums1: AlbumTracks[] = [];
   let albums2: AlbumTracks[] = [];
   const shuffleAlbums = () => {
-    const shuffled = shuffleArray([...playlist.albums]);
+    const shuffled = shuffle([...playlist.albums]);
     const half = Math.ceil(shuffled.length / 2);
     albums1 = shuffled.slice(0, half);
     albums2 = shuffled.slice(half);
