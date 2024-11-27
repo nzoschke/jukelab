@@ -5,7 +5,7 @@
   import { pad } from "$lib/string";
   import { onMount } from "svelte";
   import type { AlbumTracks } from "$lib/types/music";
-  import { shuffle } from "$lib/array";
+  import { chunk, shuffle } from "$lib/array";
 
   let {
     playlist,
@@ -23,29 +23,30 @@
   ];
 
   let message = $state(messages[0]);
+  let artTop = $state<AlbumTracks[]>([]);
+  let artBottom = $state<AlbumTracks[]>([]);
 
-  if (browser) {
-    setInterval(() => {
-      const i = messages.findIndex((m) => m == message);
-      message = messages[(i + 1) % messages.length];
-    }, 5000);
-  }
-
-  let albums1: AlbumTracks[] = [];
-  let albums2: AlbumTracks[] = [];
-  const shuffleAlbums = () => {
+  const reshuffle = () => {
     const shuffled = shuffle([...playlist.albums]);
-    const half = Math.ceil(shuffled.length / 2);
-    albums1 = shuffled.slice(0, half);
-    albums2 = shuffled.slice(half);
+    const chunks = chunk(shuffled, Math.ceil(shuffled.length / 2));
+    artTop = chunks[0];
+    artBottom = chunks[1];
   };
 
-  onMount(() => shuffleAlbums());
-  $effect(() => {
-    if (!visible) {
-      // shuffle while in background
-      shuffleAlbums();
+  onMount(() => {
+    reshuffle();
+
+    if (browser) {
+      setInterval(() => {
+        const i = messages.findIndex((m) => m == message);
+        message = messages[(i + 1) % messages.length];
+      }, 5000);
     }
+  });
+
+  $effect(() => {
+    // reshuffle while invisible
+    visible || reshuffle();
   });
 </script>
 
@@ -72,7 +73,7 @@
         <div
           class="ml-1 flex animate-infinite-scroll items-center justify-center space-x-1 opacity-50"
         >
-          {#each albums1 as album, n}
+          {#each artTop as album, n}
             <img class="aspect-square h-32 w-32 max-w-none" src={album.art} alt="art" />
           {/each}
         </div>
@@ -84,7 +85,7 @@
         <div
           class="ml-1 flex animate-infinite-scroll-reverse items-center justify-center space-x-1 opacity-50"
         >
-          {#each albums2 as album, n}
+          {#each artBottom as album, n}
             <img class="aspect-square h-32 w-32 max-w-none" src={album.art} alt="art" />
           {/each}
         </div>
