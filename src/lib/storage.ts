@@ -1,6 +1,6 @@
 export const hash = (key: string) => {
-  for (let kv of window.location.hash.substring(1).split("&")) {
-    let [k, v] = kv.split("=");
+  for (const kv of window.location.hash.substring(1).split("&")) {
+    const [k, v] = kv.split("=");
     if (k == key) return v;
   }
 };
@@ -12,7 +12,7 @@ export const check = (key: string, value: any) => {
 };
 
 export const get = <T>(key: string, def: T): T => {
-  let v = hash(key);
+  const v = hash(key);
   if (v) return v as any;
 
   const i = localStorage.getItem(`jukelab:${key}`);

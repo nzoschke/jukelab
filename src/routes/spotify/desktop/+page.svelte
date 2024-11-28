@@ -30,6 +30,8 @@
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
   import Attract from "./Attract.svelte";
+  import Snow from "$lib/shared/snow.svelte";
+  import { holiday } from "./store";
 
   const auth = Auth();
   const log = Log();
@@ -502,6 +504,10 @@
     <button>close</button>
   </form>
 </dialog>
+
+{#if $holiday}
+  <Snow />
+{/if}
 
 <!-- page style -->
 <style>
