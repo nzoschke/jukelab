@@ -11,6 +11,7 @@
   import { AlbumTrack, Playlist } from "../playlist.svelte";
   import Queue from "../Queue.svelte";
   import { Sleep } from "../Sleep.svelte";
+  import { chunk } from "$lib/array";
 
   type Tabs = "queue" | "shuffle" | "history";
 
@@ -262,7 +263,7 @@
       page = Math.round(t.scrollLeft / t.clientWidth);
     }}
   >
-    {#each playlist.chunk(4) as albums, n}
+    {#each chunk(playlist.albums, 4) as albums, n}
       <div class="carousel-item size-full">
         <div class="carousel-item size-full">
           <div class="flex size-full flex-wrap">
