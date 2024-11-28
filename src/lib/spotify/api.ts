@@ -60,7 +60,7 @@ export const API = (token: () => Promise<string>) => {
 
   const compilations = async (userUri: string): Promise<sdk.SimplifiedPlaylist[]> => {
     const ps = await playlists(userUri);
-    return ps.filter((p) => p.description.includes("JukeLab compilation"));
+    return ps.filter((p) => p && p.description.includes("JukeLab compilation"));
   };
 
   const playlist = async (uri: string): Promise<PlaylistTracks> => {
