@@ -1,6 +1,7 @@
 <script lang="ts">
   import { href } from "$lib/href";
   import { Playlist } from "./playlist.svelte";
+  import { holiday } from "./desktop/store";
 
   let {
     playlist,
@@ -35,12 +36,25 @@
       </li>
     </ul>
   </li>
+
   <li>
     <h2 class="menu-title">Skins</h2>
     <ul>
       <li><a href={href("/spotify/desktop")}>Desktop</a></li>
       <li><a href={href("/spotify/keypad")}>Keypad</a></li>
       <li><a href={href("/spotify/vinyl")}>Vinyl</a></li>
+    </ul>
+  </li>
+
+  <li>
+    <h2 class="menu-title">Settings</h2>
+    <ul>
+      <li>
+        <label class="label flex cursor-pointer justify-start">
+          <input type="checkbox" class="toggle" bind:checked={$holiday} />
+          <span class="label-text">Holiday mode</span>
+        </label>
+      </li>
     </ul>
   </li>
 

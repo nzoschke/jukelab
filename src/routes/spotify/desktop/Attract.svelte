@@ -6,6 +6,9 @@
   import { onMount } from "svelte";
   import type { AlbumTracks } from "$lib/types/music";
   import { chunk, shuffle } from "$lib/array";
+  import Snow from "$lib/shared/snow.svelte";
+  import { writable } from "svelte/store";
+  import { holiday } from "./store";
 
   let {
     playlist,
@@ -15,12 +18,20 @@
     visible: boolean;
   } = $props();
 
-  const messages = [
+  const defaultMessages = [
     "Welcome to JukeLab",
     "Press any key to continue",
     "Tap anywhere to start",
     "Select your favorite tunes",
   ];
+
+  const holidayMessages = [
+    "Happy Holidays!",
+    "Tap anywhere for turkey",
+    "Select your favorite holiday tunes",
+  ];
+
+  const messages = $derived($holiday ? holidayMessages : defaultMessages);
 
   let message = $state(messages[0]);
   let artTop = $state<AlbumTracks[]>([]);
@@ -111,4 +122,8 @@
       </h1>
     {/key}
   </button>
+
+  {#if $holiday}
+    <Snow />
+  {/if}
 {/if}
