@@ -1,0 +1,563 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		4F56194F2D0CFDCD00DF81B4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F5619362D0CFDCC00DF81B4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F56193D2D0CFDCC00DF81B4;
+			remoteInfo = JukeLab;
+		};
+		4F5619592D0CFDCE00DF81B4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F5619362D0CFDCC00DF81B4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F56193D2D0CFDCC00DF81B4;
+			remoteInfo = JukeLab;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		4F56193E2D0CFDCC00DF81B4 /* JukeLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JukeLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F56194E2D0CFDCD00DF81B4 /* JukeLabTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JukeLabTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F5619582D0CFDCE00DF81B4 /* JukeLabUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JukeLabUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		4F5619402D0CFDCC00DF81B4 /* JukeLab */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = JukeLab;
+			sourceTree = "<group>";
+		};
+		4F5619512D0CFDCD00DF81B4 /* JukeLabTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = JukeLabTests;
+			sourceTree = "<group>";
+		};
+		4F56195B2D0CFDCE00DF81B4 /* JukeLabUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = JukeLabUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4F56193B2D0CFDCC00DF81B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F56194B2D0CFDCD00DF81B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F5619552D0CFDCE00DF81B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4F5619352D0CFDCC00DF81B4 = {
+			isa = PBXGroup;
+			children = (
+				4F5619402D0CFDCC00DF81B4 /* JukeLab */,
+				4F5619512D0CFDCD00DF81B4 /* JukeLabTests */,
+				4F56195B2D0CFDCE00DF81B4 /* JukeLabUITests */,
+				4F56193F2D0CFDCC00DF81B4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4F56193F2D0CFDCC00DF81B4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4F56193E2D0CFDCC00DF81B4 /* JukeLab.app */,
+				4F56194E2D0CFDCD00DF81B4 /* JukeLabTests.xctest */,
+				4F5619582D0CFDCE00DF81B4 /* JukeLabUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4F56193D2D0CFDCC00DF81B4 /* JukeLab */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4F5619622D0CFDCE00DF81B4 /* Build configuration list for PBXNativeTarget "JukeLab" */;
+			buildPhases = (
+				4F56193A2D0CFDCC00DF81B4 /* Sources */,
+				4F56193B2D0CFDCC00DF81B4 /* Frameworks */,
+				4F56193C2D0CFDCC00DF81B4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4F5619402D0CFDCC00DF81B4 /* JukeLab */,
+			);
+			name = JukeLab;
+			packageProductDependencies = (
+			);
+			productName = JukeLab;
+			productReference = 4F56193E2D0CFDCC00DF81B4 /* JukeLab.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4F56194D2D0CFDCD00DF81B4 /* JukeLabTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4F5619652D0CFDCE00DF81B4 /* Build configuration list for PBXNativeTarget "JukeLabTests" */;
+			buildPhases = (
+				4F56194A2D0CFDCD00DF81B4 /* Sources */,
+				4F56194B2D0CFDCD00DF81B4 /* Frameworks */,
+				4F56194C2D0CFDCD00DF81B4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4F5619502D0CFDCD00DF81B4 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4F5619512D0CFDCD00DF81B4 /* JukeLabTests */,
+			);
+			name = JukeLabTests;
+			packageProductDependencies = (
+			);
+			productName = JukeLabTests;
+			productReference = 4F56194E2D0CFDCD00DF81B4 /* JukeLabTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		4F5619572D0CFDCE00DF81B4 /* JukeLabUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4F5619682D0CFDCE00DF81B4 /* Build configuration list for PBXNativeTarget "JukeLabUITests" */;
+			buildPhases = (
+				4F5619542D0CFDCE00DF81B4 /* Sources */,
+				4F5619552D0CFDCE00DF81B4 /* Frameworks */,
+				4F5619562D0CFDCE00DF81B4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4F56195A2D0CFDCE00DF81B4 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4F56195B2D0CFDCE00DF81B4 /* JukeLabUITests */,
+			);
+			name = JukeLabUITests;
+			packageProductDependencies = (
+			);
+			productName = JukeLabUITests;
+			productReference = 4F5619582D0CFDCE00DF81B4 /* JukeLabUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4F5619362D0CFDCC00DF81B4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1610;
+				LastUpgradeCheck = 1610;
+				TargetAttributes = {
+					4F56193D2D0CFDCC00DF81B4 = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					4F56194D2D0CFDCD00DF81B4 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = 4F56193D2D0CFDCC00DF81B4;
+					};
+					4F5619572D0CFDCE00DF81B4 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = 4F56193D2D0CFDCC00DF81B4;
+					};
+				};
+			};
+			buildConfigurationList = 4F5619392D0CFDCC00DF81B4 /* Build configuration list for PBXProject "JukeLab" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4F5619352D0CFDCC00DF81B4;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 4F56193F2D0CFDCC00DF81B4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4F56193D2D0CFDCC00DF81B4 /* JukeLab */,
+				4F56194D2D0CFDCD00DF81B4 /* JukeLabTests */,
+				4F5619572D0CFDCE00DF81B4 /* JukeLabUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4F56193C2D0CFDCC00DF81B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F56194C2D0CFDCD00DF81B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F5619562D0CFDCE00DF81B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4F56193A2D0CFDCC00DF81B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F56194A2D0CFDCD00DF81B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F5619542D0CFDCE00DF81B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4F5619502D0CFDCD00DF81B4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F56193D2D0CFDCC00DF81B4 /* JukeLab */;
+			targetProxy = 4F56194F2D0CFDCD00DF81B4 /* PBXContainerItemProxy */;
+		};
+		4F56195A2D0CFDCE00DF81B4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F56193D2D0CFDCC00DF81B4 /* JukeLab */;
+			targetProxy = 4F5619592D0CFDCE00DF81B4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4F5619602D0CFDCE00DF81B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		4F5619612D0CFDCE00DF81B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4F5619632D0CFDCE00DF81B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"JukeLab/Preview Content\"";
+				DEVELOPMENT_TEAM = Z29X8887K5;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.mixable.jukebot;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4F5619642D0CFDCE00DF81B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"JukeLab/Preview Content\"";
+				DEVELOPMENT_TEAM = Z29X8887K5;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.mixable.jukebot;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4F5619662D0CFDCE00DF81B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z29X8887K5;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.mixable.JukeLabTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JukeLab.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/JukeLab";
+			};
+			name = Debug;
+		};
+		4F5619672D0CFDCE00DF81B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z29X8887K5;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.mixable.JukeLabTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JukeLab.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/JukeLab";
+			};
+			name = Release;
+		};
+		4F5619692D0CFDCE00DF81B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z29X8887K5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.mixable.JukeLabUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = JukeLab;
+			};
+			name = Debug;
+		};
+		4F56196A2D0CFDCE00DF81B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z29X8887K5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.mixable.JukeLabUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = JukeLab;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4F5619392D0CFDCC00DF81B4 /* Build configuration list for PBXProject "JukeLab" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F5619602D0CFDCE00DF81B4 /* Debug */,
+				4F5619612D0CFDCE00DF81B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4F5619622D0CFDCE00DF81B4 /* Build configuration list for PBXNativeTarget "JukeLab" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F5619632D0CFDCE00DF81B4 /* Debug */,
+				4F5619642D0CFDCE00DF81B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4F5619652D0CFDCE00DF81B4 /* Build configuration list for PBXNativeTarget "JukeLabTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F5619662D0CFDCE00DF81B4 /* Debug */,
+				4F5619672D0CFDCE00DF81B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4F5619682D0CFDCE00DF81B4 /* Build configuration list for PBXNativeTarget "JukeLabUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F5619692D0CFDCE00DF81B4 /* Debug */,
+				4F56196A2D0CFDCE00DF81B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4F5619362D0CFDCC00DF81B4 /* Project object */;
+}

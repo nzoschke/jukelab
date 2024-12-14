@@ -55,6 +55,7 @@
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",
+    "*.swift": "swift-format format --recursive --in-place",
     "**/*": "prettier --write --ignore-unknown"
   },
   "type": "module",
