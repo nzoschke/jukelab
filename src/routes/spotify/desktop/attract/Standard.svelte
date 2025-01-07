@@ -78,7 +78,7 @@
 
   <div class="fixed inset-0 flex flex-col items-center justify-center pb-20">
     {#if art != ""}
-      <div class="rounded bg-white p-2 shadow-xl">
+      <div class="w-[60vmin] rounded bg-white p-2 shadow-xl">
         <img class="aspect-square h-[60vmin] w-[60vmin] rounded" src={art} alt="" />
         <p class="pt-2 italic">{title} by <b>{artist}</b></p>
       </div>
