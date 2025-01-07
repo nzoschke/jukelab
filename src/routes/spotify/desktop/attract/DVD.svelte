@@ -1,8 +1,15 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
   import { Playlist } from "../../playlist.svelte";
+  import { fade } from "svelte/transition";
 
-  let { playlist }: { playlist: ReturnType<typeof Playlist> } = $props();
+  let {
+    playlist,
+    message,
+  }: {
+    playlist: ReturnType<typeof Playlist>;
+    message: string;
+  } = $props();
 
   const {
     album: { art },
@@ -91,6 +98,16 @@
 </script>
 
 <div class="flex h-screen w-screen items-center justify-center">
+  {#key message}
+    <h1
+      class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center text-4xl font-bold text-neutral-400"
+      in:fade={{ duration: 400 }}
+      out:fade={{ duration: 400 }}
+    >
+      {message}
+    </h1>
+  {/key}
+
   {#each albums as album (album.art)}
     <img
       src={album.art}
@@ -99,5 +116,6 @@
       style="width: {size}px; height: {size}px; left: {album.x}px; top: {album.y}px;"
     />
   {/each}
+
   <p class="absolute bottom-5 left-5 pt-2 text-xl italic">{title} by <b>{artist}</b></p>
 </div>

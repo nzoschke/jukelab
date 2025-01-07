@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+  import { browser } from "$app/environment";
   import { Playlist } from "../playlist.svelte";
   import { fade } from "svelte/transition";
   import Standard from "./attract/Standard.svelte";
@@ -18,6 +20,36 @@
   } = $props();
 
   let format = $state("default");
+
+  const defaultMessages = [
+    "Welcome to JukeLab",
+    "Press any key to continue",
+    "Tap anywhere to start",
+    "Select your favorite tunes",
+  ];
+
+  const holidayMessages = [
+    "Happy Holidays!",
+    "Tap anywhere for turkey",
+    "Select your favorite holiday tunes",
+  ];
+
+  const messages = $derived($holiday ? holidayMessages : defaultMessages);
+  let msgIdx = $state(0);
+  const message = $derived(messages[msgIdx]);
+
+  onMount(() => {
+    if (!browser) {
+      return;
+    }
+
+    const i = setInterval(() => {
+      msgIdx = (msgIdx + 1) % messages.length;
+    }, 5000);
+
+    return () => clearInterval(i);
+  });
+
   const onClose = () => (visible = false);
 </script>
 
@@ -37,11 +69,11 @@
     </h1>
 
     {#if format === "default"}
-      <Standard {playlist} />
+      <Standard {playlist} {message} />
     {:else if format === "vinyl"}
-      <Vinyl {playlist} />
+      <Vinyl {playlist} {message} />
     {:else if format === "dvd"}
-      <DVD {playlist} />
+      <DVD {playlist} {message} />
     {/if}
 
     {#if $holiday}

@@ -1,30 +1,18 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { browser } from "$app/environment";
   import { Playlist } from "../../playlist.svelte";
   import { onMount } from "svelte";
   import type { AlbumTracks } from "$lib/types/music";
   import { chunk, shuffle } from "$lib/array";
-  import { holiday } from "../store";
 
-  let { playlist }: { playlist: ReturnType<typeof Playlist> } = $props();
+  let {
+    playlist,
+    message,
+  }: {
+    playlist: ReturnType<typeof Playlist>;
+    message: string;
+  } = $props();
 
-  const defaultMessages = [
-    "Welcome to JukeLab",
-    "Press any key to continue",
-    "Tap anywhere to start",
-    "Select your favorite tunes",
-  ];
-
-  const holidayMessages = [
-    "Happy Holidays!",
-    "Tap anywhere for turkey",
-    "Select your favorite holiday tunes",
-  ];
-
-  const messages = $derived($holiday ? holidayMessages : defaultMessages);
-
-  let msgIdx = $state(0);
   let artTop = $state<AlbumTracks[]>([]);
   let artBottom = $state<AlbumTracks[]>([]);
 
@@ -37,16 +25,6 @@
 
   onMount(() => {
     reshuffle();
-
-    if (!browser) {
-      return;
-    }
-
-    const i = setInterval(() => {
-      msgIdx = (msgIdx + 1) % messages.length;
-    }, 5000);
-
-    return () => clearInterval(i);
   });
 
   const {
@@ -89,13 +67,13 @@
     {/if}
   </div>
 
-  {#key msgIdx}
+  {#key message}
     <h1
       class="absolute bottom-20 left-1/2 -translate-x-1/2 transform text-center text-5xl font-bold"
       in:fade={{ duration: 400 }}
       out:fade={{ duration: 400 }}
     >
-      {messages[msgIdx]}
+      {message}
     </h1>
   {/key}
 </div>
