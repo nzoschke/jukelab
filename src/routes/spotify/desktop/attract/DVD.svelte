@@ -17,7 +17,7 @@
     vy: number;
   };
 
-  const size = 200; // width and height, in px
+  const size = window.innerWidth / 5; // width and height, in px
   const speed = 2;
 
   let albums: DVD[] = $state([]);
