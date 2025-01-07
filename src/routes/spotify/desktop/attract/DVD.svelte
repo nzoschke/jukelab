@@ -7,7 +7,7 @@
   const {
     album: { art },
     track: { title, artist },
-  } = playlist;
+  } = $derived(playlist);
 
   let x = $state(0);
   let y = $state(0);

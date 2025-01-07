@@ -48,7 +48,7 @@
   const {
     album: { art },
     track: { title, artist },
-  } = playlist;
+  } = $derived(playlist);
 </script>
 
 <div class="flex h-screen w-screen flex-col items-center justify-center pb-20">

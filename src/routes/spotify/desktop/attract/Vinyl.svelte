@@ -6,7 +6,7 @@
   const {
     album: { art },
     track: { title, artist },
-  } = playlist;
+  } = $derived(playlist);
 </script>
 
 <div class="flex h-screen w-screen items-center justify-center">
