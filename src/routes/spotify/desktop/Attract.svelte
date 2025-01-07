@@ -3,6 +3,7 @@
   import { fade } from "svelte/transition";
   import Standard from "./attract/Standard.svelte";
   import Vinyl from "./attract/Vinyl.svelte";
+  import { pad } from "$lib/string";
   import { holiday } from "./store";
   import Snow from "$lib/shared/snow.svelte";
   import { Icon, ArrowPath } from "svelte-hero-icons";
@@ -24,12 +25,16 @@
     role="button"
     aria-label="Close attract screen"
     tabindex="0"
-    class="flex h-screen w-screen flex-col items-center justify-center"
+    class="flex h-screen w-screen flex-col items-center justify-center bg-slate-200"
     in:fade
     out:fade
     onclick={onClose}
     onkeydown={onClose}
   >
+    <h1 class="absolute right-5 top-5 text-5xl text-base-300">
+      Queue: {pad(playlist.queue.length)}
+    </h1>
+
     {#if format === "default"}
       <Standard {playlist} />
     {:else if format === "vinyl"}

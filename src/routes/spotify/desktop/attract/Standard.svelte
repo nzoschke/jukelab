@@ -2,7 +2,6 @@
   import { fade } from "svelte/transition";
   import { browser } from "$app/environment";
   import { Playlist } from "../../playlist.svelte";
-  import { pad } from "$lib/string";
   import { onMount } from "svelte";
   import type { AlbumTracks } from "$lib/types/music";
   import { chunk, shuffle } from "$lib/array";
@@ -52,11 +51,7 @@
   } = playlist;
 </script>
 
-<div class="flex h-screen w-screen flex-col items-center justify-center border bg-slate-200 pb-20">
-  <h1 class="absolute right-5 top-5 text-5xl text-base-300">
-    Queue: {pad(playlist.queue.length)}
-  </h1>
-
+<div class="flex h-screen w-screen flex-col items-center justify-center pb-20">
   <div class="inline-flex w-full flex-nowrap">
     {#each Array(2) as _, n}
       <div
