@@ -15,6 +15,7 @@
     y: number;
     vx: number;
     vy: number;
+    inside: boolean;
   };
 
   const size = window.innerWidth / 5; // width and height, in px
@@ -33,10 +34,10 @@
 
       const vx = Math.random() < 0.5 ? speed : -speed;
       const vy = Math.random() < 0.5 ? speed : -speed;
-      const x = vx > 0 ? 0 : screenWidth - size;
-      const y = vy > 0 ? 0 : screenHeight - size;
+      const x = vx > 0 ? -size : Math.random() * (screenWidth + size);
+      const y = vy > 0 ? -size : Math.random() * (screenHeight + size);
 
-      albums = [{ art, x, y, vx, vy }, ...albums];
+      albums = [{ art, x, y, vx, vy, inside: false }, ...albums];
     }
   });
 
@@ -55,11 +56,20 @@
 
       if (index === 0) {
         // active album, bounce
-        if (album.x < 0 || album.x + size > screenWidth) {
-          album.vx = -album.vx;
+        if (!album.inside) {
+          album.inside =
+            album.x >= 0 &&
+            album.x + size <= screenWidth &&
+            album.y >= 0 &&
+            album.y + size <= screenHeight;
         }
-        if (album.y < 0 || album.y + size > screenHeight) {
-          album.vy = -album.vy;
+        if (album.inside) {
+          if (album.x < 0 || album.x + size > screenWidth) {
+            album.vx = -album.vx;
+          }
+          if (album.y < 0 || album.y + size > screenHeight) {
+            album.vy = -album.vy;
+          }
         }
       } else {
         // previous album, check if over bounds
