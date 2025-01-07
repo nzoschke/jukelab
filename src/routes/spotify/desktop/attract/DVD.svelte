@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import { Playlist } from "../../playlist.svelte";
 
   let { playlist }: { playlist: ReturnType<typeof Playlist> } = $props();
@@ -19,9 +19,9 @@
   let logoWidth = 200;
   let logoHeight = 200;
 
-  onMount(() => {
-    requestAnimationFrame(animate);
-  });
+  let animId: number;
+  onMount(() => (animId = requestAnimationFrame(animate)));
+  onDestroy(() => cancelAnimationFrame(animId));
 
   function animate() {
     x += vx;
@@ -37,7 +37,7 @@
       vy = -vy;
     }
 
-    requestAnimationFrame(animate);
+    animId = requestAnimationFrame(animate);
   }
 </script>
 
