@@ -3,6 +3,7 @@
   import { fade } from "svelte/transition";
   import Standard from "./attract/Standard.svelte";
   import Vinyl from "./attract/Vinyl.svelte";
+  import DVD from "./attract/DVD.svelte";
   import { pad } from "$lib/string";
   import { holiday } from "./store";
   import Snow from "$lib/shared/snow.svelte";
@@ -39,6 +40,8 @@
       <Standard {playlist} />
     {:else if format === "vinyl"}
       <Vinyl {playlist} />
+    {:else if format === "dvd"}
+      <DVD {playlist} />
     {/if}
 
     {#if $holiday}
@@ -51,6 +54,8 @@
         e.stopPropagation();
         if (format === "default") {
           format = "vinyl";
+        } else if (format === "vinyl") {
+          format = "dvd";
         } else {
           format = "default";
         }
