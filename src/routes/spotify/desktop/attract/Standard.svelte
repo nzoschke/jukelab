@@ -38,11 +38,15 @@
   onMount(() => {
     reshuffle();
 
-    if (browser) {
-      setInterval(() => {
-        msgIdx = (msgIdx + 1) % messages.length;
-      }, 5000);
+    if (!browser) {
+      return;
     }
+
+    const i = setInterval(() => {
+      msgIdx = (msgIdx + 1) % messages.length;
+    }, 5000);
+
+    return () => clearInterval(i);
   });
 
   const {
