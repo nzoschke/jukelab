@@ -58,7 +58,7 @@
     role="button"
     aria-label="Close attract screen"
     tabindex="0"
-    class="flex h-screen w-screen flex-col items-center justify-center bg-slate-200"
+    class="flex h-screen w-screen flex-col items-center justify-center"
     in:fade
     out:fade
     onclick={onClose}

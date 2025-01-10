@@ -9,7 +9,6 @@
     Bars3,
     ChevronLeft,
     ChevronRight,
-    Clock,
     CodeBracketSquare,
     CommandLine,
     Icon,
@@ -18,6 +17,7 @@
     MagnifyingGlass,
     QueueList,
     Sparkles,
+    PaintBrush,
     Sun,
   } from "svelte-hero-icons";
   import Broadcast from "../../audio/Broadcast.svelte";
@@ -30,8 +30,10 @@
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
   import Attract from "./Attract.svelte";
+  import ThemeDialog from "./ThemeDialog.svelte";
   import Snow from "$lib/shared/snow.svelte";
   import { holiday } from "./store";
+  import { themes } from "$lib/themes";
 
   const auth = Auth();
   const log = Log();
@@ -51,9 +53,26 @@
     details: false,
     full: false,
     portrait: false,
+    theme: false,
     toast: false,
   });
   let user = $state(IUser);
+
+  let theme = $state("karaoke");
+  const themeSpec = $derived(themes.find((t) => t.name === theme));
+  const themeStyle = $derived.by(() => {
+    let bg: string[] = [];
+
+    if (themeSpec?.backgroundColor) {
+      bg.push(`background-color: ${themeSpec.backgroundColor};`);
+    }
+    if (themeSpec?.backgroundGradient) {
+      bg.push(
+        `background: url("https://assets.getpartiful.com/backgrounds/${theme}/web.mp4"), ${themeSpec.backgroundGradient};`,
+      );
+    }
+    return bg.join(" ");
+  });
 
   let attractTimeout = setTimeout(() => {}, 0);
   const attractReset = () => {
@@ -168,7 +187,18 @@
 <AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
 
 <!-- page layout -->
-<div class="drawer" data-theme="corporate">
+{#key themeStyle}
+  <div class="backdrop" style={themeStyle}>
+    {#if themeSpec?.animationStyle === "video"}
+      <!-- svelte-ignore a11y_media_has_caption -->
+      <video autoplay playsinline loop>
+        <source src="https://assets.getpartiful.com/backgrounds/{theme}/web.mp4" type="video/mp4" />
+      </video>
+    {/if}
+  </div>
+{/key}
+
+<div class="drawer bg-transparent" data-theme="corporate">
   <input id="drawer" type="checkbox" class="drawer-toggle" />
   <div
     class="drawer-content"
@@ -201,6 +231,7 @@
   </div>
 
   <Attract bind:visible={ui.attract} {playlist} />
+  <ThemeDialog bind:open={ui.theme} bind:theme />
 </div>
 
 <!-- page components -->
@@ -210,7 +241,7 @@
 
 {#snippet nav()}
   <!-- component layout -->
-  <div class="navbar min-h-20 bg-base-100 p-0">
+  <div class="navbar min-h-20 p-0">
     <div class="navbar-start w-32 p-2">
       {@render start()}
     </div>
@@ -244,7 +275,7 @@
     {@const { album, track } = playlist}
 
     <div class="relative">
-      <div class="flex size-full space-x-2 rounded border bg-base-200 md:w-[32rem]">
+      <div class="flex size-full space-x-2 rounded border bg-base-200 bg-opacity-30 md:w-[32rem]">
         <div class="avatar size-16">
           <div class="rounded">
             {#if album.art != ""}
@@ -298,7 +329,7 @@
             }}
             class:border-accent={album == select.album}
           >
-            <div class="card w-full rounded-sm bg-base-100">
+            <div class="card w-full rounded-sm bg-base-100 bg-opacity-50">
               <figure class="relative size-full">
                 <img class="aspect-square object-cover object-center" src={album?.art} alt="art" />
                 <div
@@ -316,7 +347,7 @@
         </div>
       {/each}
     </div>
-    <div class="flex w-full items-center justify-between bg-base-200 px-1">
+    <div class="flex w-full items-center justify-between bg-base-200 bg-opacity-50 px-1">
       <button class="btn join-item btn-sm rounded" onclick={() => pageScroll(-1)}>
         <Icon src={ChevronLeft} class="size-4" solid />
       </button>
@@ -332,11 +363,9 @@
         <Icon src={ChevronRight} class="size-4" solid />
       </button>
     </div>
-    <div
-      class="flex flex-1 justify-center overflow-scroll bg-gradient-to-b from-base-200 to-gray-300"
-    >
+    <div class="flex flex-1 justify-center overflow-scroll">
       <div
-        class="mb-3 mt-1 flex w-full justify-center overflow-scroll rounded bg-base-100 shadow-xl md:w-[32rem]"
+        class="mb-3 mt-1 flex w-full justify-center overflow-scroll rounded bg-base-100 bg-opacity-50 shadow-xl md:w-[32rem]"
       >
         <div class="grid w-full grid-cols-1 content-start">
           {#each select.album.tracks as track, n}
@@ -371,7 +400,7 @@
   {@const { progress } = playlist}
 
   <!-- component layout -->
-  <div class="navbar relative min-h-20 bg-base-100 p-0" class:hidden={ui.full}>
+  <div class="navbar relative min-h-20 bg-base-100 bg-opacity-50 p-0" class:hidden={ui.full}>
     <progress
       class="progress progress-primary absolute -top-1 h-1"
       max={progress.max}
@@ -416,6 +445,15 @@
       }}
     >
       <Icon src={Sparkles} class="size-5" solid={ui.attract} />
+    </button>
+
+    <button
+      class="btn btn-circle btn-ghost"
+      onclick={() => {
+        ui.theme = !ui.theme;
+      }}
+    >
+      <Icon src={PaintBrush} class="size-5" solid={ui.theme} />
     </button>
 
     <button
@@ -513,5 +551,32 @@
 <style>
   :global(html) {
     overflow: hidden;
+  }
+
+  .backdrop {
+    box-sizing: border-box;
+    background-repeat: repeat-y;
+    background-size: 100% auto;
+    left: 0;
+    min-height: 100vh;
+    overflow: hidden;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    touch-action: none;
+    width: 100vw;
+  }
+  .backdrop video {
+    pointer-events: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    height: 100vh;
+    left: 0;
+    object-fit: cover;
+    object-position: top;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 0;
   }
 </style>
