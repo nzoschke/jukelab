@@ -34,6 +34,7 @@
   import Snow from "$lib/shared/snow.svelte";
   import { holiday } from "./store";
   import { themes } from "$lib/themes";
+  import { animations } from "$lib/animations";
 
   const auth = Auth();
   const log = Log();
@@ -59,6 +60,8 @@
   let user = $state(IUser);
 
   let theme = $state("karaoke");
+  let anim = $state("none");
+
   const themeSpec = $derived(themes.find((t) => t.name === theme));
   const themeStyle = $derived.by(() => {
     let bg: string[] = [];
@@ -73,6 +76,8 @@
     }
     return bg.join(" ");
   });
+
+  const animSpec = $derived(animations.find((e) => e.name === anim));
 
   let attractTimeout = setTimeout(() => {}, 0);
   const attractReset = () => {
@@ -231,8 +236,23 @@
   </div>
 
   <Attract bind:visible={ui.attract} {playlist} />
-  <ThemeDialog bind:open={ui.theme} bind:theme />
+  <ThemeDialog bind:open={ui.theme} bind:theme bind:anim />
 </div>
+
+{#key animSpec}
+  <div class="backdrop">
+    {#if animSpec?.ext === "mp4"}
+      <!-- svelte-ignore a11y_media_has_caption -->
+      <video autoplay playsinline loop>
+        <source
+          src="https://assets.getpartiful.com/animations/{anim}/web.mov"
+          type="video/mp4;codecs=hvc1"
+        />
+        <source src="https://assets.getpartiful.com/animations/{anim}/web.webm" type="video/webm" />
+      </video>
+    {/if}
+  </div>
+{/key}
 
 <!-- page components -->
 {#snippet menu()}

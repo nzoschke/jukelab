@@ -1,14 +1,18 @@
 <script lang="ts">
+  import { animations } from "$lib/animations";
   import { themes } from "$lib/themes";
 
   let {
     open = $bindable(),
     theme = $bindable(),
+    anim = $bindable(),
   }: {
     open: boolean;
     theme: string;
+    anim: string;
   } = $props();
 
+  let activeTab = $state("themes");
   let modal: HTMLDialogElement | null = null;
 
   $effect(() => {
@@ -26,24 +30,56 @@
       <form method="dialog">
         <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
       </form>
-      <h3 class="text-lg font-bold">Themes</h3>
 
-      <div class="my-4 flex flex-wrap gap-4">
-        {#each themes.filter((t) => !t.hidden) as t}
-          <button class="flex w-20 flex-col items-center" onclick={() => (theme = t.name)}>
-            <img
-              src="https://assets.getpartiful.com/backgrounds/{t.name}/thumbnail.png"
-              alt={t.name}
-              class="h-20 w-20 rounded-full border-8 border-solid object-cover"
-              class:border-primary={t.name === theme}
-              class:border-transparent={t.name !== theme}
-            />
-          </button>
-        {/each}
+      <div role="tablist" class="tabs tabs-bordered inline-flex justify-center">
+        <button
+          class="tab font-bold"
+          class:tab-active={activeTab === "themes"}
+          onclick={() => (activeTab = "themes")}
+        >
+          Theme
+        </button>
+        <button
+          class="tab font-bold"
+          class:tab-active={activeTab === "effects"}
+          onclick={() => (activeTab = "effects")}
+        >
+          Effects
+        </button>
+      </div>
+
+      <div class="my-4 flex max-h-80 flex-wrap gap-4 overflow-y-auto">
+        {#if activeTab === "themes"}
+          {#each themes.filter((t) => !t.hidden) as t}
+            <button class="flex w-20 flex-col items-center" onclick={() => (theme = t.name)}>
+              <img
+                src={`https://assets.getpartiful.com/backgrounds/${t.name}/thumbnail.png`}
+                alt={t.name}
+                class="h-20 w-20 rounded-full border-8 border-solid object-cover"
+                class:border-primary={t.name === theme}
+                class:border-transparent={t.name !== theme}
+              />
+            </button>
+          {/each}
+        {/if}
+
+        {#if activeTab === "effects"}
+          {#each animations.filter((a) => !a.hidden) as a}
+            <button class="flex w-20 flex-col items-center" onclick={() => (anim = a.name)}>
+              <img
+                src={`https://assets.getpartiful.com/animations/${a.name}/thumbnail.png`}
+                alt={a.name}
+                class="h-20 w-20 rounded-full border-8 border-solid object-cover"
+                class:border-primary={a.name === anim}
+                class:border-transparent={a.name !== anim}
+              />
+            </button>
+          {/each}
+        {/if}
       </div>
 
       <p>
-        Themes from <a href="https://partiful.com/" target="_blank" class="link text-primary"
+        Styles from <a href="https://partiful.com/" target="_blank" class="link text-primary"
           >Partiful</a
         >.
       </p>
