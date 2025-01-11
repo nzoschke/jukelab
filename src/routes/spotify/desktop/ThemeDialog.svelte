@@ -22,25 +22,35 @@
       modal?.close();
     }
   });
+
+  const onClickRandomize = () => {
+    theme = themes[Math.floor(Math.random() * themes.length)].name;
+    anim = animations[Math.floor(Math.random() * animations.length)].name;
+  };
 </script>
 
 {#if open}
   <dialog bind:this={modal} onclose={() => (open = false)} class="modal">
     <div class="modal-box w-11/12 max-w-5xl">
-      <div role="tablist" class="tabs tabs-bordered inline-flex justify-center">
-        <button
-          class="tab font-bold"
-          class:tab-active={activeTab === "themes"}
-          onclick={() => (activeTab = "themes")}
-        >
-          Theme
-        </button>
-        <button
-          class="tab font-bold"
-          class:tab-active={activeTab === "effects"}
-          onclick={() => (activeTab = "effects")}
-        >
-          Effects
+      <div class="mb-4 flex items-center justify-between">
+        <div role="tablist" class="tabs tabs-bordered inline-flex">
+          <button
+            class="tab font-bold"
+            class:tab-active={activeTab === "themes"}
+            onclick={() => (activeTab = "themes")}
+          >
+            Theme
+          </button>
+          <button
+            class="tab font-bold"
+            class:tab-active={activeTab === "effects"}
+            onclick={() => (activeTab = "effects")}
+          >
+            Effects
+          </button>
+        </div>
+        <button class="btn btn-circle btn-primary btn-sm" onclick={onClickRandomize}>
+          <img src="/dice.svg" alt="randomize" class="h-6 w-6 rounded" />
         </button>
       </div>
 
