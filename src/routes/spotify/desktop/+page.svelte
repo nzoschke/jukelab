@@ -35,6 +35,7 @@
   import { holiday } from "./store";
   import { themes } from "$lib/themes";
   import { animations } from "$lib/animations";
+  import { browser } from "$app/environment";
 
   const auth = Auth();
   const log = Log();
@@ -167,6 +168,8 @@
     if (!ui.attract) attractReset();
   });
 
+  let LottiePlayer: any = $state();
+
   onMount(async () => {
     onscreenchange();
     screen.orientation.addEventListener("change", onscreenchange);
@@ -178,6 +181,11 @@
     select.album = playlist.albums[0];
 
     pageScroll(0);
+
+    if (browser) {
+      const module = await import("@lottiefiles/svelte-lottie-player");
+      LottiePlayer = module.LottiePlayer;
+    }
   });
 </script>
 
@@ -250,6 +258,17 @@
         />
         <source src="https://assets.getpartiful.com/animations/{anim}/web.webm" type="video/webm" />
       </video>
+    {/if}
+    {#if animSpec?.ext === "json" && LottiePlayer}
+      <LottiePlayer
+        src="https://assets.getpartiful.com/animations/{anim}/web.json"
+        autoplay
+        loop
+        renderer="svg"
+        background="transparent"
+        width="100vw"
+        height="100vh"
+      />
     {/if}
   </div>
 {/key}
