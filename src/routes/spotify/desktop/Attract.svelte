@@ -64,7 +64,7 @@
     onclick={onClose}
     onkeydown={onClose}
   >
-    <h1 class="absolute right-5 top-5 text-5xl text-base-300">
+    <h1 class="absolute right-5 top-5 text-5xl text-neutral">
       Queue: {pad(playlist.queue.length)}
     </h1>
 
@@ -81,7 +81,7 @@
     {/if}
 
     <button
-      class="absolute bottom-5 right-5"
+      class="btn btn-circle btn-neutral absolute bottom-5 right-5"
       onclick={(e) => {
         e.stopPropagation();
         if (format === "default") {

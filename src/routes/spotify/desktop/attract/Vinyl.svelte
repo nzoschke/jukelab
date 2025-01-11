@@ -29,7 +29,7 @@
 
   {#key message}
     <h1
-      class="glow absolute left-1/2 top-1/2 mt-[32vmin] -translate-x-1/2 transform text-center text-4xl font-bold text-white"
+      class="glow absolute left-1/2 top-1/2 mt-[32vmin] -translate-x-1/2 transform text-center text-4xl font-bold text-base-content"
       in:fade={{ duration: 400 }}
       out:fade={{ duration: 400 }}
     >

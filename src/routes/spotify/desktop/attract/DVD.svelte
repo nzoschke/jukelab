@@ -100,7 +100,7 @@
 <div class="flex h-screen w-screen items-center justify-center">
   {#key message}
     <h1
-      class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center text-4xl font-bold text-neutral-400"
+      class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center text-4xl font-bold text-base-content"
       in:fade={{ duration: 400 }}
       out:fade={{ duration: 400 }}
     >

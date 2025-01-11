@@ -27,10 +27,6 @@
 {#if open}
   <dialog bind:this={modal} onclose={() => (open = false)} class="modal">
     <div class="modal-box w-11/12 max-w-5xl">
-      <form method="dialog">
-        <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
-      </form>
-
       <div role="tablist" class="tabs tabs-bordered inline-flex justify-center">
         <button
           class="tab font-bold"
@@ -84,5 +80,8 @@
         >.
       </p>
     </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
   </dialog>
 {/if}

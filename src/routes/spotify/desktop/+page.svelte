@@ -203,7 +203,7 @@
   </div>
 {/key}
 
-<div class="drawer bg-transparent" data-theme="corporate">
+<div class="drawer bg-transparent" data-theme={themeSpec?.darkMode ? "dark" : "corporate"}>
   <input id="drawer" type="checkbox" class="drawer-toggle" />
   <div
     class="drawer-content"
@@ -295,7 +295,7 @@
     {@const { album, track } = playlist}
 
     <div class="relative">
-      <div class="flex size-full space-x-2 rounded border bg-base-200 bg-opacity-30 md:w-[32rem]">
+      <div class="flex size-full space-x-2 rounded border bg-base-200 bg-opacity-40 md:w-[32rem]">
         <div class="avatar size-16">
           <div class="rounded">
             {#if album.art != ""}
@@ -331,7 +331,7 @@
 
 {#snippet main()}
   <div class="flex h-full flex-col">
-    <div class="skeleton h-[19.5rem] w-full" class:hidden={playlist.albums.length > 0}></div>
+    <div class="skeleton h-[20vh] w-full" class:hidden={playlist.albums.length > 0}></div>
     <div
       id="carousel"
       class="carousel carousel-center relative w-full"
@@ -340,16 +340,16 @@
       }}
     >
       {#each playlist.albums as album, n}
-        <div class="carousel-item w-64">
+        <div class="carousel-item w-[20vh]">
           <button
-            class="group w-full border-b-4 border-gray-300"
+            class="group w-full border-b-4 border-transparent"
             onclick={(e) => {
               select.album = album;
               pageItemCenter(n);
             }}
             class:border-accent={album == select.album}
           >
-            <div class="card w-full rounded-sm bg-base-100 bg-opacity-50">
+            <div class="card w-full rounded-sm bg-base-100 bg-opacity-40">
               <figure class="relative size-full">
                 <img class="aspect-square object-cover object-center" src={album?.art} alt="art" />
                 <div
@@ -367,25 +367,25 @@
         </div>
       {/each}
     </div>
-    <div class="flex w-full items-center justify-between bg-base-200 bg-opacity-50 px-1">
-      <button class="btn join-item btn-sm rounded" onclick={() => pageScroll(-1)}>
+    <div class="flex w-full items-center justify-between px-1">
+      <button class="btn join-item btn-sm rounded bg-opacity-50" onclick={() => pageScroll(-1)}>
         <Icon src={ChevronLeft} class="size-4" solid />
       </button>
       {#each Array(pages) as _, n}
         <button
           aria-label="page"
           class="h-2 w-2 rounded-full bg-base-100 hover:bg-base-300"
-          class:bg-base-300={n == page}
+          class:bg-opacity-20={n != page}
           onclick={() => pageScroll(n - page)}
         ></button>
       {/each}
-      <button class="btn join-item btn-sm rounded" onclick={() => pageScroll(+1)}>
+      <button class="btn join-item btn-sm rounded bg-opacity-50" onclick={() => pageScroll(+1)}>
         <Icon src={ChevronRight} class="size-4" solid />
       </button>
     </div>
     <div class="flex flex-1 justify-center overflow-scroll">
       <div
-        class="mb-3 mt-1 flex w-full justify-center overflow-scroll rounded bg-base-100 bg-opacity-50 shadow-xl md:w-[32rem]"
+        class="mb-3 mt-1 flex w-full justify-center overflow-scroll rounded bg-base-100 bg-opacity-40 shadow-xl md:w-[32rem]"
       >
         <div class="grid w-full grid-cols-1 content-start">
           {#each select.album.tracks as track, n}
@@ -399,7 +399,7 @@
             >
               <Icon
                 src={Play}
-                class="size-4 shrink-0 text-gray-300 group-hover:text-primary"
+                class="size-4 shrink-0 text-base-content group-hover:text-primary"
                 solid
               />
               {n + 1}.
@@ -420,7 +420,7 @@
   {@const { progress } = playlist}
 
   <!-- component layout -->
-  <div class="navbar relative min-h-20 bg-base-100 bg-opacity-50 p-0" class:hidden={ui.full}>
+  <div class="navbar relative min-h-20 bg-base-100 bg-opacity-20 p-0" class:hidden={ui.full}>
     <progress
       class="progress progress-primary absolute -top-1 h-1"
       max={progress.max}
