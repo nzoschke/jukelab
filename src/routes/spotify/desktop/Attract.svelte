@@ -7,8 +7,6 @@
   import Vinyl from "./attract/Vinyl.svelte";
   import DVD from "./attract/DVD.svelte";
   import { pad } from "$lib/string";
-  import { holiday } from "./store";
-  import Snow from "$lib/shared/snow.svelte";
   import { Icon, ArrowPath } from "svelte-hero-icons";
 
   let {
@@ -21,20 +19,13 @@
 
   let format = $state("default");
 
-  const defaultMessages = [
+  const messages = [
     "Welcome to JukeLab",
     "Press any key to continue",
     "Tap anywhere to start",
     "Select your favorite tunes",
   ];
 
-  const holidayMessages = [
-    "Happy Holidays!",
-    "Tap anywhere for turkey",
-    "Select your favorite holiday tunes",
-  ];
-
-  const messages = $derived($holiday ? holidayMessages : defaultMessages);
   let msgIdx = $state(0);
   const message = $derived(messages[msgIdx]);
 
@@ -74,10 +65,6 @@
       <Vinyl {playlist} {message} />
     {:else if format === "dvd"}
       <DVD {playlist} {message} />
-    {/if}
-
-    {#if $holiday}
-      <Snow />
     {/if}
 
     <button

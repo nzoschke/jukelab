@@ -31,8 +31,6 @@
   import { AlbumTrack, Playlist } from "../playlist.svelte";
   import Attract from "./Attract.svelte";
   import ThemeDialog from "./ThemeDialog.svelte";
-  import Snow from "$lib/shared/snow.svelte";
-  import { holiday } from "./store";
   import { themes } from "$lib/themes";
   import { animations } from "$lib/animations";
   import { browser } from "$app/environment";
@@ -581,10 +579,6 @@
     <button>close</button>
   </form>
 </dialog>
-
-{#if $holiday}
-  <Snow />
-{/if}
 
 <!-- page style -->
 <style>
