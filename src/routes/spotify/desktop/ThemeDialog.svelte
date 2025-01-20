@@ -1,15 +1,11 @@
 <script lang="ts">
-  import { animations } from "$lib/animations";
-  import { themes } from "$lib/themes";
+  import { anim, animations } from "$lib/animations";
+  import { theme, themes } from "$lib/themes";
 
   let {
     open = $bindable(),
-    theme = $bindable(),
-    anim = $bindable(),
   }: {
     open: boolean;
-    theme: string;
-    anim: string;
   } = $props();
 
   let activeTab = $state("themes");
@@ -24,8 +20,8 @@
   });
 
   const onClickRandomize = () => {
-    theme = themes[Math.floor(Math.random() * themes.length)].name;
-    anim = animations[Math.floor(Math.random() * animations.length)].name;
+    $theme = themes[Math.floor(Math.random() * themes.length)].name;
+    $anim = animations[Math.floor(Math.random() * animations.length)].name;
   };
 </script>
 
@@ -57,13 +53,13 @@
       <div class="my-4 flex max-h-80 flex-wrap gap-4 overflow-y-auto">
         {#if activeTab === "themes"}
           {#each themes.filter((t) => !t.hidden) as t}
-            <button class="flex w-20 flex-col items-center" onclick={() => (theme = t.name)}>
+            <button class="flex w-20 flex-col items-center" onclick={() => ($theme = t.name)}>
               <img
                 src={`https://assets.getpartiful.com/backgrounds/${t.name}/thumbnail.png`}
                 alt={t.name}
                 class="h-20 w-20 rounded-full border-8 border-solid object-cover"
-                class:border-primary={t.name === theme}
-                class:border-transparent={t.name !== theme}
+                class:border-primary={t.name === $theme}
+                class:border-transparent={t.name !== $theme}
               />
             </button>
           {/each}
@@ -71,13 +67,13 @@
 
         {#if activeTab === "effects"}
           {#each animations.filter((a) => !a.hidden) as a}
-            <button class="flex w-20 flex-col items-center" onclick={() => (anim = a.name)}>
+            <button class="flex w-20 flex-col items-center" onclick={() => ($anim = a.name)}>
               <img
                 src={`https://assets.getpartiful.com/animations/${a.name}/thumbnail.png`}
                 alt={a.name}
                 class="h-20 w-20 rounded-full border-8 border-solid object-cover"
-                class:border-primary={a.name === anim}
-                class:border-transparent={a.name !== anim}
+                class:border-primary={a.name === $anim}
+                class:border-transparent={a.name !== $anim}
               />
             </button>
           {/each}

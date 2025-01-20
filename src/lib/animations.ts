@@ -1,3 +1,7 @@
+import { writable } from "svelte/store";
+
+export const anim = writable("none");
+
 export const animations = [
   {
     name: "fireflies",

@@ -31,8 +31,8 @@
   import { AlbumTrack, Playlist } from "../playlist.svelte";
   import Attract from "./Attract.svelte";
   import ThemeDialog from "./ThemeDialog.svelte";
-  import { themes } from "$lib/themes";
-  import { animations } from "$lib/animations";
+  import { theme, themes } from "$lib/themes";
+  import { anim, animations } from "$lib/animations";
   import { browser } from "$app/environment";
 
   const auth = Auth();
@@ -58,10 +58,7 @@
   });
   let user = $state(IUser);
 
-  let theme = $state("karaoke");
-  let anim = $state("none");
-
-  const themeSpec = $derived(themes.find((t) => t.name === theme));
+  const themeSpec = $derived(themes.find((t) => t.name === $theme));
   const themeStyle = $derived.by(() => {
     let bg: string[] = [];
 
@@ -70,13 +67,13 @@
     }
     if (themeSpec?.backgroundGradient) {
       bg.push(
-        `background: url("https://assets.getpartiful.com/backgrounds/${theme}/web.mp4"), ${themeSpec.backgroundGradient};`,
+        `background: url("https://assets.getpartiful.com/backgrounds/${$theme}/web.mp4"), ${themeSpec.backgroundGradient};`,
       );
     }
     return bg.join(" ");
   });
 
-  const animSpec = $derived(animations.find((e) => e.name === anim));
+  const animSpec = $derived(animations.find((e) => e.name === $anim));
 
   let attractTimeout = setTimeout(() => {}, 0);
   const attractReset = () => {
@@ -203,7 +200,10 @@
     {#if themeSpec?.animationStyle === "video"}
       <!-- svelte-ignore a11y_media_has_caption -->
       <video autoplay playsinline loop>
-        <source src="https://assets.getpartiful.com/backgrounds/{theme}/web.mp4" type="video/mp4" />
+        <source
+          src="https://assets.getpartiful.com/backgrounds/{$theme}/web.mp4"
+          type="video/mp4"
+        />
       </video>
     {/if}
   </div>
@@ -242,7 +242,7 @@
   </div>
 
   <Attract bind:visible={ui.attract} {playlist} />
-  <ThemeDialog bind:open={ui.theme} bind:theme bind:anim />
+  <ThemeDialog bind:open={ui.theme} />
 </div>
 
 {#key animSpec}
@@ -251,15 +251,18 @@
       <!-- svelte-ignore a11y_media_has_caption -->
       <video autoplay playsinline loop>
         <source
-          src="https://assets.getpartiful.com/animations/{anim}/web.mov"
+          src="https://assets.getpartiful.com/animations/{$anim}/web.mov"
           type="video/mp4;codecs=hvc1"
         />
-        <source src="https://assets.getpartiful.com/animations/{anim}/web.webm" type="video/webm" />
+        <source
+          src="https://assets.getpartiful.com/animations/{$anim}/web.webm"
+          type="video/webm"
+        />
       </video>
     {/if}
     {#if animSpec?.ext === "json" && LottiePlayer}
       <LottiePlayer
-        src="https://assets.getpartiful.com/animations/{anim}/web.json"
+        src="https://assets.getpartiful.com/animations/{$anim}/web.json"
         autoplay
         loop
         renderer="svg"

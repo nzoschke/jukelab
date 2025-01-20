@@ -1,3 +1,7 @@
+import { writable } from "svelte/store";
+
+export const theme = writable("karaoke");
+
 export const themes = [
   {
     name: "test",
