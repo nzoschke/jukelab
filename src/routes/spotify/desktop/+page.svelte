@@ -31,8 +31,8 @@
   import { AlbumTrack, Playlist } from "../playlist.svelte";
   import Attract from "./Attract.svelte";
   import ThemeDialog from "./ThemeDialog.svelte";
-  import { theme, themes } from "$lib/themes";
-  import { anim, animations } from "$lib/animations";
+  import { getTheme, theme } from "$lib/themes";
+  import { anim, getAnimation } from "$lib/animations";
   import { browser } from "$app/environment";
 
   const auth = Auth();
@@ -58,14 +58,14 @@
   });
   let user = $state(IUser);
 
-  const themeSpec = $derived(themes.find((t) => t.name === $theme));
+  const themeSpec = $derived(getTheme($theme));
   const themeStyle = $derived.by(() => {
     let bg: string[] = [];
 
-    if (themeSpec?.backgroundColor) {
+    if (themeSpec.backgroundColor) {
       bg.push(`background-color: ${themeSpec.backgroundColor};`);
     }
-    if (themeSpec?.backgroundGradient) {
+    if (themeSpec.backgroundGradient) {
       bg.push(
         `background: url("https://assets.getpartiful.com/backgrounds/${$theme}/web.mp4"), ${themeSpec.backgroundGradient};`,
       );
@@ -73,7 +73,9 @@
     return bg.join(" ");
   });
 
-  const animSpec = $derived(animations.find((e) => e.name === $anim));
+  const transparent = $derived(themeSpec.transparent);
+
+  const animSpec = $derived(getAnimation($anim));
 
   let attractTimeout = setTimeout(() => {}, 0);
   const attractReset = () => {
@@ -196,8 +198,8 @@
 
 <!-- page layout -->
 {#key themeStyle}
-  <div class="backdrop" style={themeStyle}>
-    {#if themeSpec?.animationStyle === "video"}
+  <div class="backdrop {themeSpec.backdropClass}" style={themeStyle}>
+    {#if themeSpec.animationStyle === "video"}
       <!-- svelte-ignore a11y_media_has_caption -->
       <video autoplay playsinline loop>
         <source
@@ -209,7 +211,7 @@
   </div>
 {/key}
 
-<div class="drawer bg-transparent" data-theme={themeSpec?.darkMode ? "dark" : "corporate"}>
+<div class="drawer bg-transparent" data-theme={themeSpec.darkMode ? "dark" : "corporate"}>
   <input id="drawer" type="checkbox" class="drawer-toggle" />
   <div
     class="drawer-content"
@@ -247,7 +249,7 @@
 
 {#key animSpec}
   <div class="backdrop">
-    {#if animSpec?.ext === "mp4"}
+    {#if animSpec.ext === "mp4"}
       <!-- svelte-ignore a11y_media_has_caption -->
       <video autoplay playsinline loop>
         <source
@@ -315,7 +317,10 @@
     {@const { album, track } = playlist}
 
     <div class="relative">
-      <div class="flex size-full space-x-2 rounded border bg-base-200 bg-opacity-40 md:w-[32rem]">
+      <div
+        class="flex size-full space-x-2 rounded border bg-base-200 md:w-[32rem]"
+        class:bg-opacity-40={transparent}
+      >
         <div class="avatar size-16">
           <div class="rounded">
             {#if album.art != ""}
@@ -369,7 +374,7 @@
             }}
             class:border-accent={album == select.album}
           >
-            <div class="card w-full rounded-sm bg-base-100 bg-opacity-40">
+            <div class="card w-full rounded-sm bg-base-100" class:bg-opacity-40={transparent}>
               <figure class="relative size-full">
                 <img class="aspect-square object-cover object-center" src={album?.art} alt="art" />
                 <div
@@ -388,24 +393,33 @@
       {/each}
     </div>
     <div class="flex w-full items-center justify-between px-1">
-      <button class="btn join-item btn-sm rounded bg-opacity-50" onclick={() => pageScroll(-1)}>
+      <button
+        class="btn join-item btn-sm rounded"
+        class:bg-opacity-50={transparent}
+        onclick={() => pageScroll(-1)}
+      >
         <Icon src={ChevronLeft} class="size-4" solid />
       </button>
       {#each Array(pages) as _, n}
         <button
           aria-label="page"
-          class="h-2 w-2 rounded-full bg-base-100 hover:bg-base-300"
+          class="h-2 w-2 rounded-full bg-base-content hover:bg-base-300"
           class:bg-opacity-20={n != page}
           onclick={() => pageScroll(n - page)}
         ></button>
       {/each}
-      <button class="btn join-item btn-sm rounded bg-opacity-50" onclick={() => pageScroll(+1)}>
+      <button
+        class="btn join-item btn-sm rounded"
+        class:bg-opacity-50={transparent}
+        onclick={() => pageScroll(+1)}
+      >
         <Icon src={ChevronRight} class="size-4" solid />
       </button>
     </div>
     <div class="flex flex-1 justify-center overflow-scroll">
       <div
-        class="mb-3 mt-1 flex w-full justify-center overflow-scroll rounded bg-base-100 bg-opacity-40 shadow-xl md:w-[32rem]"
+        class="mb-3 mt-1 flex w-full justify-center overflow-scroll rounded bg-base-100 shadow-xl md:w-[32rem]"
+        class:bg-opacity-40={transparent}
       >
         <div class="grid w-full grid-cols-1 content-start">
           {#each select.album.tracks as track, n}
@@ -440,7 +454,11 @@
   {@const { progress } = playlist}
 
   <!-- component layout -->
-  <div class="navbar relative min-h-20 bg-base-100 bg-opacity-20 p-0" class:hidden={ui.full}>
+  <div
+    class="navbar relative min-h-20 bg-base-100 p-0"
+    class:bg-opacity-20={themeSpec.transparent}
+    class:hidden={ui.full}
+  >
     <progress
       class="progress progress-primary absolute -top-1 h-1"
       max={progress.max}

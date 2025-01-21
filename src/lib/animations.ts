@@ -2,7 +2,37 @@ import { writable } from "svelte/store";
 
 export const anim = writable("none");
 
-export const animations = [
+export const getAnimations = () => [
+  { name: "none", avatar: "None", img: null },
+  ...partifulAnimations.map((t) => partifulToJukelab(t)).filter((t) => !!t),
+];
+
+export const getAnimation = (name: string) => {
+  if (name === "none") {
+    return { name: "none", ext: "" };
+  }
+
+  const pa = partifulAnimations.find((t) => t.name === name);
+  if (pa) {
+    return pa;
+  }
+
+  throw `unknown animation: ${name}`;
+};
+
+const partifulToJukelab = (t: (typeof partifulAnimations)[number]) => {
+  if (t.hidden || t.name == "none") {
+    return null;
+  }
+
+  return {
+    name: t.name,
+    avatar: null,
+    img: `https://assets.getpartiful.com/backgrounds/${t.name}/thumbnail.png`,
+  };
+};
+
+const partifulAnimations = [
   {
     name: "fireflies",
     ext: "mp4",

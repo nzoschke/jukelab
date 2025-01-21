@@ -1,8 +1,54 @@
 import { writable } from "svelte/store";
 
-export const theme = writable("karaoke");
+export const theme = writable("default");
 
-export const themes = [
+export const getThemes = () => [
+  ...jukelabThemes,
+  ...partifulThemes.map((t) => partifulToJukelab(t)).filter((t) => !!t),
+];
+
+export const getTheme = (name: string) => {
+  const jt = jukelabThemes.find((t) => t.name === name);
+  if (jt) {
+    return {
+      backdropClass: "bg-gradient-to-b from-white to-gray-300",
+      backgroundColor: null,
+      backgroundGradient: null,
+      animationStyle: null,
+      darkMode: false,
+      transparent: false,
+    };
+  }
+
+  const pt = partifulThemes.find((t) => t.name === name);
+  if (pt) {
+    return { ...pt, backdropClass: null, transparent: true };
+  }
+
+  throw `unknown theme: ${name}`;
+};
+
+const jukelabThemes = [
+  {
+    name: "default",
+    avatar: "Default",
+    img: null,
+  },
+];
+
+const partifulToJukelab = (t: (typeof partifulThemes)[number]) => {
+  if (t.hidden) {
+    return null;
+  }
+
+  return {
+    name: t.name,
+    avatar: null,
+    img: `https://assets.getpartiful.com/backgrounds/${t.name}/thumbnail.png`,
+  };
+};
+
+const partifulThemes = [
   {
     name: "test",
     backgroundColor: "#1C0606",
