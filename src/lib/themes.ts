@@ -17,6 +17,15 @@ export const getTheme = (name: string) => {
       animationStyle: null,
       darkMode: false,
       transparent: false,
+      themeColors: {
+        gradient1: null,
+        gradient2: null,
+        gradient3: null,
+        gradient4: null,
+        gradient5: null,
+        link: null,
+        linkGradientCenter: null,
+      },
     };
   }
 

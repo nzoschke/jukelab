@@ -9,6 +9,8 @@
   } = $props();
 
   let activeTab = $state("themes");
+
+  // svelte-ignore non_reactive_update
   let modal: HTMLDialogElement | null = null;
 
   $effect(() => {
