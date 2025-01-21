@@ -2,6 +2,7 @@
   import { onMount, onDestroy } from "svelte";
   import { Playlist } from "../../playlist.svelte";
   import { fade } from "svelte/transition";
+  import { theme, getTheme } from "$lib/themes";
 
   let {
     playlist,
@@ -10,6 +11,8 @@
     playlist: ReturnType<typeof Playlist>;
     message: string;
   } = $props();
+
+  const messageColor = $derived(getTheme($theme).themeColors?.link || "");
 
   const {
     album: { art },
@@ -101,6 +104,7 @@
   {#key message}
     <h1
       class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center text-4xl font-bold text-base-content"
+      style="color: {messageColor}"
       in:fade={{ duration: 400 }}
       out:fade={{ duration: 400 }}
     >
