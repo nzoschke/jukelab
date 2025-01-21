@@ -48,8 +48,8 @@
             Effects
           </button>
         </div>
-        <button class="btn btn-circle btn-primary btn-sm" onclick={onClickRandomize}>
-          <img src="/dice.svg" alt="randomize" class="h-6 w-6 rounded" />
+        <button class="btn btn-primary btn-sm rounded-full" onclick={onClickRandomize}>
+          Randomize!
         </button>
       </div>
 
