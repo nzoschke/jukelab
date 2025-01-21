@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import type { AlbumTracks } from "$lib/types/music";
   import { chunk, shuffle } from "$lib/array";
+  import { theme, getTheme } from "$lib/themes";
 
   let {
     playlist,
@@ -15,6 +16,8 @@
 
   let artTop = $state<AlbumTracks[]>([]);
   let artBottom = $state<AlbumTracks[]>([]);
+
+  const messageColor = $derived(getTheme($theme).themeColors?.link || "");
 
   const reshuffle = () => {
     const shuffled = shuffle([...playlist.albums]);
@@ -70,6 +73,7 @@
   {#key message}
     <h1
       class="absolute bottom-20 left-1/2 -translate-x-1/2 transform text-center text-5xl font-bold"
+      style="color: {messageColor}"
       in:fade={{ duration: 400 }}
       out:fade={{ duration: 400 }}
     >

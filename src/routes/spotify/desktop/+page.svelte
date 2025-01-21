@@ -9,7 +9,6 @@
     Bars3,
     ChevronLeft,
     ChevronRight,
-    Clock,
     CodeBracketSquare,
     CommandLine,
     Icon,
@@ -18,6 +17,7 @@
     MagnifyingGlass,
     QueueList,
     Sparkles,
+    PaintBrush,
     Sun,
   } from "svelte-hero-icons";
   import Broadcast from "../../audio/Broadcast.svelte";
@@ -30,8 +30,10 @@
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
   import Attract from "./Attract.svelte";
-  import Snow from "$lib/shared/snow.svelte";
-  import { holiday } from "./store";
+  import ThemeDialog from "./ThemeDialog.svelte";
+  import { getTheme, theme } from "$lib/themes";
+  import { anim, getAnimation } from "$lib/animations";
+  import { browser } from "$app/environment";
 
   const auth = Auth();
   const log = Log();
@@ -51,9 +53,29 @@
     details: false,
     full: false,
     portrait: false,
+    theme: false,
     toast: false,
   });
   let user = $state(IUser);
+
+  const themeSpec = $derived(getTheme($theme));
+  const themeStyle = $derived.by(() => {
+    let bg: string[] = [];
+
+    if (themeSpec.backgroundColor) {
+      bg.push(`background-color: ${themeSpec.backgroundColor};`);
+    }
+    if (themeSpec.backgroundGradient) {
+      bg.push(
+        `background: url("https://assets.getpartiful.com/backgrounds/${$theme}/web.mp4"), ${themeSpec.backgroundGradient};`,
+      );
+    }
+    return bg.join(" ");
+  });
+
+  const transparent = $derived(themeSpec.transparent);
+
+  const animSpec = $derived(getAnimation($anim));
 
   let attractTimeout = setTimeout(() => {}, 0);
   const attractReset = () => {
@@ -143,6 +165,8 @@
     if (!ui.attract) attractReset();
   });
 
+  let LottiePlayer: any = $state();
+
   onMount(async () => {
     onscreenchange();
     screen.orientation.addEventListener("change", onscreenchange);
@@ -154,6 +178,11 @@
     select.album = playlist.albums[0];
 
     pageScroll(0);
+
+    if (browser) {
+      const module = await import("@lottiefiles/svelte-lottie-player");
+      LottiePlayer = module.LottiePlayer;
+    }
   });
 </script>
 
@@ -168,7 +197,21 @@
 <AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
 
 <!-- page layout -->
-<div class="drawer" data-theme="corporate">
+{#key themeStyle}
+  <div class="backdrop {themeSpec.backdropClass}" style={themeStyle}>
+    {#if themeSpec.animationStyle === "video"}
+      <!-- svelte-ignore a11y_media_has_caption -->
+      <video autoplay playsinline loop>
+        <source
+          src="https://assets.getpartiful.com/backgrounds/{$theme}/web.mp4"
+          type="video/mp4"
+        />
+      </video>
+    {/if}
+  </div>
+{/key}
+
+<div class="drawer bg-transparent" data-theme={themeSpec.darkMode ? "dark" : "corporate"}>
   <input id="drawer" type="checkbox" class="drawer-toggle" />
   <div
     class="drawer-content"
@@ -201,7 +244,37 @@
   </div>
 
   <Attract bind:visible={ui.attract} {playlist} />
+  <ThemeDialog bind:open={ui.theme} />
 </div>
+
+{#key animSpec}
+  <div class="backdrop">
+    {#if animSpec.ext === "mp4"}
+      <!-- svelte-ignore a11y_media_has_caption -->
+      <video autoplay playsinline loop>
+        <source
+          src="https://assets.getpartiful.com/animations/{$anim}/web.mov"
+          type="video/mp4;codecs=hvc1"
+        />
+        <source
+          src="https://assets.getpartiful.com/animations/{$anim}/web.webm"
+          type="video/webm"
+        />
+      </video>
+    {/if}
+    {#if animSpec?.ext === "json" && LottiePlayer}
+      <LottiePlayer
+        src="https://assets.getpartiful.com/animations/{$anim}/web.json"
+        autoplay
+        loop
+        renderer="svg"
+        background="transparent"
+        width="100vw"
+        height="100vh"
+      />
+    {/if}
+  </div>
+{/key}
 
 <!-- page components -->
 {#snippet menu()}
@@ -210,7 +283,7 @@
 
 {#snippet nav()}
   <!-- component layout -->
-  <div class="navbar min-h-20 bg-base-100 p-0">
+  <div class="navbar min-h-20 p-0">
     <div class="navbar-start w-32 p-2">
       {@render start()}
     </div>
@@ -244,7 +317,10 @@
     {@const { album, track } = playlist}
 
     <div class="relative">
-      <div class="flex size-full space-x-2 rounded border bg-base-200 md:w-[32rem]">
+      <div
+        class="flex size-full space-x-2 rounded border bg-base-200 md:w-[32rem]"
+        class:bg-opacity-40={transparent}
+      >
         <div class="avatar size-16">
           <div class="rounded">
             {#if album.art != ""}
@@ -280,7 +356,7 @@
 
 {#snippet main()}
   <div class="flex h-full flex-col">
-    <div class="skeleton h-[19.5rem] w-full" class:hidden={playlist.albums.length > 0}></div>
+    <div class="skeleton h-[20vh] w-full" class:hidden={playlist.albums.length > 0}></div>
     <div
       id="carousel"
       class="carousel carousel-center relative w-full"
@@ -289,16 +365,16 @@
       }}
     >
       {#each playlist.albums as album, n}
-        <div class="carousel-item w-64">
+        <div class="carousel-item w-[20vh]">
           <button
-            class="group w-full border-b-4 border-gray-300"
+            class="group w-full border-b-4 border-transparent"
             onclick={(e) => {
               select.album = album;
               pageItemCenter(n);
             }}
             class:border-accent={album == select.album}
           >
-            <div class="card w-full rounded-sm bg-base-100">
+            <div class="card w-full rounded-sm bg-base-100" class:bg-opacity-40={transparent}>
               <figure class="relative size-full">
                 <img class="aspect-square object-cover object-center" src={album?.art} alt="art" />
                 <div
@@ -316,27 +392,34 @@
         </div>
       {/each}
     </div>
-    <div class="flex w-full items-center justify-between bg-base-200 px-1">
-      <button class="btn join-item btn-sm rounded" onclick={() => pageScroll(-1)}>
+    <div class="flex w-full items-center justify-between px-1">
+      <button
+        class="btn join-item btn-sm rounded"
+        class:bg-opacity-50={transparent}
+        onclick={() => pageScroll(-1)}
+      >
         <Icon src={ChevronLeft} class="size-4" solid />
       </button>
       {#each Array(pages) as _, n}
         <button
           aria-label="page"
-          class="h-2 w-2 rounded-full bg-base-100 hover:bg-base-300"
-          class:bg-base-300={n == page}
+          class="h-2 w-2 rounded-full bg-base-content hover:bg-base-300"
+          class:bg-opacity-20={n != page}
           onclick={() => pageScroll(n - page)}
         ></button>
       {/each}
-      <button class="btn join-item btn-sm rounded" onclick={() => pageScroll(+1)}>
+      <button
+        class="btn join-item btn-sm rounded"
+        class:bg-opacity-50={transparent}
+        onclick={() => pageScroll(+1)}
+      >
         <Icon src={ChevronRight} class="size-4" solid />
       </button>
     </div>
-    <div
-      class="flex flex-1 justify-center overflow-scroll bg-gradient-to-b from-base-200 to-gray-300"
-    >
+    <div class="flex flex-1 justify-center overflow-scroll">
       <div
         class="mb-3 mt-1 flex w-full justify-center overflow-scroll rounded bg-base-100 shadow-xl md:w-[32rem]"
+        class:bg-opacity-40={transparent}
       >
         <div class="grid w-full grid-cols-1 content-start">
           {#each select.album.tracks as track, n}
@@ -350,7 +433,7 @@
             >
               <Icon
                 src={Play}
-                class="size-4 shrink-0 text-gray-300 group-hover:text-primary"
+                class="size-4 shrink-0 text-base-content group-hover:text-primary"
                 solid
               />
               {n + 1}.
@@ -371,7 +454,11 @@
   {@const { progress } = playlist}
 
   <!-- component layout -->
-  <div class="navbar relative min-h-20 bg-base-100 p-0" class:hidden={ui.full}>
+  <div
+    class="navbar relative min-h-20 bg-base-100 p-0"
+    class:bg-opacity-20={themeSpec.transparent}
+    class:hidden={ui.full}
+  >
     <progress
       class="progress progress-primary absolute -top-1 h-1"
       max={progress.max}
@@ -416,6 +503,15 @@
       }}
     >
       <Icon src={Sparkles} class="size-5" solid={ui.attract} />
+    </button>
+
+    <button
+      class="btn btn-circle btn-ghost"
+      onclick={() => {
+        ui.theme = !ui.theme;
+      }}
+    >
+      <Icon src={PaintBrush} class="size-5" solid={ui.theme} />
     </button>
 
     <button
@@ -505,13 +601,36 @@
   </form>
 </dialog>
 
-{#if $holiday}
-  <Snow />
-{/if}
-
 <!-- page style -->
 <style>
   :global(html) {
     overflow: hidden;
+  }
+
+  .backdrop {
+    box-sizing: border-box;
+    background-repeat: repeat-y;
+    background-size: 100% auto;
+    left: 0;
+    min-height: 100vh;
+    overflow: hidden;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    touch-action: none;
+    width: 100vw;
+  }
+  .backdrop video {
+    pointer-events: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    height: 100vh;
+    left: 0;
+    object-fit: cover;
+    object-position: top;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 0;
   }
 </style>

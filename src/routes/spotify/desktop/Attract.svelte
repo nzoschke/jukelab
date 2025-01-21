@@ -7,8 +7,6 @@
   import Vinyl from "./attract/Vinyl.svelte";
   import DVD from "./attract/DVD.svelte";
   import { pad } from "$lib/string";
-  import { holiday } from "./store";
-  import Snow from "$lib/shared/snow.svelte";
   import { Icon, ArrowPath } from "svelte-hero-icons";
 
   let {
@@ -21,20 +19,13 @@
 
   let format = $state("default");
 
-  const defaultMessages = [
+  const messages = [
     "Welcome to JukeLab",
     "Press any key to continue",
     "Tap anywhere to start",
     "Select your favorite tunes",
   ];
 
-  const holidayMessages = [
-    "Happy Holidays!",
-    "Tap anywhere for turkey",
-    "Select your favorite holiday tunes",
-  ];
-
-  const messages = $derived($holiday ? holidayMessages : defaultMessages);
   let msgIdx = $state(0);
   const message = $derived(messages[msgIdx]);
 
@@ -58,13 +49,13 @@
     role="button"
     aria-label="Close attract screen"
     tabindex="0"
-    class="flex h-screen w-screen flex-col items-center justify-center bg-slate-200"
+    class="flex h-screen w-screen flex-col items-center justify-center"
     in:fade
     out:fade
     onclick={onClose}
     onkeydown={onClose}
   >
-    <h1 class="absolute right-5 top-5 text-5xl text-base-300">
+    <h1 class="absolute right-5 top-5 text-5xl text-neutral">
       Queue: {pad(playlist.queue.length)}
     </h1>
 
@@ -76,12 +67,8 @@
       <DVD {playlist} {message} />
     {/if}
 
-    {#if $holiday}
-      <Snow />
-    {/if}
-
     <button
-      class="absolute bottom-5 right-5"
+      class="btn btn-circle btn-neutral absolute bottom-5 right-5"
       onclick={(e) => {
         e.stopPropagation();
         if (format === "default") {
