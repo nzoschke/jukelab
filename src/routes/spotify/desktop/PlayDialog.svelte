@@ -14,25 +14,35 @@
   let dialog: HTMLDialogElement;
   let videoElement = $state<HTMLVideoElement>();
 
-  // Expose showModal() so the parent can open the dialog.
   export function showModal() {
     dialog.showModal();
   }
 
-  // When confirming, capture the image if photobooth is enabled.
-  async function confirm() {
+  async function confirm(takePicture: boolean) {
     let photoData: string | undefined;
-    if ($photoboothEnabled && videoElement) {
-      // Capture a frame from the video preview
+
+    if (takePicture && $photoboothEnabled && videoElement) {
       const canvas = document.createElement("canvas");
       canvas.width = videoElement.videoWidth;
       canvas.height = videoElement.videoHeight;
       const ctx = canvas.getContext("2d");
       if (ctx) {
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
         ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
         photoData = canvas.toDataURL("image/png");
       }
     }
+
+    if (photoData) {
+      const a = document.createElement("a");
+      a.href = photoData;
+      a.download = `photo-${Date.now()}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
     if (onPlay) onPlay(photoData);
     dialog.close();
   }
@@ -55,9 +65,15 @@
     <p class="text-lg font-bold">{track?.track.title}</p>
     <p>{track?.track.artist}</p>
     {#if $photoboothEnabled}
-      <div class="flex h-80 w-full items-center justify-center">
-        <!-- Video preview reusing the shared camera stream -->
-        <video autoplay playsinline bind:this={videoElement} class="max-h-full max-w-full"></video>
+      <div class="flex h-80 w-full items-center justify-center pt-4">
+        <!-- svelte-ignore a11y_media_has_caption -->
+        <video
+          autoplay
+          playsinline
+          bind:this={videoElement}
+          class="mirror-video max-h-full max-w-full"
+        >
+        </video>
       </div>
     {/if}
     <form method="dialog">
@@ -69,7 +85,14 @@
         >
         <button type="button" class="btn" onclick={cancel}>Cancel</button>
         <div class="flex-col gap-8">
-          <button type="button" class="btn btn-accent" onclick={confirm}> Enqueue </button>
+          {#if $photoboothEnabled}
+            <button type="button" class="btn btn-primary" onclick={() => confirm(true)}
+              >Enqueue with photo</button
+            >
+          {/if}
+          <button type="button" class="btn btn-accent" onclick={() => confirm(false)}
+            >Just enqueue</button
+          >
         </div>
       </div>
     </form>
@@ -78,3 +101,9 @@
     <button type="button" onclick={cancel}>close</button>
   </form>
 </dialog>
+
+<style type="text/css">
+  .mirror-video {
+    transform: scaleX(-1);
+  }
+</style>
