@@ -34,6 +34,7 @@
   import { getTheme, theme } from "$lib/themes";
   import { anim, getAnimation } from "$lib/animations";
   import { browser } from "$app/environment";
+  import PlayDialog from "./PlayDialog.svelte";
 
   const auth = Auth();
   const log = Log();
@@ -52,11 +53,14 @@
     attract: false,
     details: false,
     full: false,
+    playDialog: null,
     portrait: false,
     theme: false,
     toast: false,
   });
   let user = $state(IUser);
+
+  let playDialog: PlayDialog | null = null;
 
   const themeSpec = $derived(getTheme($theme));
   const themeStyle = $derived.by(() => {
@@ -127,6 +131,14 @@
 
   const onscreenchange = () => {
     ui.portrait = screen.orientation.type.includes("portrait");
+  };
+
+  const onHandleDialogPlay = async () => {
+    playlist.enqueue(select.track);
+    ui.toast = true;
+    setTimeout(() => {
+      ui.toast = false;
+    }, 3000);
   };
 
   // if queued when nothing is playing, play
@@ -427,8 +439,7 @@
               class="group flex h-10 w-full items-center gap-2 p-2 hover:bg-base-300 hover:text-primary"
               onclick={() => {
                 select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
-                const el = document.getElementById("select") as HTMLDialogElement;
-                el.showModal();
+                playDialog?.showModal();
               }}
             >
               <Icon
@@ -573,33 +584,7 @@
   </div>
 </div>
 
-<dialog id="select" class="modal">
-  <div class="modal-box text-center">
-    <h3 class="pb-4 text-lg font-bold">Queue</h3>
-    <p class="text-lg font-bold">{select.track.track.title}</p>
-    <p>{select.track.track.artist}</p>
-    <form method="dialog">
-      <div class="modal-action justify-between">
-        <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
-        <button class="btn" onclick={() => {}}>NO</button>
-        <button
-          class="btn btn-accent"
-          onclick={async () => {
-            playlist.enqueue(select.track);
-
-            ui.toast = true;
-            setTimeout(() => {
-              ui.toast = false;
-            }, 3000);
-          }}>OK</button
-        >
-      </div>
-    </form>
-  </div>
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
+<PlayDialog bind:this={playDialog} track={select.track} onPlay={onHandleDialogPlay} />
 
 <!-- page style -->
 <style>
