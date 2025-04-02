@@ -61,6 +61,9 @@
   "dependencies": {
     "@lottiefiles/svelte-lottie-player": "^0.3.1",
     "@supabase/supabase-js": "^2.46.1",
+    "@tensorflow-models/body-segmentation": "^1.0.2",
+    "@tensorflow/tfjs-backend-webgl": "^4.22.0",
+    "@tensorflow/tfjs-core": "^4.22.0",
     "gsap": "^3.12.5",
     "nosleep.js": "^0.12.0"
   }

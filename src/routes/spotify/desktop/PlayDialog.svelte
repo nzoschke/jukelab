@@ -2,6 +2,9 @@
   import { photoboothEnabled, cameraStream } from "$lib/photobooth";
   import type { AlbumTrack } from "../playlist.svelte";
   import { onMount } from "svelte";
+  import "@tensorflow/tfjs-backend-webgl";
+  import * as bodySegmentation from "@tensorflow-models/body-segmentation";
+  import type { BodySegmenter } from "@tensorflow-models/body-segmentation";
 
   let {
     track,
@@ -13,10 +16,57 @@
 
   let dialog: HTMLDialogElement;
   let videoElement = $state<HTMLVideoElement>();
+  let segmenter: BodySegmenter;
 
   export function showModal() {
     dialog.showModal();
   }
+
+  onMount(() => {
+    const model = bodySegmentation.SupportedModels.MediaPipeSelfieSegmentation;
+    const loadedSegmenter = bodySegmentation
+      .createSegmenter(model, {
+        runtime: "tfjs",
+        modelType: "general",
+      })
+      .then((s) => (segmenter = s))
+      .catch((err) => console.error(err));
+  });
+
+  $effect(() => {
+    if (videoElement && $cameraStream && $photoboothEnabled) {
+      videoElement.srcObject = $cameraStream;
+      videoElement.play().catch(console.error);
+    }
+  });
+
+  const drawimage = async (
+    webcam: HTMLVideoElement,
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+  ) => {
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = webcam.videoWidth;
+    tempCanvas.height = webcam.videoHeight;
+    const tempCtx = tempCanvas.getContext("2d");
+
+    async function drawMask() {
+      requestAnimationFrame(drawMask);
+      if (!segmenter || !tempCtx) return;
+
+      const segmentation = await segmenter.segmentPeople(webcam);
+      const mask = await bodySegmentation.toBinaryMask(segmentation);
+      tempCtx.putImageData(mask, 0, 0);
+
+      context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+      context.save();
+      context.globalCompositeOperation = "destination-out";
+      context.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height);
+      context.restore();
+    }
+
+    drawMask();
+  };
 
   async function confirm(takePicture: boolean) {
     let photoData: string | undefined;
@@ -50,49 +100,45 @@
   function cancel() {
     dialog.close();
   }
-
-  $effect(() => {
-    if (videoElement && $cameraStream && $photoboothEnabled) {
-      videoElement.srcObject = $cameraStream;
-      videoElement.play().catch(console.error);
-    }
-  });
 </script>
 
 <dialog class="modal" bind:this={dialog}>
   <div class="modal-box text-center">
-    <h3 class="pb-4 text-lg font-bold">Queue</h3>
     <p class="text-lg font-bold">{track?.track.title}</p>
     <p>{track?.track.artist}</p>
     {#if $photoboothEnabled}
-      <div class="flex h-80 w-full items-center justify-center pt-4">
+      <div class="flex aspect-square w-full items-center justify-center pt-4">
         <!-- svelte-ignore a11y_media_has_caption -->
         <video
           autoplay
           playsinline
           bind:this={videoElement}
-          class="mirror-video max-h-full max-w-full"
+          class="mirror-video aspect-square w-full object-cover"
         >
         </video>
       </div>
     {/if}
     <form method="dialog">
+      <button
+        type="button"
+        class="btn btn-circle btn-neutral btn-sm absolute right-2 top-2"
+        onclick={cancel}>✕</button
+      >
       <div class="modal-action justify-between">
-        <button
-          type="button"
-          class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
-          onclick={cancel}>✕</button
-        >
-        <button type="button" class="btn" onclick={cancel}>Cancel</button>
-        <div class="flex-col gap-8">
+        <button type="button" class="btn btn-neutral" onclick={cancel}>Cancel</button>
+        <div class="flex gap-2">
           {#if $photoboothEnabled}
+            <button type="button" class="btn btn-neutral" onclick={() => confirm(false)}
+              >Just Queue</button
+            >
             <button type="button" class="btn btn-primary" onclick={() => confirm(true)}
-              >Enqueue with photo</button
+              >Photo + Queue</button
+            >
+          {:else}
+            <button type="button" class="btn btn-primary" onclick={() => confirm(false)}
+              >Queue</button
             >
           {/if}
-          <button type="button" class="btn btn-accent" onclick={() => confirm(false)}
-            >Just enqueue</button
-          >
         </div>
       </div>
     </form>
