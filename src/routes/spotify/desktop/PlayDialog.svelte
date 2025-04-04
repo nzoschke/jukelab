@@ -1,7 +1,6 @@
 <script lang="ts">
   import { photoboothEnabled, cameraStream } from "$lib/photobooth";
   import type { AlbumTrack } from "../playlist.svelte";
-  import { onMount } from "svelte";
 
   let {
     track,
@@ -14,6 +13,8 @@
   } = $props();
 
   let videoElement = $state<HTMLVideoElement>();
+  let countdown = $state(0);
+  let flash = $state(false);
 
   // svelte-ignore non_reactive_update
   let modal: HTMLDialogElement | null = null;
@@ -88,6 +89,21 @@
     open = false;
   }
 
+  async function startCountdown() {
+    countdown = 3;
+
+    while (countdown > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      countdown -= 1;
+    }
+
+    flash = true;
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    flash = false;
+
+    confirm(true);
+  }
+
   const onClose = () => {
     open = false;
   };
@@ -95,7 +111,7 @@
 
 {#if open}
   <dialog bind:this={modal} onclose={() => (open = false)} class="modal">
-    <div class="modal-box text-center">
+    <div class="modal-box relative text-center">
       <p class="text-lg font-bold">{track?.track.title}</p>
       <p>{track?.track.artist}</p>
       {#if $photoboothEnabled}
@@ -106,11 +122,16 @@
             playsinline
             bind:this={videoElement}
             class="mirror-video absolute left-0 top-0 h-full w-full"
-          >
-          </video>
+          ></video>
           <div class="absolute right-2 top-2">
             <img src={track.album.art} alt="Album Art" class="h-40 w-40 rounded-sm" />
           </div>
+
+          {#if countdown > 0}
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="text-6xl font-bold text-white drop-shadow-lg">{countdown}</div>
+            </div>
+          {/if}
         </div>
       {/if}
       <form method="dialog">
@@ -120,13 +141,22 @@
           onclick={onClose}>✕</button
         >
         <div class="modal-action justify-between">
-          <button type="button" class="btn btn-neutral" onclick={onClose}>Cancel</button>
+          <button
+            type="button"
+            class="btn btn-neutral"
+            class:btn-disabled={countdown > 0}
+            onclick={onClose}>Cancel</button
+          >
           <div class="flex gap-2">
             {#if $photoboothEnabled}
-              <button type="button" class="btn btn-neutral" onclick={() => confirm(false)}
-                >Just Queue</button
+              <button
+                type="button"
+                class="btn btn-neutral"
+                class:btn-disabled={countdown > 0}
+                aria-disabled="true"
+                onclick={() => confirm(false)}>Just Queue</button
               >
-              <button type="button" class="btn btn-primary" onclick={() => confirm(true)}
+              <button type="button" class="btn btn-primary" onclick={startCountdown}
                 >Photo + Queue</button
               >
             {:else}
@@ -141,11 +171,39 @@
     <form method="dialog" class="modal-backdrop">
       <button type="button" onclick={onClose}>close</button>
     </form>
+
+    {#if flash}
+      <div class="flash-overlay"></div>
+    {/if}
   </dialog>
 {/if}
 
 <style type="text/css">
   .mirror-video {
     transform: scaleX(-1);
+  }
+
+  @keyframes flashAnimation {
+    0% {
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .flash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    animation: flashAnimation 0.5s ease-out;
+    pointer-events: none;
+    z-index: 50000;
   }
 </style>
