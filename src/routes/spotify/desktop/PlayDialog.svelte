@@ -2,9 +2,6 @@
   import { photoboothEnabled, cameraStream } from "$lib/photobooth";
   import type { AlbumTrack } from "../playlist.svelte";
   import { onMount } from "svelte";
-  import "@tensorflow/tfjs-backend-webgl";
-  import * as bodySegmentation from "@tensorflow-models/body-segmentation";
-  import type { BodySegmenter } from "@tensorflow-models/body-segmentation";
 
   let {
     track,
@@ -16,22 +13,10 @@
 
   let dialog: HTMLDialogElement;
   let videoElement = $state<HTMLVideoElement>();
-  let segmenter: BodySegmenter;
 
   export function showModal() {
     dialog.showModal();
   }
-
-  onMount(() => {
-    const model = bodySegmentation.SupportedModels.MediaPipeSelfieSegmentation;
-    const loadedSegmenter = bodySegmentation
-      .createSegmenter(model, {
-        runtime: "tfjs",
-        modelType: "general",
-      })
-      .then((s) => (segmenter = s))
-      .catch((err) => console.error(err));
-  });
 
   $effect(() => {
     if (videoElement && $cameraStream && $photoboothEnabled) {
@@ -39,34 +24,6 @@
       videoElement.play().catch(console.error);
     }
   });
-
-  const drawimage = async (
-    webcam: HTMLVideoElement,
-    context: CanvasRenderingContext2D,
-    canvas: HTMLCanvasElement,
-  ) => {
-    const tempCanvas = document.createElement("canvas");
-    tempCanvas.width = webcam.videoWidth;
-    tempCanvas.height = webcam.videoHeight;
-    const tempCtx = tempCanvas.getContext("2d");
-
-    async function drawMask() {
-      requestAnimationFrame(drawMask);
-      if (!segmenter || !tempCtx) return;
-
-      const segmentation = await segmenter.segmentPeople(webcam);
-      const mask = await bodySegmentation.toBinaryMask(segmentation);
-      tempCtx.putImageData(mask, 0, 0);
-
-      context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
-      context.save();
-      context.globalCompositeOperation = "destination-out";
-      context.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height);
-      context.restore();
-    }
-
-    drawMask();
-  };
 
   async function confirm(takePicture: boolean) {
     let photoData: string | undefined;
