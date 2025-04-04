@@ -75,11 +75,19 @@
       const canvas = document.createElement("canvas");
       canvas.width = videoElement.videoWidth;
       canvas.height = videoElement.videoHeight;
+
+      const side = Math.min(videoElement.videoWidth, videoElement.videoHeight);
+      canvas.width = side;
+      canvas.height = side;
+
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        ctx.translate(canvas.width, 0);
+        const sx = (videoElement.videoWidth - side) / 2;
+        const sy = (videoElement.videoHeight - side) / 2;
+
+        ctx.translate(side, 0);
         ctx.scale(-1, 1);
-        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(videoElement, sx, sy, side, side, 0, 0, side, side);
         photoData = canvas.toDataURL("image/png");
       }
     }
