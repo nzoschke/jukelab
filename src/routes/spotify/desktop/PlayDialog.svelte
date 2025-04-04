@@ -86,9 +86,26 @@
         const sx = (videoElement.videoWidth - side) / 2;
         const sy = (videoElement.videoHeight - side) / 2;
 
+        ctx.save();
         ctx.translate(side, 0);
         ctx.scale(-1, 1);
         ctx.drawImage(videoElement, sx, sy, side, side, 0, 0, side, side);
+        ctx.restore();
+
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = track.album.art;
+
+        await new Promise((resolve, reject) => {
+          img.onload = () => {
+            const size = side * 0.32;
+            const padding = side * 0.02;
+            ctx.drawImage(img, side - size - padding, padding, size, size);
+            resolve(null);
+          };
+          img.onerror = reject;
+        });
+
         photoData = canvas.toDataURL("image/png");
       }
     }
@@ -116,15 +133,18 @@
     <p class="text-lg font-bold">{track?.track.title}</p>
     <p>{track?.track.artist}</p>
     {#if $photoboothEnabled}
-      <div class="flex aspect-square w-full items-center justify-center pt-4">
+      <div class="relative flex aspect-square w-full pt-4">
         <!-- svelte-ignore a11y_media_has_caption -->
         <video
           autoplay
           playsinline
           bind:this={videoElement}
-          class="mirror-video aspect-square w-full object-cover"
+          class="mirror-video absolute left-0 top-0 h-full w-full"
         >
         </video>
+        <div class="absolute right-2 top-2">
+          <img src={track.album.art} alt="Album Art" class="h-40 w-40 rounded-sm" />
+        </div>
       </div>
     {/if}
     <form method="dialog">
