@@ -1,7 +1,5 @@
 <script lang="ts">
   import { Auth, IUser } from "$lib/auth";
-  import { pad } from "$lib/string";
-  import { mmss } from "$lib/time";
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
@@ -57,6 +55,7 @@
     portrait: false,
     theme: false,
     toast: false,
+    toastImage: "",
   });
   let user = $state(IUser);
 
@@ -134,9 +133,12 @@
   const onHandleDialogPlay = async (photo?: string) => {
     playlist.enqueue(select.track, photo);
     ui.toast = true;
+    if (photo) {
+      ui.toastImage = photo;
+    }
     setTimeout(() => {
       ui.toast = false;
-    }, 3000);
+    }, 5000);
   };
 
   // if queued when nothing is playing, play
@@ -573,6 +575,13 @@
 {/snippet}
 
 <div class="toast z-10" class:hidden={!ui.toast}>
+  {#if ui.toastImage}
+    <div class="avatar shadow-lg">
+      <div class="rounded-2xl">
+        <img src={ui.toastImage} alt="Music taker" style="width: 358px; height: 358px;" />
+      </div>
+    </div>
+  {/if}
   <div role="alert" class="alert shadow-lg">
     <Icon src={Plus} class="size-5" />
     <div class="w-72 overflow-hidden">
