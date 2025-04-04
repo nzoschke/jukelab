@@ -15,7 +15,7 @@
   const messageColor = $derived(getTheme($theme).themeColors?.link || "");
 
   const {
-    album: { art },
+    nowPlayingImage,
     track: { title, artist },
   } = $derived(playlist);
 
@@ -34,11 +34,11 @@
   let albums: DVD[] = $state([]);
 
   $effect(() => {
-    if (!art) {
+    if (!nowPlayingImage) {
       return;
     }
 
-    if (albums.length === 0 || albums[0].art !== art) {
+    if (albums.length === 0 || albums[0].art !== nowPlayingImage) {
       const screenWidth = window.innerWidth;
       const screenHeight = window.innerHeight;
 
@@ -47,7 +47,7 @@
       const x = vx > 0 ? -size : Math.random() * (screenWidth + size);
       const y = vy > 0 ? -size : Math.random() * (screenHeight + size);
 
-      albums = [{ art, x, y, vx, vy, inside: false }, ...albums];
+      albums = [{ art: nowPlayingImage, x, y, vx, vy, inside: false }, ...albums];
     }
   });
 

@@ -131,8 +131,8 @@
     ui.portrait = screen.orientation.type.includes("portrait");
   };
 
-  const onHandleDialogPlay = async () => {
-    playlist.enqueue(select.track);
+  const onHandleDialogPlay = async (photo?: string) => {
+    playlist.enqueue(select.track, photo);
     ui.toast = true;
     setTimeout(() => {
       ui.toast = false;

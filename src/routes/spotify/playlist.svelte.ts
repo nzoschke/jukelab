@@ -5,6 +5,7 @@ import { API } from "$lib/spotify/api";
 import * as s from "$lib/storage";
 import { pad } from "$lib/string";
 import { Album, AlbumTracks, PlaylistTracks, Track } from "$lib/types/music";
+import { get as dbGet, set as dbSet } from "idb-keyval";
 
 export type Lists = "queue" | "shuffle" | "history";
 
@@ -45,6 +46,7 @@ export const Playlist = () => {
   let queue = $state<Src[]>([]);
   let shuffle = $state<Src[]>([]);
   let track = $state(Track);
+  let photo = $state<string>();
 
   const playing = $derived.by(() => {
     const an = albums.indexOf(album);
@@ -52,7 +54,7 @@ export const Playlist = () => {
     return tn >= 0 ? `${pad(an)}${pad(tn + 1)}` : "____";
   });
 
-  const enqueue = async (at: AlbumTrack) => {
+  const enqueue = async (at: AlbumTrack, photo?: string) => {
     if (album?.src == at.album.src && track?.src == at.track.src) {
       return;
     }
@@ -60,6 +62,9 @@ export const Playlist = () => {
       return;
     }
     queue.push({ albumSrc: at.album.src, trackSrc: at.track.src });
+    if (photo) {
+      dbSet(`${at.album.src}${at.track.src}`, photo);
+    }
     s.set("queue", queue);
   };
 
@@ -179,6 +184,7 @@ export const Playlist = () => {
     const at = find(src);
     album = at.album;
     track = at.track;
+    photo = await dbGet(`${at.album.src}${at.track.src}`);
 
     return src;
   };
@@ -278,6 +284,9 @@ export const Playlist = () => {
     },
     set track(v: Track) {
       track = v;
+    },
+    get nowPlayingImage() {
+      return photo || album.art;
     },
   };
 };
