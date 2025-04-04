@@ -6,7 +6,7 @@ export const cameraStream = writable<MediaStream | null>(null);
 export async function startCamera() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { width: { ideal: 1280 }, height: { ideal: 1280 } },
+      video: { width: { ideal: 1024 }, height: { ideal: 1024 } },
     });
     cameraStream.set(stream);
   } catch (err) {

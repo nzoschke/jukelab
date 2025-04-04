@@ -64,7 +64,7 @@
 
         await new Promise((resolve, reject) => {
           img.onload = () => {
-            const size = side * 0.32;
+            const size = side * 0.34;
             const padding = side * 0.02;
             ctx.drawImage(img, side - size - padding, padding, size, size);
             resolve(null);
