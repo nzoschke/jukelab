@@ -53,14 +53,12 @@
     attract: false,
     details: false,
     full: false,
-    playDialog: null,
+    playDialog: false,
     portrait: false,
     theme: false,
     toast: false,
   });
   let user = $state(IUser);
-
-  let playDialog: PlayDialog | null = null;
 
   const themeSpec = $derived(getTheme($theme));
   const themeStyle = $derived.by(() => {
@@ -439,7 +437,7 @@
               class="group flex h-10 w-full items-center gap-2 p-2 hover:bg-base-300 hover:text-primary"
               onclick={() => {
                 select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
-                playDialog?.showModal();
+                ui.playDialog = true;
               }}
             >
               <Icon
@@ -584,7 +582,7 @@
   </div>
 </div>
 
-<PlayDialog bind:this={playDialog} track={select.track} onPlay={onHandleDialogPlay} />
+<PlayDialog bind:open={ui.playDialog} track={select.track} onPlay={onHandleDialogPlay} />
 
 <!-- page style -->
 <style>
