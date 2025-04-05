@@ -25,17 +25,17 @@
   });
 
   const {
-    album: { art },
+    nowPlayingImage,
     track: { title, artist },
   } = $derived(playlist);
 </script>
 
 <div class="flex h-screen w-screen items-center justify-center">
-  {#if art != ""}
+  {#if nowPlayingImage != ""}
     <div
       class="vinyl flex size-full h-[90vmin] w-[90vmin] animate-[spin_2s_linear_infinite] items-center justify-center rounded-full"
     >
-      <img class="h-2/3 w-2/3" src={art} alt="" />
+      <img class="h-2/3 w-2/3" src={nowPlayingImage} alt="" />
     </div>
 
     <p class="absolute bottom-5 left-5 pt-2 text-xl italic">{title} by <b>{artist}</b></p>

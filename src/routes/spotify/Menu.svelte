@@ -1,5 +1,6 @@
 <script lang="ts">
   import { href } from "$lib/href";
+  import { cameraStream, photoboothEnabled, startCamera, stopCamera } from "$lib/photobooth";
   import { Playlist } from "./playlist.svelte";
 
   let {
@@ -9,6 +10,18 @@
   } = $props();
 
   let playlistIn = $state({ value: "", err: "" });
+
+  $effect(() => {
+    if ($photoboothEnabled) {
+      if (!$cameraStream) {
+        startCamera();
+      }
+    } else {
+      if ($cameraStream) {
+        stopCamera();
+      }
+    }
+  });
 </script>
 
 <ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
@@ -42,6 +55,18 @@
       <li><a href={href("/spotify/desktop")}>Desktop</a></li>
       <li><a href={href("/spotify/keypad")}>Keypad</a></li>
       <li><a href={href("/spotify/vinyl")}>Vinyl</a></li>
+    </ul>
+  </li>
+
+  <li>
+    <h2 class="menu-title">Settings</h2>
+    <ul>
+      <li>
+        <label class="label flex cursor-pointer justify-start">
+          <input type="checkbox" class="toggle" bind:checked={$photoboothEnabled} />
+          <span class="label-text">Photobooth</span>
+        </label>
+      </li>
     </ul>
   </li>
 

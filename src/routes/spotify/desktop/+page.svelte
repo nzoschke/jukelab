@@ -1,7 +1,5 @@
 <script lang="ts">
   import { Auth, IUser } from "$lib/auth";
-  import { pad } from "$lib/string";
-  import { mmss } from "$lib/time";
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
@@ -34,6 +32,7 @@
   import { getTheme, theme } from "$lib/themes";
   import { anim, getAnimation } from "$lib/animations";
   import { browser } from "$app/environment";
+  import PlayDialog from "./PlayDialog.svelte";
 
   const auth = Auth();
   const log = Log();
@@ -52,9 +51,11 @@
     attract: false,
     details: false,
     full: false,
+    playDialog: false,
     portrait: false,
     theme: false,
     toast: false,
+    toastImage: "",
   });
   let user = $state(IUser);
 
@@ -127,6 +128,19 @@
 
   const onscreenchange = () => {
     ui.portrait = screen.orientation.type.includes("portrait");
+  };
+
+  const onHandleDialogPlay = async (photo?: string) => {
+    playlist.enqueue(select.track, photo);
+    ui.toast = true;
+    if (photo) {
+      ui.toastImage = photo;
+    } else {
+      ui.toastImage = "";
+    }
+    setTimeout(() => {
+      ui.toast = false;
+    }, 5000);
   };
 
   // if queued when nothing is playing, play
@@ -427,8 +441,7 @@
               class="group flex h-10 w-full items-center gap-2 p-2 hover:bg-base-300 hover:text-primary"
               onclick={() => {
                 select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
-                const el = document.getElementById("select") as HTMLDialogElement;
-                el.showModal();
+                ui.playDialog = true;
               }}
             >
               <Icon
@@ -564,6 +577,13 @@
 {/snippet}
 
 <div class="toast z-10" class:hidden={!ui.toast}>
+  {#if ui.toastImage}
+    <div class="avatar shadow-lg">
+      <div class="rounded-2xl">
+        <img src={ui.toastImage} alt="Music taker" style="width: 358px; height: 358px;" />
+      </div>
+    </div>
+  {/if}
   <div role="alert" class="alert shadow-lg">
     <Icon src={Plus} class="size-5" />
     <div class="w-72 overflow-hidden">
@@ -573,33 +593,7 @@
   </div>
 </div>
 
-<dialog id="select" class="modal">
-  <div class="modal-box text-center">
-    <h3 class="pb-4 text-lg font-bold">Queue</h3>
-    <p class="text-lg font-bold">{select.track.track.title}</p>
-    <p>{select.track.track.artist}</p>
-    <form method="dialog">
-      <div class="modal-action justify-between">
-        <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
-        <button class="btn" onclick={() => {}}>NO</button>
-        <button
-          class="btn btn-accent"
-          onclick={async () => {
-            playlist.enqueue(select.track);
-
-            ui.toast = true;
-            setTimeout(() => {
-              ui.toast = false;
-            }, 3000);
-          }}>OK</button
-        >
-      </div>
-    </form>
-  </div>
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
+<PlayDialog bind:open={ui.playDialog} track={select.track} onPlay={onHandleDialogPlay} />
 
 <!-- page style -->
 <style>
