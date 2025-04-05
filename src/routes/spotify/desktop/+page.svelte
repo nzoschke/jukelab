@@ -135,6 +135,8 @@
     ui.toast = true;
     if (photo) {
       ui.toastImage = photo;
+    } else {
+      ui.toastImage = "";
     }
     setTimeout(() => {
       ui.toast = false;
