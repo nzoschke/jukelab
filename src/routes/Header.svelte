@@ -15,16 +15,7 @@
       <img class="w-20" src={href(logo)} alt="JukeLab logo" />
     </a>
   </div>
-  <div class="navbar-center">
-    <div role="tablist" class="tabs-boxed tabs">
-      {@render tab("Home", "/")}
-      {@render tab("HTML Audio", "/audio")}
-      {@render tab("Spotify", "/spotify")}
-      {@render tab("Desktop", "/spotify/desktop")}
-      {@render tab("Keypad", "/spotify/keypad")}
-      {@render tab("About", "/about")}
-    </div>
-  </div>
+  <div class="navbar-center"></div>
   <div class="navbar-end">
     <a class="btn btn-circle btn-ghost" href="https://github.com/nzoschke/jukelab">
       <img src={href(github)} alt="GitHub" />
