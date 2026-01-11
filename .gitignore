@@ -5,7 +5,7 @@ node_modules
 .output
 .vercel
 /.svelte-kit
-/build
+# /build - keep build directory for Go embed
 /test-results
 
 # OS
