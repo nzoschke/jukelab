@@ -4,7 +4,7 @@
   import { Broadcast } from "$lib/supabase/broadcast.svelte";
   import { Track } from "$lib/types/music";
   import { onMount } from "svelte";
-  import { Backward, Forward, Icon, Pause, Play, Signal } from "svelte-hero-icons";
+  import { Backward, Forward, Icon, Pause, Play } from "svelte-hero-icons";
   import Avatar from "../Avatar.svelte";
 
   const auth = Auth();

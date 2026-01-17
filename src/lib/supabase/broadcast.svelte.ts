@@ -7,6 +7,7 @@ export interface Presence {
 }
 
 export interface Message {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
   type: string;
 }
@@ -30,7 +31,7 @@ export const Broadcast = () => {
     onmsg: (msg: Message) => void,
     onpresence?: (p: Presence) => void,
   ) => {
-    var ch = client.channel(channel);
+    const ch = client.channel(channel);
     ch.on("broadcast", { event: "message" }, (payload) => {
       const msg = payload.payload as Message;
       onmsg(msg);
@@ -42,7 +43,7 @@ export const Broadcast = () => {
     })
       .on("presence", { event: "sync" }, () => {
         const presences = ch.presenceState<Presence>();
-        Object.entries(presences).forEach(([id, ps]) => {
+        Object.entries(presences).forEach(([_id, ps]) => {
           const p = ps[0];
           onpresence && onpresence(p);
           presence.set(p.presence_ref, p);

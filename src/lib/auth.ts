@@ -32,7 +32,7 @@ export const Auth = (): IAuth => {
 
   return {
     exchange: async () => "unimplemented",
-    login: async (path: string) => {},
+    login: async (_path: string) => {},
     logout: async () => {},
     token: async () => "",
     user: async () => IUser,

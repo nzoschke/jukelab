@@ -15,7 +15,14 @@ export default tseslint.config(
       globals: {
         ...globals.browser,
         ...globals.node,
+        Spotify: "readonly",
       },
+    },
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
     },
   },
   {
@@ -24,6 +31,28 @@ export default tseslint.config(
       parserOptions: {
         parser: tseslint.parser,
       },
+    },
+  },
+  {
+    files: ["**/*.svelte.ts"],
+    languageOptions: {
+      parser: tseslint.parser,
+    },
+  },
+  {
+    files: ["**/*.svelte", "**/*.svelte.ts"],
+    rules: {
+      "svelte/require-each-key": "off",
+      "svelte/no-navigation-without-resolve": "off",
+      "svelte/no-unnecessary-state-wrap": "off",
+      "svelte/prefer-svelte-reactivity": "off",
+      "@typescript-eslint/no-unused-expressions": "off",
+    },
+  },
+  {
+    files: ["tailwind.config.ts"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
   {

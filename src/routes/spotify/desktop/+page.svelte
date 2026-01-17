@@ -179,6 +179,7 @@
     if (!ui.attract) attractReset();
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let LottiePlayer: any = $state();
 
   onMount(async () => {
@@ -214,7 +215,6 @@
 {#key themeStyle}
   <div class="backdrop {themeSpec.backdropClass}" style={themeStyle}>
     {#if themeSpec.animationStyle === "video"}
-      <!-- svelte-ignore a11y_media_has_caption -->
       <video autoplay playsinline loop>
         <source
           src="https://assets.getpartiful.com/backgrounds/{$theme}/web.mp4"
@@ -264,7 +264,6 @@
 {#key animSpec}
   <div class="backdrop">
     {#if animSpec.ext === "mp4"}
-      <!-- svelte-ignore a11y_media_has_caption -->
       <video autoplay playsinline loop>
         <source
           src="https://assets.getpartiful.com/animations/{$anim}/web.mov"
@@ -382,7 +381,7 @@
         <div class="carousel-item w-[20vh]">
           <button
             class="group w-full border-b-4 border-transparent"
-            onclick={(e) => {
+            onclick={() => {
               select.album = album;
               pageItemCenter(n);
             }}

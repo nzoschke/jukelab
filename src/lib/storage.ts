@@ -9,7 +9,7 @@ export const hash = (key: string) => {
   }
 };
 
-export const check = (key: string, value: any) => {
+export const check = (key: string, value: unknown) => {
   if (!isBrowser()) return false;
   const i = localStorage.getItem(`jukelab:${key}`);
   const v = i ? JSON.parse(i) : undefined;
@@ -18,7 +18,7 @@ export const check = (key: string, value: any) => {
 
 export const get = <T>(key: string, def: T): T => {
   const v = hash(key);
-  if (v) return v as any;
+  if (v) return v as T;
 
   if (!isBrowser()) return def;
   const i = localStorage.getItem(`jukelab:${key}`);
@@ -37,7 +37,7 @@ export const remPrefix = (prefix: string) => {
     .forEach((k) => localStorage.removeItem(k));
 };
 
-export const set = (key: string, value: any) => {
+export const set = (key: string, value: unknown) => {
   if (!isBrowser()) return;
   localStorage.setItem(`jukelab:${key}`, JSON.stringify(value));
 };

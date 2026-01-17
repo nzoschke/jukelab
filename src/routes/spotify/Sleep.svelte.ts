@@ -1,7 +1,7 @@
 import NoSleep from "nosleep.js";
 
 export const Sleep = () => {
-  var nosleep: NoSleep;
+  let nosleep: NoSleep;
   let disabled = $state<boolean>();
 
   return {

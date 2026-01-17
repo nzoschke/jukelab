@@ -8,7 +8,7 @@ export interface Log {
 }
 
 export const Log = (length = 1000) => {
-  let logs = $state<Log[]>([]);
+  const logs = $state<Log[]>([]);
 
   const log = (msg: string, level?: Level) => {
     console.log(msg);

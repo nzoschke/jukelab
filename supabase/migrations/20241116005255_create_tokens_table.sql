@@ -1,6 +1,6 @@
 CREATE TABLE "public"."tokens" (
   "token" text,
-  "user_id" UUID NOT NULL DEFAULT gen_random_uuid ()
+  "user_id" UUID NOT NULL DEFAULT gen_random_uuid()
 );
 
 ALTER TABLE "public"."tokens" enable ROW level security;

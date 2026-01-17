@@ -100,7 +100,7 @@ export const devToken = async () => {
   try {
     await api.currentUser.profile();
     return token;
-  } catch (e) {
+  } catch {
     return "";
   }
 };
