@@ -27,7 +27,7 @@
     <div class="truncate">{track.title}</div>
     <div class="truncate">
       {track.album}
-      {track.year.getTime() == 0 ? "" : `(${track.year.getFullYear()})`}
+      {track.year?.getTime() == 0 ? "" : `(${track.year?.getFullYear()})`}
     </div>
     <div class="truncate">{track.artist}</div>
   </div>
