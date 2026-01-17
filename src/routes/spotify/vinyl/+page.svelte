@@ -3,7 +3,7 @@
   import { Draggable } from "gsap/Draggable";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { onMount } from "svelte";
-  import { Auth, IUser } from "$lib/auth";
+  import { Auth } from "$lib/auth";
   import { Audio } from "$lib/types/audio";
   import AudioC from "../Audio.svelte";
   import { Playlist } from "../playlist.svelte";
@@ -12,15 +12,13 @@
   const auth = Auth();
   const log = Log();
 
-  let user = $state(IUser);
   let audio = $state(Audio);
   let playlist = Playlist();
 
   gsap.registerPlugin(ScrollTrigger, Draggable);
 
   onMount(async () => {
-    user = await auth.user();
-    await playlist.get(auth.token, (a) => {
+    await playlist.get(auth.token, (_a) => {
       // select.album = a;
     });
     // select.album = playlist.albums[0];

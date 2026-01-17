@@ -5,7 +5,7 @@
 
   let {
     audio = $bindable(Audio),
-    log = (msg: string, level?: Level) => {},
+    log = (_msg: string, _level?: Level) => {},
     src = "",
     token,
   }: {

@@ -116,7 +116,6 @@
       <p>{track?.track.artist}</p>
       {#if $photoboothEnabled}
         <div class="relative flex aspect-square w-full pt-4">
-          <!-- svelte-ignore a11y_media_has_caption -->
           <video
             autoplay
             playsinline

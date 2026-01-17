@@ -38,11 +38,11 @@
 
 <div class="flex h-screen w-screen flex-col items-center justify-center pb-20">
   <div class="inline-flex w-full flex-nowrap">
-    {#each Array(2) as _, n}
+    {#each [1, 2]}
       <div
         class="ml-1 flex animate-infinite-scroll items-center justify-center space-x-1 opacity-50"
       >
-        {#each artTop as album, n}
+        {#each artTop as album (album.src)}
           <img class="aspect-square h-32 w-32 max-w-none" src={album.art} alt="art" />
         {/each}
       </div>
@@ -50,11 +50,11 @@
   </div>
 
   <div class="mt-1 inline-flex w-full flex-nowrap">
-    {#each Array(2) as _, n}
+    {#each [1, 2]}
       <div
         class="ml-1 flex animate-infinite-scroll-reverse items-center justify-center space-x-1 opacity-50"
       >
-        {#each artBottom as album, n}
+        {#each artBottom as album (album.src)}
           <img class="aspect-square h-32 w-32 max-w-none" src={album.art} alt="art" />
         {/each}
       </div>

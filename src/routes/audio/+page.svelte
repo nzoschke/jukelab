@@ -26,8 +26,8 @@
           href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio">HTML Audio</a
         >
         and <a href="https://learn.svelte.dev/tutorial/media-elements">Svelte Media Elements</a>.
-        You can bind properties of an <span class="font-mono">&lt;audio&gt;</span> element to easily
-        build a custom player UI.
+        You can bind properties of an <span class="font-mono">&lt;audio&gt;</span> element to easily build
+        a custom player UI.
       </p>
 
       <div class="form-control">

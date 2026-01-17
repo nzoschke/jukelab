@@ -26,10 +26,12 @@ brew install git node
 git clone https://github.com/nzoschke/jukelab.git
 cd jukelab
 
-# fill in PUBLIC_SPOTIFY_TOKEN
-cp .env.example .env
+npm install
+npx playwright install
 
-supabase start
+# fill in PUBLIC_SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET and run tests
+cp .env.example .env
+npm test
 
 npm install
 npm run dev -- --open
@@ -37,40 +39,15 @@ npm run dev -- --open
 
 ### Spotify
 
-To get a development Spotify access token that works for 1 hour, go to the [Getting Started with Web Playback SDK](https://developer.spotify.com/documentation/web-playback-sdk/tutorials/getting-started) doc, log into Spotify, click "Reveal your access token", then set it in `.env`:
-
-```bash
-PUBLIC_SPOTIFY_TOKEN=<TOKEN>
-```
-
-![Dev Token](static/token.png?raw=true)
-
-To make a "prod" Spotify app that works indefinitely, go to [Getting started with Web API
-](https://developer.spotify.com/documentation/web-api/tutorials/getting-started) doc, follow the "Create an app" section, get your client ID, then set it in `.env`:
+To make a Spotify app that works indefinitely, go to [Getting started with Web API
+](https://developer.spotify.com/documentation/web-api/tutorials/getting-started) doc, follow the "Create an app" section, get your client credentials, then set it in `.env`:
 
 ```bash
 PUBLIC_SPOTIFY_CLIENT_ID=<CLIENT_ID>
+SPOTIFY_CLIENT_SECRET=<CLIENT_SECRET>
 ```
 
-### Supabase
-
-```bash
-supabase init
-supabase start
-supabase status
-
-# create new migration
-supabase migration new create_channels_table
-
-# then browse to http://127.0.0.1:54323, use table editor, then generate diff
-supabase db diff --schema public > supabase/migrations/20241104092543_create_channels_table.sql
-
-# generate types
-supabase gen types --local > src/lib/types/database.ts
-
-# reset data
-supabase db reset
-```
+Note that only the client ID is public, the secret is only for local testing.
 
 ## Building
 

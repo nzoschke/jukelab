@@ -1,9 +1,6 @@
-import * as env from "$env/static/public";
 import { Auth as SpotifyAuth } from "$lib/spotify/auth";
-import { Auth as SupabaseAuth } from "$lib/supabase/auth";
 
 export interface IUser {
-  channel: string;
   email: string;
   id: string;
   image: string;
@@ -19,22 +16,10 @@ export interface IAuth {
 }
 
 export const IUser: IUser = {
-  channel: "",
   email: "",
   id: "",
   image: "",
   name: "",
 };
 
-export const Auth = (): IAuth => {
-  if (env.PUBLIC_SUPABASE_URL) return SupabaseAuth();
-  if (env.PUBLIC_SPOTIFY_CLIENT_ID) return SpotifyAuth();
-
-  return {
-    exchange: async () => "unimplemented",
-    login: async (path: string) => {},
-    logout: async () => {},
-    token: async () => "",
-    user: async () => IUser,
-  };
-};
+export const Auth = (): IAuth => SpotifyAuth();

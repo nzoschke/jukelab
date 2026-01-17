@@ -12,7 +12,7 @@
 <div class="navbar bg-base-100">
   <div class="navbar-start">
     <a class="" href="https://jukelab.com">
-      <img class="w-20" src={href(logo)} alt="JukeLab logo" />
+      <img class="w-20" src={logo} alt="JukeLab logo" />
     </a>
   </div>
   <div class="navbar-center">
@@ -27,7 +27,7 @@
   </div>
   <div class="navbar-end">
     <a class="btn btn-circle btn-ghost" href="https://github.com/nzoschke/jukelab">
-      <img src={href(github)} alt="GitHub" />
+      <img src={github} alt="GitHub" />
     </a>
   </div>
 </div>

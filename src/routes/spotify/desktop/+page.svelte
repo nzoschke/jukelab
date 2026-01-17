@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Auth, IUser } from "$lib/auth";
+  import { Auth } from "$lib/auth";
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
@@ -18,7 +18,6 @@
     PaintBrush,
     Sun,
   } from "svelte-hero-icons";
-  import Broadcast from "../../audio/Broadcast.svelte";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Avatar from "../Avatar.svelte";
@@ -57,7 +56,6 @@
     toast: false,
     toastImage: "",
   });
-  let user = $state(IUser);
 
   const themeSpec = $derived(getTheme($theme));
   const themeStyle = $derived.by(() => {
@@ -179,13 +177,13 @@
     if (!ui.attract) attractReset();
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let LottiePlayer: any = $state();
 
   onMount(async () => {
     onscreenchange();
     screen.orientation.addEventListener("change", onscreenchange);
 
-    user = await auth.user();
     await playlist.get(auth.token, (a) => {
       select.album = a;
     });
@@ -214,7 +212,6 @@
 {#key themeStyle}
   <div class="backdrop {themeSpec.backdropClass}" style={themeStyle}>
     {#if themeSpec.animationStyle === "video"}
-      <!-- svelte-ignore a11y_media_has_caption -->
       <video autoplay playsinline loop>
         <source
           src="https://assets.getpartiful.com/backgrounds/{$theme}/web.mp4"
@@ -264,7 +261,6 @@
 {#key animSpec}
   <div class="backdrop">
     {#if animSpec.ext === "mp4"}
-      <!-- svelte-ignore a11y_media_has_caption -->
       <video autoplay playsinline loop>
         <source
           src="https://assets.getpartiful.com/animations/{$anim}/web.mov"
@@ -382,7 +378,7 @@
         <div class="carousel-item w-[20vh]">
           <button
             class="group w-full border-b-4 border-transparent"
-            onclick={(e) => {
+            onclick={() => {
               select.album = album;
               pageItemCenter(n);
             }}
@@ -535,10 +531,6 @@
     >
       <Icon src={CommandLine} class="size-5" solid={ui.details} />
     </button>
-
-    {#if user.channel}
-      <Broadcast bind:audio channel={user.channel} name="player" {playlist} />
-    {/if}
   {/snippet}
 
   {#snippet center()}
