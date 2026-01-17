@@ -44,13 +44,8 @@ export const Auth = (): IAuth => {
 
   // token is the current access token. "" implies not authenticated
   const token = async () => {
-    if (clientId()) {
-      const t = await api.getAccessToken();
-      return t?.access_token || "";
-    }
-
-    const t = await devToken();
-    return t || "";
+    const t = await api.getAccessToken();
+    return t?.access_token || "";
   };
 
   // user is the current user. Empty ID means unauthenticated
@@ -84,21 +79,24 @@ const clientId = () => {
   return id;
 };
 
-// get dev token. undefined means unset, "" means invalid, otherwise the valid token is returned
+// get dev token using client credentials flow (Node.js only, for tests)
+// returns undefined if not in dev, "" if failed, otherwise the access token
 export const devToken = async () => {
-  const { PUBLIC_SPOTIFY_TOKEN: token } = env;
-  if (!token) return;
+  if (!dev) return;
 
-  const api = SpotifyApi.withAccessToken("", {
-    access_token: token,
-    token_type: "",
-    expires_in: 3600,
-    refresh_token: "",
-  });
+  // client credentials flow only works in Node.js (tests)
+  if (typeof process === "undefined" || !process.env) return;
+
+  const id = clientId();
+  const secret = process.env.SPOTIFY_CLIENT_SECRET;
+  if (!id || !secret) return;
 
   try {
-    await api.currentUser.profile();
-    return token;
+    const api = SpotifyApi.withClientCredentials(id, secret);
+    // Make an API call to trigger token fetch (SDK is lazy)
+    await api.albums.get("4aawyAB9vmqN3uQ7FjRGTy");
+    const t = await api.getAccessToken();
+    return t?.access_token || "";
   } catch {
     return "";
   }
@@ -114,9 +112,5 @@ export const validate = async (): Promise<string | undefined> => {
     return "Bad PUBLIC_SPOTIFY_CLIENT_ID. See README.md";
   }
 
-  if (env.PUBLIC_SPOTIFY_TOKEN) {
-    return "Bad or expired token PUBLIC_SPOTIFY_TOKEN. See README.md";
-  }
-
-  return "Missing PUBLIC_SPOTIFY_TOKEN and PUBLIC_SPOTIFY_CLIENT_ID. See README.md";
+  return "Missing PUBLIC_SPOTIFY_CLIENT_ID. See README.md";
 };

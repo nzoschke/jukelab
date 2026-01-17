@@ -9,5 +9,6 @@ export default defineConfig({
   },
   test: {
     include: ["src/**/*.{test,spec}.{js,ts}"],
+    setupFiles: ["src/lib/test-setup.ts"],
   },
 });

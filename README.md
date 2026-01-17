@@ -29,7 +29,7 @@ cd jukelab
 npm install
 npx playwright install
 
-# fill in PUBLIC_SPOTIFY_TOKEN and run tests
+# fill in PUBLIC_SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET and run tests
 cp .env.example .env
 npm test
 
@@ -39,20 +39,15 @@ npm run dev -- --open
 
 ### Spotify
 
-To get a development Spotify access token that works for 1 hour, go to the [Getting Started with Web Playback SDK](https://developer.spotify.com/documentation/web-playback-sdk/tutorials/getting-started) doc, log into Spotify, click "Reveal your access token", then set it in `.env`:
-
-```bash
-PUBLIC_SPOTIFY_TOKEN=<TOKEN>
-```
-
-![Dev Token](static/token.png?raw=true)
-
-To make a "prod" Spotify app that works indefinitely, go to [Getting started with Web API
-](https://developer.spotify.com/documentation/web-api/tutorials/getting-started) doc, follow the "Create an app" section, get your client ID, then set it in `.env`:
+To make a Spotify app that works indefinitely, go to [Getting started with Web API
+](https://developer.spotify.com/documentation/web-api/tutorials/getting-started) doc, follow the "Create an app" section, get your client credentials, then set it in `.env`:
 
 ```bash
 PUBLIC_SPOTIFY_CLIENT_ID=<CLIENT_ID>
+SPOTIFY_CLIENT_SECRET=<CLIENT_SECRET>
 ```
+
+Note that only the client ID is public, the secret is only for local testing.
 
 ## Building
 
