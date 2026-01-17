@@ -24,8 +24,6 @@ jobs:
           PUBLIC_ORIGIN: ${{ secrets.PUBLIC_ORIGIN }}
           PUBLIC_SPOTIFY_TOKEN: ""
           PUBLIC_SPOTIFY_CLIENT_ID: ${{ secrets.PUBLIC_SPOTIFY_CLIENT_ID }}
-          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
-          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
         run: |
           npm run check
           npm run build
@@ -51,22 +49,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: supabase/setup-cli@v1
-        with:
-          version: latest
-
-      - env:
-          PUBLIC_SPOTIFY_CLIENT_ID: id
-          SPOTIFY_CLIENT_SECRET: secret
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-        run: |
-          supabase link --project-ref $SUPABASE_PROJECT_ID
-          supabase db push
-          supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
-
       - id: deploy
         uses: actions/deploy-pages@v4
