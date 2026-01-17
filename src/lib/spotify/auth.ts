@@ -1,4 +1,5 @@
 import { dev } from "$app/environment";
+import { base } from "$app/paths";
 import * as env from "$env/static/public";
 import { IUser, type IAuth } from "$lib/auth";
 import { href } from "$lib/href";
@@ -6,23 +7,27 @@ import * as s from "$lib/storage";
 import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 
 export const Auth = (): IAuth => {
-  const api = SpotifyApi.withUserAuthorization(
-    env.PUBLIC_SPOTIFY_CLIENT_ID,
-    `${env.PUBLIC_ORIGIN}/auth/callback`,
-    [
-      "app-remote-control",
-      "streaming",
-      "user-modify-playback-state",
-      "user-read-currently-playing",
-      "user-read-email",
-      "user-read-playback-state",
-      "user-read-private",
-    ],
-  );
+  let api: SpotifyApi;
+
+  const getApi = () => {
+    if (!api) {
+      const redirectUri = `${window.location.origin}${base}/auth/callback`;
+      api = SpotifyApi.withUserAuthorization(env.PUBLIC_SPOTIFY_CLIENT_ID, redirectUri, [
+        "app-remote-control",
+        "streaming",
+        "user-modify-playback-state",
+        "user-read-currently-playing",
+        "user-read-email",
+        "user-read-playback-state",
+        "user-read-private",
+      ]);
+    }
+    return api;
+  };
 
   // exchange stores an access and refresh token. If successful it redirects, otherwise it returns an error string
   const exchange = async () => {
-    const res = await api.authenticate();
+    const res = await getApi().authenticate();
     if (!res.authenticated) return "auth user not found?";
 
     const k = "spotify:href";
@@ -34,26 +39,26 @@ export const Auth = (): IAuth => {
   const login = async (path: string) => {
     s.set("spotify:href", href(path));
 
-    await api.authenticate();
+    await getApi().authenticate();
   };
 
   const logout = async () => {
-    api.logOut();
+    getApi().logOut();
     window.location.reload();
   };
 
   // token is the current access token. "" implies not authenticated
   const token = async () => {
-    const t = await api.getAccessToken();
+    const t = await getApi().getAccessToken();
     return t?.access_token || "";
   };
 
   // user is the current user. Empty ID means unauthenticated
   const user = async () => {
-    const t = await api.getAccessToken();
+    const t = await getApi().getAccessToken();
     if (!t) return IUser;
 
-    const p = await api.currentUser.profile();
+    const p = await getApi().currentUser.profile();
     return {
       email: p.email,
       id: p.id,
