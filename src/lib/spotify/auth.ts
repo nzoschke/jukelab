@@ -60,11 +60,10 @@ export const Auth = (): IAuth => {
 
     const p = await api.currentUser.profile();
     return {
-      channel: "",
       email: p.email,
       id: p.id,
-      image: p.images[0].url,
-      name: p.display_name,
+      image: p.images[0]?.url || "",
+      name: p.display_name || "",
     };
   };
 

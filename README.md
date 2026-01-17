@@ -21,7 +21,7 @@ JukeLab is built on TypeScript and Svelte 5.
 On Mac we recommend [Homebrew](https://brew.sh/) to install development tools:
 
 ```bash
-brew install docker-desktop git node supabase
+brew install git node
 
 git clone https://github.com/nzoschke/jukelab.git
 cd jukelab
@@ -32,9 +32,6 @@ npx playwright install
 # fill in PUBLIC_SPOTIFY_TOKEN and run tests
 cp .env.example .env
 npm test
-
-open -a Docker
-supabase start
 
 npm install
 npm run dev -- --open
@@ -55,26 +52,6 @@ To make a "prod" Spotify app that works indefinitely, go to [Getting started wit
 
 ```bash
 PUBLIC_SPOTIFY_CLIENT_ID=<CLIENT_ID>
-```
-
-### Supabase
-
-```bash
-supabase init
-supabase start
-supabase status
-
-# create new migration
-supabase migration new create_channels_table
-
-# then browse to http://127.0.0.1:54323, use table editor, then generate diff
-supabase db diff --schema public > supabase/migrations/20241104092543_create_channels_table.sql
-
-# generate types
-supabase gen types --local > src/lib/types/database.ts
-
-# reset data
-supabase db reset
 ```
 
 ## Building

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Auth, IUser } from "$lib/auth";
+  import { Auth } from "$lib/auth";
   import { Audio } from "$lib/types/audio";
   import { AlbumTracks } from "$lib/types/music";
   import { onMount } from "svelte";
@@ -18,7 +18,6 @@
     PaintBrush,
     Sun,
   } from "svelte-hero-icons";
-  import Broadcast from "../../audio/Broadcast.svelte";
   import PlaySkip from "../../audio/PlaySkip.svelte";
   import AudioC from "../Audio.svelte";
   import Avatar from "../Avatar.svelte";
@@ -57,7 +56,6 @@
     toast: false,
     toastImage: "",
   });
-  let user = $state(IUser);
 
   const themeSpec = $derived(getTheme($theme));
   const themeStyle = $derived.by(() => {
@@ -186,7 +184,6 @@
     onscreenchange();
     screen.orientation.addEventListener("change", onscreenchange);
 
-    user = await auth.user();
     await playlist.get(auth.token, (a) => {
       select.album = a;
     });
@@ -534,10 +531,6 @@
     >
       <Icon src={CommandLine} class="size-5" solid={ui.details} />
     </button>
-
-    {#if user.channel}
-      <Broadcast bind:audio channel={user.channel} name="player" {playlist} />
-    {/if}
   {/snippet}
 
   {#snippet center()}
