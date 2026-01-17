@@ -6,6 +6,7 @@
   import AudioC from "./Audio.svelte";
   import Header from "../Header.svelte";
   import { Icon, ArrowTopRightOnSquare } from "svelte-hero-icons";
+  import { href } from "$lib/href";
 
   let src = "spotify:track:0UK7txy2sUR6kqvEZtx72w";
 
@@ -50,7 +51,7 @@
       <p>
         JukeLab is built on <a href="https://developer.spotify.com/documentation/web-playback-sdk"
           >Spotify Web Playback SDK</a
-        >. Just like <a href="/audio">HTML Audio</a>, you can bind properties of a
+        >. Just like <a href={href("/audio")}>HTML Audio</a>, you can bind properties of a
         <a
           href="https://developer.spotify.com/documentation/web-playback-sdk/reference#spotifyplayer"
           >Spotify Player</a

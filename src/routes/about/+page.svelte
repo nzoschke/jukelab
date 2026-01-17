@@ -24,7 +24,7 @@
       <pre>git clone https://github.com/nzoschke/jukelab.git</pre>
 
       <p>
-        The <a href={href("/spotify/jukebox")}>jukebox</a> page illustrates music player that works like
+        The <a href={href("/spotify/desktop")}>desktop</a> page illustrates music player that works like
         an old-school jukebox. To curate a music vibe it only allows a limited number of albums. To keep
         things simple it only allows you to add a song to the end of the queue.
       </p>
