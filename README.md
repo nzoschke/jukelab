@@ -21,13 +21,17 @@ JukeLab is built on TypeScript and Svelte 5.
 On Mac we recommend [Homebrew](https://brew.sh/) to install development tools:
 
 ```bash
-brew install git node
+brew install git node supabase
 
 git clone https://github.com/nzoschke/jukelab.git
 cd jukelab
 
-# fill in PUBLIC_SPOTIFY_TOKEN
+npm install
+npx playwright install
+
+# fill in PUBLIC_SPOTIFY_TOKEN and run tests
 cp .env.example .env
+npm test
 
 supabase start
 

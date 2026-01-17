@@ -1,7 +1,8 @@
+import { PUBLIC_ORIGIN } from "$env/static/public";
 import { assert, test } from "vitest";
 import { href, ishref } from "./href";
 
 test("href", async () => {
-  assert.equal(href("/foo"), "http://localhost:5173/foo");
-  assert.isTrue(ishref("/foo", new URL("http://localhost:5173/foo")));
+  assert.equal(href("/foo"), `${PUBLIC_ORIGIN}/foo`);
+  assert.isTrue(ishref("/foo", new URL(`${PUBLIC_ORIGIN}/foo`)));
 });
