@@ -22,7 +22,6 @@ jobs:
 
       - env:
           BASE_PATH: /jukelab
-          PUBLIC_ORIGIN: ${{ secrets.PUBLIC_ORIGIN }}
           PUBLIC_SPOTIFY_TOKEN: ""
           PUBLIC_SPOTIFY_CLIENT_ID: ${{ secrets.PUBLIC_SPOTIFY_CLIENT_ID }}
         run: |
