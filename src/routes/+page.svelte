@@ -13,12 +13,14 @@
   <meta name="description" content="JukeLab Playground" />
 </svelte:head>
 
-<div class="flex flex-col items-center">
+<div class="flex min-h-svh flex-col">
   <Header />
-  <h1 class="py-16 text-5xl font-bold">Welcome to JukeLab</h1>
-  <p>Your new music laboratory.</p>
-  <div class="w-1/2 py-16">
-    <AudioC bind:audio src={href("/steps.mp3")} />
-    <Controls bind:audio />
+  <div class="flex flex-1 flex-col items-center justify-center px-4 py-8">
+    <h1 class="text-center text-3xl font-bold sm:text-4xl md:text-5xl">Welcome to JukeLab</h1>
+    <p class="mt-4 text-center text-base-content/70">Your new music laboratory.</p>
+    <div class="mt-8 w-full max-w-md">
+      <AudioC bind:audio src={href("/steps.mp3")} />
+      <Controls bind:audio />
+    </div>
   </div>
 </div>
