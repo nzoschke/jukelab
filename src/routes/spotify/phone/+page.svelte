@@ -144,7 +144,7 @@
 
 {#snippet albumsView()}
   <div class="h-full overflow-y-auto p-3">
-    <div class="grid grid-cols-2 gap-3">
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
       {#each playlist.albums as album}
         <button
           class="card bg-base-200 shadow transition-transform active:scale-95"
@@ -172,53 +172,57 @@
 {/snippet}
 
 {#snippet tracksView()}
-  <div class="flex h-full flex-col">
-    <!-- album header -->
-    <div class="flex items-center gap-3 bg-base-200 p-3">
-      <button
-        class="btn btn-circle btn-ghost btn-sm"
-        onclick={() => {
-          ui.view = "albums";
-        }}
-      >
-        ←
-      </button>
-      <div class="avatar">
-        <div class="w-14 rounded">
-          <img src={select.album.art} alt={select.album.title} />
-        </div>
-      </div>
-      <div class="min-w-0 flex-1">
-        <p class="truncate font-bold">{select.album.title}</p>
-        <p class="truncate text-sm opacity-70">{select.album.artist}</p>
-      </div>
-    </div>
-
-    <!-- track list -->
-    <div class="flex-1 overflow-y-auto">
-      {#each select.album.tracks as track, n}
+  <div class="flex h-full justify-center">
+    <div class="flex h-full w-full max-w-xl flex-col">
+      <!-- album header -->
+      <div class="flex items-center gap-3 bg-base-200 p-3">
         <button
-          class="flex w-full items-center gap-3 px-4 py-3 active:bg-base-200"
+          class="btn btn-circle btn-ghost btn-sm"
           onclick={() => {
-            select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
-            onPlay(select.track);
+            ui.view = "albums";
           }}
         >
-          <div
-            class="flex size-8 items-center justify-center rounded-full bg-primary text-primary-content"
-          >
-            <Icon src={Play} class="size-4" solid />
-          </div>
-          <span class="min-w-6 text-sm opacity-50">{n + 1}</span>
-          <span class="flex-1 truncate text-left">{track.title}</span>
+          ←
         </button>
-      {/each}
+        <div class="avatar">
+          <div class="w-14 rounded">
+            <img src={select.album.art} alt={select.album.title} />
+          </div>
+        </div>
+        <div class="min-w-0 flex-1">
+          <p class="truncate font-bold">{select.album.title}</p>
+          <p class="truncate text-sm opacity-70">{select.album.artist}</p>
+        </div>
+      </div>
+
+      <!-- track list -->
+      <div class="flex-1 overflow-y-auto">
+        {#each select.album.tracks as track, n}
+          <button
+            class="flex w-full items-center gap-3 px-4 py-3 active:bg-base-200"
+            onclick={() => {
+              select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
+              onPlay(select.track);
+            }}
+          >
+            <div
+              class="flex size-8 items-center justify-center rounded-full bg-primary text-primary-content"
+            >
+              <Icon src={Play} class="size-4" solid />
+            </div>
+            <span class="min-w-6 text-sm opacity-50">{n + 1}</span>
+            <span class="flex-1 truncate text-left">{track.title}</span>
+          </button>
+        {/each}
+      </div>
     </div>
   </div>
 {/snippet}
 
 {#snippet queueView()}
-  <Queue {playlist} hidden={false} class="h-full w-full" />
+  <div class="flex h-full justify-center">
+    <Queue {playlist} hidden={false} class="h-full w-full max-w-xl" />
+  </div>
 {/snippet}
 
 {#snippet nowPlaying()}
