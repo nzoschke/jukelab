@@ -41,13 +41,7 @@
     </button>
   </div>
 {:else}
-  <button
-    class="btn btn-circle btn-ghost"
-    class:hidden={token != ""}
-    onclick={async () => {
-      await auth.login(path);
-    }}
-  >
+  <button class="btn btn-primary btn-sm" class:hidden={!!token} onclick={() => auth.login(path)}>
     Login
   </button>
 {/if}

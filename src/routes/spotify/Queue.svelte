@@ -5,20 +5,22 @@
   let {
     hidden = false,
     playlist,
+    class: className = "w-80",
   }: {
     hidden: boolean;
     playlist: ReturnType<typeof Playlist>;
+    class?: string;
   } = $props();
 
   let active = $state<Lists>("queue");
 </script>
 
-<div class="flex w-80 flex-col overflow-hidden bg-base-300 p-1" class:hidden>
-  <div role="tablist" class="tabs-boxed tabs justify-center">
+<div class="flex flex-col overflow-hidden bg-base-300 p-1 {className}" class:hidden>
+  <div role="tablist" class="tabs-boxed tabs shrink-0 justify-center">
     {@render tab("queue")}
     {@render tab("history")}
   </div>
-  <div class="overflow-scroll">
+  <div class="flex-1 overflow-y-auto">
     <div class:hidden={active != "queue"}>
       <div class="flex justify-between">
         <button class="btn btn-ghost btn-sm pointer-events-none">Hand picked</button>
