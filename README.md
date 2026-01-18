@@ -37,6 +37,22 @@ npm install
 npm run dev -- --open
 ```
 
+### Mobile Testing
+
+To test on a mobile device (iPhone/Android), run with `--host` to expose on your local network:
+
+```bash
+npm run dev -- --host
+```
+
+For iOS Safari, HTTPS is required for Spotify authentication (the Web Crypto API needs a secure context). Use the `HTTPS` flag:
+
+```bash
+HTTPS=true npm run dev -- --host
+```
+
+Then visit `https://<your-ip>:8090` on your phone (accept the self-signed certificate warning).
+
 ### Spotify
 
 To make a Spotify app that works indefinitely, go to [Getting started with Web API
