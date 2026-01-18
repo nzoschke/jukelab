@@ -13,7 +13,10 @@
   import { AlbumTrack, Playlist } from "../playlist.svelte";
   import { Sleep } from "../Sleep.svelte";
   import PlayDialog from "../desktop/PlayDialog.svelte";
+  import ThemeDialog from "../desktop/ThemeDialog.svelte";
   import { getTheme, theme } from "$lib/themes";
+  import { anim, getAnimation } from "$lib/animations";
+  import { browser } from "$app/environment";
 
   const auth = Auth();
   const log = Log();
@@ -30,10 +33,28 @@
     toast: false,
     toastImage: "",
     playDialog: false,
+    theme: false,
   });
 
   const themeSpec = $derived(getTheme($theme));
+  const themeStyle = $derived.by(() => {
+    let bg: string[] = [];
+
+    if (themeSpec.backgroundColor) {
+      bg.push(`background-color: ${themeSpec.backgroundColor};`);
+    }
+    if (themeSpec.backgroundGradient) {
+      bg.push(
+        `background: url("https://assets.getpartiful.com/backgrounds/${$theme}/web.mp4"), ${themeSpec.backgroundGradient};`,
+      );
+    }
+    return bg.join(" ");
+  });
   const transparent = $derived(themeSpec.transparent);
+  const animSpec = $derived(getAnimation($anim));
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let LottiePlayer: any = $state();
 
   const onHandleDialogPlay = async (photo?: string) => {
     playlist.enqueue(select.track, photo);
@@ -85,6 +106,11 @@
       select.album = a;
     });
     select.album = playlist.albums[0];
+
+    if (browser) {
+      const module = await import("@lottiefiles/svelte-lottie-player");
+      LottiePlayer = module.LottiePlayer;
+    }
   });
 </script>
 
@@ -100,11 +126,58 @@
 <!-- audio element -->
 <AudioC bind:audio log={log.log} token={auth.token} src={playlist.track.src} />
 
+<!-- theme backdrop -->
+{#key themeStyle}
+  <div class="backdrop {themeSpec.backdropClass}" style={themeStyle}>
+    {#if themeSpec.animationStyle === "video"}
+      <video autoplay playsinline loop muted>
+        <source
+          src="https://assets.getpartiful.com/backgrounds/{$theme}/web.mp4"
+          type="video/mp4"
+        />
+      </video>
+    {/if}
+  </div>
+{/key}
+
+<!-- animation backdrop -->
+{#key animSpec}
+  <div class="backdrop">
+    {#if animSpec.ext === "mp4"}
+      <video autoplay playsinline loop muted>
+        <source
+          src="https://assets.getpartiful.com/animations/{$anim}/web.mov"
+          type="video/mp4;codecs=hvc1"
+        />
+        <source
+          src="https://assets.getpartiful.com/animations/{$anim}/web.webm"
+          type="video/webm"
+        />
+      </video>
+    {/if}
+    {#if animSpec?.ext === "json" && LottiePlayer}
+      <LottiePlayer
+        src="https://assets.getpartiful.com/animations/{$anim}/web.json"
+        autoplay
+        loop
+        renderer="svg"
+        background="transparent"
+        width="100vw"
+        height="100vh"
+      />
+    {/if}
+  </div>
+{/key}
+
 <!-- drawer for menu -->
-<div class="drawer" data-theme={themeSpec.darkMode ? "dark" : "corporate"}>
+<div class="drawer bg-transparent" data-theme={themeSpec.darkMode ? "dark" : "corporate"}>
   <input id="phone-drawer" type="checkbox" class="drawer-toggle" />
 
-  <div class="drawer-content flex h-svh flex-col bg-base-100">
+  <div
+    class="drawer-content flex h-svh flex-col"
+    class:bg-base-100={!transparent}
+    class:bg-transparent={transparent}
+  >
     <!-- top navbar -->
     {@render navbar()}
 
@@ -128,8 +201,10 @@
 
   <div class="drawer-side z-50">
     <label for="phone-drawer" aria-label="close menu" class="drawer-overlay"></label>
-    <Menu {playlist} />
+    <Menu {playlist} onThemeClick={() => (ui.theme = true)} />
   </div>
+
+  <ThemeDialog bind:open={ui.theme} />
 </div>
 
 <!-- toast notification -->
@@ -154,7 +229,7 @@
 
 <!-- snippets -->
 {#snippet navbar()}
-  <div class="navbar min-h-14 bg-base-200 px-2">
+  <div class="navbar min-h-14 bg-base-200 px-2" class:bg-opacity-40={transparent}>
     <div class="navbar-start">
       <label for="phone-drawer" class="btn btn-circle btn-ghost btn-sm">
         <Icon src={Bars3} class="size-5" />
@@ -175,6 +250,7 @@
       {#each playlist.albums as album}
         <button
           class="card bg-base-200 shadow transition-transform active:scale-95"
+          class:bg-opacity-40={transparent}
           onclick={() => {
             select.album = album;
             ui.view = "tracks";
@@ -202,7 +278,7 @@
   <div class="flex h-full justify-center">
     <div class="flex h-full w-full max-w-xl flex-col">
       <!-- album header -->
-      <div class="flex items-center gap-3 bg-base-200 p-3">
+      <div class="flex items-center gap-3 bg-base-200 p-3" class:bg-opacity-40={transparent}>
         <button
           class="btn btn-circle btn-ghost btn-sm"
           onclick={() => {
@@ -255,7 +331,11 @@
 {#snippet nowPlaying()}
   {@const { album, track } = playlist}
 
-  <div class="flex shrink-0 items-center gap-2 bg-base-200 p-2" class:hidden={!track.title}>
+  <div
+    class="flex shrink-0 items-center gap-2 bg-base-200 p-2"
+    class:bg-opacity-40={transparent}
+    class:hidden={!track.title}
+  >
     <div class="avatar">
       <div class="w-12 rounded">
         {#if album.art}
@@ -279,7 +359,10 @@
 {/snippet}
 
 {#snippet bottomNav()}
-  <div class="bottom-nav flex shrink-0 border-t border-base-300 bg-base-200">
+  <div
+    class="bottom-nav flex shrink-0 border-t border-base-300 bg-base-200"
+    class:bg-opacity-40={transparent}
+  >
     <button
       class="flex flex-1 flex-col items-center justify-center py-2"
       class:text-primary={ui.view === "albums"}
@@ -326,5 +409,32 @@
 
   .bottom-nav {
     padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .backdrop {
+    box-sizing: border-box;
+    background-repeat: repeat-y;
+    background-size: 100% auto;
+    left: 0;
+    min-height: 100vh;
+    overflow: hidden;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    touch-action: none;
+    width: 100vw;
+  }
+  .backdrop video {
+    pointer-events: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    height: 100vh;
+    left: 0;
+    object-fit: cover;
+    object-position: top;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 0;
   }
 </style>

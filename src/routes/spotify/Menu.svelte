@@ -5,8 +5,10 @@
 
   let {
     playlist,
+    onThemeClick,
   }: {
     playlist: ReturnType<typeof Playlist>;
+    onThemeClick?: () => void;
   } = $props();
 
   let playlistIn = $state({ value: "", err: "" });
@@ -62,6 +64,11 @@
   <li>
     <h2 class="menu-title">Settings</h2>
     <ul>
+      {#if onThemeClick}
+        <li>
+          <button onclick={onThemeClick}>Themes & Effects</button>
+        </li>
+      {/if}
       <li>
         <label class="label flex cursor-pointer justify-start">
           <input type="checkbox" class="toggle" bind:checked={$photoboothEnabled} />
