@@ -11,7 +11,11 @@ export const Auth = (): IAuth => {
 
   const getApi = () => {
     if (!api) {
-      const redirectUri = `${window.location.origin}${base}/auth/callback`;
+      let origin = window.location.origin;
+      if (origin.startsWith("http://localhost")) {
+        origin = origin.replace("http://localhost", "http://127.0.0.1");
+      }
+      const redirectUri = `${origin}${base}/auth/callback`;
       api = SpotifyApi.withUserAuthorization(env.PUBLIC_SPOTIFY_CLIENT_ID, redirectUri, [
         "app-remote-control",
         "streaming",
