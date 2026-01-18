@@ -235,7 +235,8 @@ export const Playlist = () => {
 
   const reshuffle = () => {
     const srcs = albums.map((a) => a.tracks.map((t) => _src(a, t))).flat();
-    s.set("shuffle", arrayShuffle(srcs));
+    shuffle = arrayShuffle(srcs);
+    s.set("shuffle", shuffle);
   };
 
   const _src = (a: Album, t: Track): Src => ({ albumSrc: a.src, trackSrc: t.src });

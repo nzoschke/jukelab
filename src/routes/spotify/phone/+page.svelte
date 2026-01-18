@@ -11,10 +11,13 @@
   import Queue from "../Queue.svelte";
   import { Log } from "../log.svelte";
   import { AlbumTrack, Playlist } from "../playlist.svelte";
+  import { Sleep } from "../Sleep.svelte";
+  import PlayDialog from "../desktop/PlayDialog.svelte";
   import { getTheme, theme } from "$lib/themes";
 
   const auth = Auth();
   const log = Log();
+  const sleep = Sleep();
 
   let audio = $state(Audio);
   let playlist = Playlist();
@@ -25,14 +28,21 @@
   let ui = $state({
     view: "albums" as "albums" | "tracks" | "queue",
     toast: false,
+    toastImage: "",
+    playDialog: false,
   });
 
   const themeSpec = $derived(getTheme($theme));
   const transparent = $derived(themeSpec.transparent);
 
-  const onPlay = (track: typeof AlbumTrack) => {
-    playlist.enqueue(track);
+  const onHandleDialogPlay = async (photo?: string) => {
+    playlist.enqueue(select.track, photo);
     ui.toast = true;
+    if (photo) {
+      ui.toastImage = photo;
+    } else {
+      ui.toastImage = "";
+    }
     setTimeout(() => {
       ui.toast = false;
     }, 3000);
@@ -61,6 +71,13 @@
   // if ended, play next
   $effect(() => {
     if (audio.ended) playlist.skip(1);
+  });
+
+  // if playing and sleep is uninitialized, disable sleep (enable wake lock)
+  $effect(() => {
+    if (!audio.paused && sleep.disabled === undefined) {
+      sleep.disabled = true;
+    }
   });
 
   onMount(async () => {
@@ -117,6 +134,13 @@
 
 <!-- toast notification -->
 <div class="toast toast-end toast-bottom z-50 mb-32" class:hidden={!ui.toast}>
+  {#if ui.toastImage}
+    <div class="avatar shadow-lg">
+      <div class="w-24 rounded-lg">
+        <img src={ui.toastImage} alt="" />
+      </div>
+    </div>
+  {/if}
   <div role="alert" class="alert alert-success shadow-lg">
     <Icon src={Plus} class="size-5" />
     <div class="overflow-hidden">
@@ -124,6 +148,9 @@
     </div>
   </div>
 </div>
+
+<!-- play dialog -->
+<PlayDialog bind:open={ui.playDialog} track={select.track} onPlay={onHandleDialogPlay} />
 
 <!-- snippets -->
 {#snippet navbar()}
@@ -202,7 +229,7 @@
             class="flex w-full items-center gap-3 px-4 py-3 active:bg-base-200"
             onclick={() => {
               select.track = playlist.find({ albumSrc: select.album.src, trackSrc: track.src });
-              onPlay(select.track);
+              ui.playDialog = true;
             }}
           >
             <div
